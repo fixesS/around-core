@@ -1,0 +1,9 @@
+version: '1'
+
+services:
+  rabbitmq-stomp:
+    build: src/main/resources/rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "61613:61613"
