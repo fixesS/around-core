@@ -12,5 +12,5 @@ public class GameUserSkills {
     private GameUserSkillEmbedded gameUserSkillEmbedded;
 
     @Column(name = "current_level")
-    private int currentLevel;
+    private Integer currentLevel;
 }
