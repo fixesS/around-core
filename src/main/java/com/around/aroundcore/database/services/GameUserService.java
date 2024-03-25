@@ -30,8 +30,8 @@ public class GameUserService {
         return userRepository.findById(id).orElse(null);
     }
     @Transactional
-    public GameUser findByUsername(String username){
-        return userRepository.findByUsername(username).orElse(null);
+    public GameUser findByEmail(String email){
+        return userRepository.findByEmail(email).orElse(null);
     }
     @Transactional
     public List<GameUser> findAll(){

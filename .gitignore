@@ -35,3 +35,5 @@ build/
 **/application-dev.properties
 
 .docker/
+
+src/main/resources/application-dev.properties

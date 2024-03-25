@@ -6,6 +6,8 @@ import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.security.AuthService;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.gson.GsonParser;
+import com.around.aroundcore.web.models.ApiError;
+import com.around.aroundcore.web.models.ApiOk;
 import com.around.aroundcore.web.models.AuthModel;
 import com.around.aroundcore.web.models.TokenData;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +20,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,22 +46,20 @@ public class LoginController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping
-    public ResponseEntity<String> handle(HttpServletRequest request, @RequestBody AuthModel authModel) throws UnknownHostException {
+    public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody AuthModel authModel) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");
         String ip_address = request.getRemoteAddr();
-        GsonParser gsonParser = new GsonParser();
         String body = "";
         ApiResponse response;
-        GameUser user = userService.findByUsername(authModel.getUsername());
+        GameUser user = userService.findByEmail(authModel.getEmail());
 
         try {
             if (user == null) {
                 response = ApiResponse.USER_DOES_NOT_EXIST;
             } else {
                 UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(authModel.getUsername(), authModel.getPassword());
+                        new UsernamePasswordAuthenticationToken(authModel.getEmail(), authModel.getPassword());
                 Authentication auth = authenticationManager.authenticate(authenticationToken);
-
 
                 user = (GameUser) auth.getPrincipal();
                 response = ApiResponse.OK;
@@ -71,21 +72,19 @@ public class LoginController {
             if(e instanceof BadCredentialsException){
                 response = ApiResponse.USER_DOES_NOT_EXIST;
             }
-            //response.setMessage(e.getMessage());
             log.error(e.getMessage());
         }
 
         switch (response){
             case OK -> {
                 TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip_address));
-                //ApiOk<TokenData> apiOk = ApiResponse.getApiOk(response.getStatusCode(), response.getMessage(), tokenData);
-                body = gsonParser.toJson(tokenData);
+                ApiOk<TokenData> apiOk = ApiResponse.getApiOk(response.getStatusCode(), response.getMessage(), tokenData);
+                body = gsonParser.toJson(apiOk);
             }
             default -> {
-                //ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
-                body = gsonParser.toJson(response.getMessage());
+                ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
+                body = gsonParser.toJson(apiError);
             }
-
         }
         return new ResponseEntity<>(body,response.getStatus());
     }
