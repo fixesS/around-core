@@ -31,7 +31,7 @@ public class AuthorizationSocketInterceptor implements ChannelInterceptor {
     public Message<?> preSend(final Message<?> message, final MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         if(!(nonNull(accessor))){
-            log.info("null accessor");
+            log.error("null accessor");
             return null;
         }
         switch (Objects.requireNonNull(accessor.getCommand())) {
@@ -50,15 +50,15 @@ public class AuthorizationSocketInterceptor implements ChannelInterceptor {
                         return message;
                     } else {
                         StompHeaderAccessor headerAccessor = StompHeaderAccessor.create(StompCommand.SEND);
-                        headerAccessor.setMessage("ИДИ НВХУЙ СО СВОИМ ЖВТ JWT invalid");
+                        headerAccessor.setMessage("JWT invalid");
 
                         channel.send(MessageBuilder.createMessage(new byte[0], headerAccessor.getMessageHeaders()));
-                        log.info("WS JWT invalid");
+                        log.error("WS JWT invalid");
                         log.info("headers:"+message.getHeaders());
                         return null;
                     }
                 } else {
-                    log.info("WS AUTH header is null or invalid");
+                    log.error("WS AUTH header is null or invalid");
                     log.info("headers:"+message.getHeaders());
                     return null;
                 }

@@ -33,6 +33,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(authHeader == null || !authHeader.startsWith("Bearer ")){
             log.info("Auth header is null");
+            log.info(authHeader);
+            log.info(request.getPathInfo());
+            log.info(request.getRequestURI());
             filterChain.doFilter(request,response);
             return;
         }
