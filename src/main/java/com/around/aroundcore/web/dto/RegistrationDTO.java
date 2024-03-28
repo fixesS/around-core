@@ -1,14 +1,13 @@
-package com.around.aroundcore.web.models;
+package com.around.aroundcore.web.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 
 @Data
-public class RegistrationModel {
+public class RegistrationDTO {
     @NotBlank(message = "-3004")
     @NotNull(message = "-3004")
     private String username;

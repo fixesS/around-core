@@ -6,14 +6,13 @@ import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.security.AuthService;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.gson.GsonParser;
-import com.around.aroundcore.web.models.ApiError;
-import com.around.aroundcore.web.models.ApiOk;
-import com.around.aroundcore.web.models.AuthModel;
-import com.around.aroundcore.web.models.TokenData;
+import com.around.aroundcore.web.dto.ApiError;
+import com.around.aroundcore.web.dto.ApiOk;
+import com.around.aroundcore.web.dto.AuthDTO;
+import com.around.aroundcore.web.dto.TokenData;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -46,19 +45,19 @@ public class LoginController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping
-    public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody AuthModel authModel) throws UnknownHostException {
+    public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");
         String ip_address = request.getRemoteAddr();
         String body = "";
         ApiResponse response;
-        GameUser user = userService.findByEmail(authModel.getEmail());
+        GameUser user = userService.findByEmail(authDTO.getEmail());
 
         try {
             if (user == null) {
                 response = ApiResponse.USER_DOES_NOT_EXIST;
             } else {
                 UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(authModel.getEmail(), authModel.getPassword());
+                        new UsernamePasswordAuthenticationToken(authDTO.getEmail(), authDTO.getPassword());
                 Authentication auth = authenticationManager.authenticate(authenticationToken);
 
                 user = (GameUser) auth.getPrincipal();

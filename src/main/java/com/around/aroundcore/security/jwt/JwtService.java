@@ -1,6 +1,10 @@
 package com.around.aroundcore.security.jwt;
 
 import com.around.aroundcore.security.models.Token;
+import com.around.aroundcore.web.exceptions.AuthHeaderEmptyException;
+import com.around.aroundcore.web.exceptions.AuthHeaderException;
+import com.around.aroundcore.web.exceptions.AuthHeaderNotStartsWithPrefixException;
+import com.around.aroundcore.web.exceptions.AuthHeaderNullException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -8,15 +12,23 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
 public class JwtService {
+    public static final String AUTH_HEADER = "Authorization";
+    public static final String JWT_PREFIX = "Bearer ";
+    private static final String JWT_ACCESS = "access";
+    private static final String JWT_REFRESH = "refresh";
     @Value("${jwt.token.access.secret}")
     private String accessSecretStr;
     private SecretKey accessSecret;
@@ -40,7 +52,7 @@ public class JwtService {
         Date expiration = new Date(now.getTime()+accessExp);
 
         Claims claims = Jwts.claims()
-                .setSubject("access")
+                .setSubject(JWT_ACCESS)
                 .setIssuer(issuer)
                 .setId(sessionUuid.toString())
                 .setIssuedAt(now)
@@ -64,7 +76,7 @@ public class JwtService {
         Date expiration = new Date(now.getTime()+refreshExp);
 
         Claims claims = Jwts.claims()
-                .setSubject("refresh")
+                .setSubject(JWT_REFRESH)
                 .setIssuer(issuer)
                 .setId(sessionUuid.toString())
                 .setIssuedAt(now)
@@ -83,30 +95,19 @@ public class JwtService {
                 .expiresIn(expiration)
                 .build();
     }
-    private boolean validateToken(String token, Key secret, String type) {
-        try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(secret)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            return type.equals(claims.getSubject());
-        } catch (ExpiredJwtException expEx) {
-            log.error("Token expired", expEx);
-        } catch (UnsupportedJwtException unsEx) {
-            log.error("Unsupported jwt", unsEx);
-        } catch (MalformedJwtException mjEx) {
-            log.error("Malformed jwt", mjEx);
-        } catch (Exception e) {
-            log.error("invalid token", e);
-        }
-        return false;
+    private boolean validateToken(String token, Key secret, String type) throws Exception{
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secret)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return type.equals(claims.getSubject());
     }
-    public boolean validateAccessToken(String accessToken){
-        return validateToken(accessToken,accessSecret,"access");
+    public boolean validateAccessToken(String accessToken) throws Exception{
+        return validateToken(accessToken,accessSecret,JWT_ACCESS);
     }
-    public boolean validateRefreshToken(String refreshToken){
-        return validateToken(refreshToken,refreshSecret,"refresh");
+    public boolean validateRefreshToken(String refreshToken) throws Exception{
+        return validateToken(refreshToken,refreshSecret,JWT_REFRESH);
     }
     public Claims getAccessClaims( String accessToken) {
         return getClaims(accessToken, accessSecret);
@@ -133,12 +134,53 @@ public class JwtService {
         return UUID.fromString(claims.getId());
 
     }
-    public String resolveToken(HttpServletRequest request){
-        final String bearer = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
+    public String resolveAuthHeader(HttpServletRequest request) throws AuthHeaderNullException, AuthHeaderNotStartsWithPrefixException {
+        final String authHeader = request.getHeader(AUTH_HEADER);
+        if(authHeader == null ){
+            throw new AuthHeaderNullException();
         }
-        return null;
+        if(!authHeader.startsWith(JWT_PREFIX)){
+            throw new AuthHeaderNotStartsWithPrefixException();
+        }
+        return authHeader;
+    }
+    public String resolveAuthHeader(ServerHttpRequest request) throws AuthHeaderException {
+        HttpHeaders headers = request.getHeaders();
+        final List<String> authHeader = headers.get(AUTH_HEADER);
+        if(authHeader == null ){
+            throw new AuthHeaderNullException();
+        }
+        if(authHeader.isEmpty()){
+            throw new AuthHeaderEmptyException();
+        }
+        String authHeaderString = authHeader.get(0);
+        if(!authHeaderString.startsWith(JWT_PREFIX)){
+            throw new AuthHeaderNotStartsWithPrefixException();
+        }
+        return authHeaderString;
+    }
+    public String resolveAuthHeader(StompHeaderAccessor accessor) throws AuthHeaderException {
+        final String authHeader = accessor.getFirstNativeHeader(AUTH_HEADER);
+        if(authHeader == null ){
+            throw new AuthHeaderNullException();
+        }
+        if(!authHeader.startsWith(JWT_PREFIX)){
+            throw new AuthHeaderNotStartsWithPrefixException();
+        }
+        return authHeader;
+    }
+    public String resolveToken(HttpServletRequest request) throws AuthHeaderException {
+        String authHeader = resolveAuthHeader(request);
+        if (!StringUtils.hasText(authHeader)) {
+            throw new AuthHeaderEmptyException();
+        }
+        return authHeader.substring(7);
+    }
+    public String resolveToken(String authHeader) throws AuthHeaderNotStartsWithPrefixException {
+        if (!StringUtils.hasText(authHeader) || !authHeader.startsWith(JWT_PREFIX)) {
+            throw new AuthHeaderNotStartsWithPrefixException();
+        }
+        return authHeader.substring(7);
     }
 }
 

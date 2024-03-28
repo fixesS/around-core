@@ -4,6 +4,9 @@ import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.jwt.JwtAuthenticationToken;
 import com.around.aroundcore.security.jwt.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,29 +37,45 @@ public class AuthorizationSocketInterceptor implements ChannelInterceptor {
             log.error("null accessor");
             return null;
         }
+        if(accessor.isHeartbeat()){
+            return message;
+        }
         switch (Objects.requireNonNull(accessor.getCommand())) {
-            case SEND,SUBSCRIBE -> {
-                String authorizationHeader = accessor.getFirstNativeHeader("Authorization");
+            case SEND-> {
+                String authorizationHeader = jwtService.resolveAuthHeader(accessor);
+                if(authorizationHeader == null){
+
+                }
+
                 if (!isNull(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
                     val accessToken = authorizationHeader.substring("Bearer".length() + 1);
-                    if (jwtService.validateAccessToken(accessToken)) {
-                        Session session = sessionService.findByUuid(jwtService.getSessionIdAccess(accessToken));
-
-                        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(session, session.getUser());
-                        jwtAuthenticationToken.setAuthenticated(true);
-
-                        accessor.setUser(jwtAuthenticationToken);
-                        log.debug("headers:"+message.getHeaders());
-                        return message;
-                    } else {
-                        StompHeaderAccessor headerAccessor = StompHeaderAccessor.create(StompCommand.SEND);
-                        headerAccessor.setMessage("JWT invalid");
-
-                        channel.send(MessageBuilder.createMessage(new byte[0], headerAccessor.getMessageHeaders()));
-                        log.error("WS JWT invalid");
-                        log.info("headers:"+message.getHeaders());
+                    try{
+                        jwtService.validateAccessToken(accessToken);
+                    } catch (ExpiredJwtException expEx) {
+                        sendMesasge(channel,"Token expired");
+                        log.info("Token expired", expEx);
+                        return null;
+                    } catch (UnsupportedJwtException unsEx) {
+                        sendMesasge(channel,"Unsupported jwt");
+                        log.info("Unsupported jwt", unsEx);
+                        return null;
+                    } catch (MalformedJwtException mjEx) {
+                        sendMesasge(channel,"Malformed jwt");
+                        log.info("Malformed jwt", mjEx);
+                        return null;
+                    } catch (Exception e) {
+                        sendMesasge(channel,"Invalid token");
+                        log.info("Invalid token", e);
                         return null;
                     }
+                    Session session = sessionService.findByUuid(jwtService.getSessionIdAccess(accessToken));
+
+                    JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(session, session.getUser());
+                    jwtAuthenticationToken.setAuthenticated(true);
+
+                    accessor.setUser(jwtAuthenticationToken);
+                    log.debug("headers:"+message.getHeaders());
+                    return message;
                 } else {
                     log.error("WS AUTH header is null or invalid");
                     log.info("headers:"+message.getHeaders());
@@ -70,5 +89,10 @@ public class AuthorizationSocketInterceptor implements ChannelInterceptor {
                 return message;
             }
         }
+    }
+    private void sendMesasge(MessageChannel channel, String message){
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.create(StompCommand.SEND);
+        headerAccessor.setMessage(message);
+        channel.send(MessageBuilder.createMessage(new byte[0], headerAccessor.getMessageHeaders()));
     }
 }

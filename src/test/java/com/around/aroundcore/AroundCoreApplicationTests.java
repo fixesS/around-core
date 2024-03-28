@@ -63,7 +63,8 @@ class AroundCoreApplicationTests {
 
 		String wsUrl = "ws://127.0.0.1:" + port + WebSocketConfig.REGISTRY;
 
-		WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
+		//WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
+		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
 
 		stompClient.setMessageConverter(new StringMessageConverter());
 
@@ -109,6 +110,7 @@ class AroundCoreApplicationTests {
 				"        \"chunkOwner\":\"RED\"\n" +
 				"    }\n" +
 				"}";
+
 		StompHeaders headers1 = new StompHeaders();
 		headers1.setDestination(ChunkWsController.FETCH_CHUNK_CHANGES_EVENT);
 		headers1.add("Authorization", "Bearer "+tok);
@@ -127,6 +129,7 @@ class AroundCoreApplicationTests {
 				blockingQueue.offer((String) payload);
 			}
 		});
+
 		StompHeaders headers2 = new StompHeaders();
 		headers2.setDestination(ChunkWsController.CHUNK_CHANGES_FROM_USER);
 		headers2.add("Authorization", "Bearer "+tok);

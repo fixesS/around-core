@@ -38,7 +38,7 @@ public class ChunkWsController {
 
     @SubscribeMapping(FETCH_CHUNK_CHANGES_EVENT)
     public void fetchChunkChangesEvent(){
-        log.error("Got new subscription");
+        log.info("Got new subscription");
     }
 
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
@@ -50,6 +50,7 @@ public class ChunkWsController {
         String accessToken = authorizationHeader.substring("Bearer".length() + 1);
         Session session = sessionService.findByUuid(jwtService.getSessionIdAccess(accessToken));
         GameUser user = session.getUser();
+        log.info(user.getEmail());
 
 
         Thread.sleep(500);

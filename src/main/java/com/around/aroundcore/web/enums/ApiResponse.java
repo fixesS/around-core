@@ -1,7 +1,7 @@
 package com.around.aroundcore.web.enums;
 
-import com.around.aroundcore.web.models.ApiError;
-import com.around.aroundcore.web.models.ApiOk;
+import com.around.aroundcore.web.dto.ApiError;
+import com.around.aroundcore.web.dto.ApiOk;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

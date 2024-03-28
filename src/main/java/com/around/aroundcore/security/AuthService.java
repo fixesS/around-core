@@ -5,7 +5,7 @@ import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.jwt.JwtService;
 import com.around.aroundcore.security.models.Token;
-import com.around.aroundcore.web.models.TokenData;
+import com.around.aroundcore.web.dto.TokenData;
 import lombok.AllArgsConstructor;
 
 import java.net.InetAddress;
