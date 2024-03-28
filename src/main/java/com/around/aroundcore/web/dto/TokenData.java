@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.models;
+package com.around.aroundcore.web.dto;
 
 import lombok.Builder;
 import lombok.Data;

@@ -12,6 +12,6 @@ import java.io.Serializable;
 public class GameUserSkillEmbedded implements Serializable {
 
     private GameUser gameUser;
-    @JdbcTypeCode(SqlTypes.INTEGER)
+
     private Skill skill;
 }

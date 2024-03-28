@@ -35,7 +35,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Slf4j
-@ActiveProfiles("test-ws")
+@ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -52,7 +52,7 @@ class AroundCoreApplicationTests {
 	@Autowired
 	MockMvc mockMvc;
 
-	private String tok = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiI2ZTA5NjA5NS05NDRiLTQxNTAtOTg5ZS1jZDc0MTVmZjNjYjQiLCJpYXQiOjE3MTA2OTY1MTUsImV4cCI6MTcxMDc5NjUxNX0.tjeLpm90jkth-oM8iqOxStTJwjsOeaaDjj-NCNb9t_BFZfY23vVsko8q-qyxWuNz";
+	private String tok = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiIwMTYxOWRhYi03OTcwLTRlMDQtOTg4Yi0zYzY5Y2FmZTg5NzIiLCJpYXQiOjE3MTE0NTk0NjAsImV4cCI6MTcxMTU1OTQ2MH0.Kf8quwKa8e0n6GhUYwY_0RGHxsz0Ks4p2xLUKFsv4DqkAke2WvWhWUJZLEMd-M_-";
 
 	@BeforeAll
 	public void setup() throws Exception {
@@ -63,23 +63,25 @@ class AroundCoreApplicationTests {
 
 		String wsUrl = "ws://127.0.0.1:" + port + WebSocketConfig.REGISTRY;
 
-		WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
+		//WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
+		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
 
 		stompClient.setMessageConverter(new StringMessageConverter());
 
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 		headers.set("Authorization", "Bearer "+tok);
+		log.info(" HEADERS: "+headers.toString());
 
 		StompSession stompSession = stompClient
 				.connect(wsUrl, headers, new StompSessionHandlerAdapter() {})
 				.get(1, SECONDS);
-		log.debug(stompSession.toString());
+		log.info(stompSession.toString());
 		client = WebClient.builder()
 				.stompClient(stompClient)
 				.stompSession(stompSession)
 				.handler(runStopFrameHandler)
 				.build();
-		log.debug(client.toString());
+		log.info(client.toString());
 	}
 	@AfterAll
 	public void tearDown() {
@@ -108,6 +110,7 @@ class AroundCoreApplicationTests {
 				"        \"chunkOwner\":\"RED\"\n" +
 				"    }\n" +
 				"}";
+
 		StompHeaders headers1 = new StompHeaders();
 		headers1.setDestination(ChunkWsController.FETCH_CHUNK_CHANGES_EVENT);
 		headers1.add("Authorization", "Bearer "+tok);
@@ -126,6 +129,7 @@ class AroundCoreApplicationTests {
 				blockingQueue.offer((String) payload);
 			}
 		});
+
 		StompHeaders headers2 = new StompHeaders();
 		headers2.setDestination(ChunkWsController.CHUNK_CHANGES_FROM_USER);
 		headers2.add("Authorization", "Bearer "+tok);

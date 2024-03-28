@@ -1,6 +1,8 @@
 package com.around.aroundcore.config;
 
 import com.around.aroundcore.database.models.Role;
+import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
+import com.around.aroundcore.security.filters.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +26,8 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/v2/api-docs/**",
             "/swagger-resources/**",
-            "/api/v1/auth/**"
+            "/api/v1/auth/**",
+            "/ws/**"
     };
 
     @Bean
@@ -34,12 +37,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(AUTH_WHITE_LIST).permitAll()
                         .requestMatchers("/api/**").hasAuthority(Role.USER.name())
-                        .requestMatchers("/ws/**").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
-                        .anyRequest().authenticated()
+                        //.requestMatchers("/ws/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(jwtConfig.authenticationManager())
                 .addFilterBefore(jwtConfig.jwtAuthenticationFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(jwtConfig.exceptionHandlerFilter(), JwtFilter.class)
         ;
         return http.build();
     }

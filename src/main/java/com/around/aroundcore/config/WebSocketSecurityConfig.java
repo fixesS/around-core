@@ -14,7 +14,7 @@ public class WebSocketSecurityConfig{
     @Bean
     AuthorizationManager<Message<?>> messageAuthorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
         messages
-                .simpDestMatchers("/topic/**").authenticated()
+                .simpDestMatchers("/topic/**").permitAll()
                 .simpTypeMatchers(
                         SimpMessageType.CONNECT,
                         SimpMessageType.MESSAGE,

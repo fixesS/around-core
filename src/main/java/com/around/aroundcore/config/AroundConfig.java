@@ -6,8 +6,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AroundConfig {
-    public static final String API_V1_LOGIN = "api/v1/auth/login";
-    public static final String API_V1_REGISTRATION = "api/v1/auth/registration";
+    public static final String API = "api/";
+    public static final String API_V1 = API+"v1/";
+
+    public static final String API_V1_AUTH = API_V1+"auth/";
+    public static final String API_V1_LOGIN = API_V1_AUTH+"login";
+    public static final String API_V1_REGISTRATION = API_V1_AUTH+"registration";
     @Bean
     public GsonParser getGsonParser(){
         return new GsonParser();

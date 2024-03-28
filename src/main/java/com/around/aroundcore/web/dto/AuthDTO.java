@@ -1,13 +1,12 @@
-package com.around.aroundcore.web.models;
+package com.around.aroundcore.web.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class AuthModel {
+public class AuthDTO {
     @Email(message = "-3002")
     @NotBlank(message = "-3002")
     @NotNull(message = "-3002")

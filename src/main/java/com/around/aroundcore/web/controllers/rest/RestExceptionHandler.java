@@ -1,9 +1,11 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.web.enums.ApiResponse;
+import com.around.aroundcore.web.exceptions.AuthHeaderException;
 import com.around.aroundcore.web.gson.GsonParser;
-import com.around.aroundcore.web.models.ApiError;
+import com.around.aroundcore.web.dto.ApiError;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -29,5 +31,9 @@ public class RestExceptionHandler {
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         String body = gsonParser.toJson(apiError);
         return new ResponseEntity<>(body, response.getStatus());
+    }
+    @ExceptionHandler(AuthHeaderException.class)
+    public ResponseEntity<String> handleUnAuthorizedException(AuthHeaderException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 }

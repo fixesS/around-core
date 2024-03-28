@@ -1,12 +1,20 @@
 package com.around.aroundcore.database.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Entity
 @Table(name = "skill")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class Skill {
+public class Skill implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
