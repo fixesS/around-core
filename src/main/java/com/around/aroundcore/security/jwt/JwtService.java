@@ -95,7 +95,7 @@ public class JwtService {
                 .expiresIn(expiration)
                 .build();
     }
-    private boolean validateToken(String token, Key secret, String type) throws Exception{
+    private boolean validateToken(String token, Key secret, String type) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(secret)
                 .build()
@@ -103,10 +103,10 @@ public class JwtService {
                 .getBody();
         return type.equals(claims.getSubject());
     }
-    public boolean validateAccessToken(String accessToken) throws Exception{
+    public boolean validateAccessToken(String accessToken) {
         return validateToken(accessToken,accessSecret,JWT_ACCESS);
     }
-    public boolean validateRefreshToken(String refreshToken) throws Exception{
+    public boolean validateRefreshToken(String refreshToken) {
         return validateToken(refreshToken,refreshSecret,JWT_REFRESH);
     }
     public Claims getAccessClaims( String accessToken) {

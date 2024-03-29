@@ -7,6 +7,7 @@ import com.around.aroundcore.security.jwt.JwtAuthenticationToken;
 import com.around.aroundcore.security.jwt.JwtService;
 import com.around.aroundcore.web.exceptions.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.AuthHeaderNullException;
+import com.around.aroundcore.web.exceptions.SessionNullException;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,56 +42,59 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             authHeader = jwtService.resolveAuthHeader(request);
         } catch (AuthHeaderNullException e) {
-            log.info("Auth header is null");
-            filterChain.doFilter(request,response);
-            return;
+            String errmsg = "Auth header is null";
+            log.debug(errmsg, e);
+            e.setMessage(errmsg);
+            throw e;
         } catch (AuthHeaderNotStartsWithPrefixException e) {
-            log.info("Auth header does not starts with '{}'", JwtService.JWT_PREFIX);
-            filterChain.doFilter(request,response);
-            return;
+            String errmsg = String.format("Auth header does not starts with '%s'",JwtService.JWT_PREFIX);
+            log.debug(errmsg, e);
+            e.setMessage(errmsg);
+            throw e;
         }
 
         String accessToken = null;
         try {
             accessToken = jwtService.resolveToken(authHeader);
         } catch (AuthHeaderNotStartsWithPrefixException e) {
-            log.info("Auth header does not starts with '{}'", JwtService.JWT_PREFIX);
-            filterChain.doFilter(request,response);
-            return;
+            String errmsg = String.format("Auth header does not starts with '%s'",JwtService.JWT_PREFIX);
+            log.debug(errmsg, e);
+            e.setMessage(errmsg);
+            throw e;
         }
 
         try{
             jwtService.validateAccessToken(accessToken);
         } catch (ExpiredJwtException expEx) {
-            log.info("Token expired", expEx);
-            filterChain.doFilter(request,response);
-            return;
+            log.debug("Token expired", expEx);
+            throw expEx;
         } catch (UnsupportedJwtException unsEx) {
-            log.info("Unsupported jwt", unsEx);
-            filterChain.doFilter(request,response);
-            return;
+            log.debug("Unsupported jwt", unsEx);
+            throw unsEx;
         } catch (MalformedJwtException mjEx) {
-            log.info("Malformed jwt", mjEx);
-            filterChain.doFilter(request,response);
-            return;
-        } catch (Exception e) {
-            log.info("invalid token", e);
-            filterChain.doFilter(request,response);
-            return;
+            log.debug("Malformed jwt", mjEx);
+            throw mjEx;
+        } catch (RuntimeException e) {
+            log.debug("invalid token", e);
+            throw e;
         }
-        Session session = sessionService.findByUuid(jwtService.getSessionIdAccess(accessToken));
-        if(session == null){
-            log.info("Session is null");
-            filterChain.doFilter(request,response);
-            return;
+        Session session = null;
+        try{
+            session = sessionService.findByUuid(jwtService.getSessionIdAccess(accessToken));
+        }catch (SessionNullException e){
+            String errmsg = "Session is null";
+            log.debug(errmsg, e);
+            e.setMessage(errmsg);
+            throw e;
         }
+
         Claims claims = jwtService.getAccessClaims(accessToken);
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(session,session.getUser());
         Date iat = claims.getIssuedAt();
         if(!iat.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().isAfter(session.getLastRefresh())){
             authentication.setAuthenticated(true);
         }else{
-            log.info("Session expired");
+            log.debug("Session expired");
             authentication.setAuthenticated(false);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);

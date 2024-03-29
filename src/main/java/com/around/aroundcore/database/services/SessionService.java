@@ -2,6 +2,7 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.repositories.SessionRepository;
+import com.around.aroundcore.web.exceptions.SessionNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -28,8 +30,15 @@ public class SessionService {
         sessionRepository.save(session);
     }
     @Transactional
-    public Session findByUuid(UUID uuid){
-        return sessionRepository.findBySessionUuid(uuid).orElse(null);
+    public Session findByUuid(UUID uuid) throws SessionNullException {
+
+        Optional<Session> session = sessionRepository.findBySessionUuid(uuid);
+        if(session.isPresent()){
+            return session.get();
+        }else{
+            throw new SessionNullException();
+        }
+
     }
     @Transactional
     public List<Session> findAll(){

@@ -6,6 +6,7 @@ import com.around.aroundcore.database.models.Role;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.security.AuthService;
 import com.around.aroundcore.web.enums.ApiResponse;
+import com.around.aroundcore.web.exceptions.ApiException;
 import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.dto.ApiError;
 import com.around.aroundcore.web.dto.ApiOk;
@@ -67,10 +68,7 @@ public class RegistrationController {
                 ApiOk<TokenData> apiOk = ApiResponse.getApiOk(response.getStatusCode(), response.getMessage(), tokenData);
                 body = gsonParser.toJson(apiOk);
             }
-            default -> {
-                ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
-                body = gsonParser.toJson(apiError);
-            }
+            default -> throw new ApiException(response);
         }
 
         return new ResponseEntity<>(body, response.getStatus());

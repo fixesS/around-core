@@ -5,6 +5,7 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.security.AuthService;
 import com.around.aroundcore.web.enums.ApiResponse;
+import com.around.aroundcore.web.exceptions.ApiException;
 import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.dto.ApiError;
 import com.around.aroundcore.web.dto.ApiOk;
@@ -33,9 +34,6 @@ import java.net.UnknownHostException;
 @AllArgsConstructor
 @RequestMapping(AroundConfig.API_V1_LOGIN)
 public class LoginController {
-
-    private PasswordEncoder passwordEncoder;
-
     private AuthService authService;
 
     private GameUserService userService;
@@ -80,10 +78,7 @@ public class LoginController {
                 ApiOk<TokenData> apiOk = ApiResponse.getApiOk(response.getStatusCode(), response.getMessage(), tokenData);
                 body = gsonParser.toJson(apiOk);
             }
-            default -> {
-                ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
-                body = gsonParser.toJson(apiError);
-            }
+            default -> throw new ApiException(response);
         }
         return new ResponseEntity<>(body,response.getStatus());
     }

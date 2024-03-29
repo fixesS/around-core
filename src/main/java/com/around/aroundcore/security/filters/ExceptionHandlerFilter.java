@@ -1,6 +1,7 @@
 package com.around.aroundcore.security.filters;
 
 import com.around.aroundcore.web.exceptions.AuthHeaderException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,10 +26,13 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (AuthHeaderException e) {
-            log.error("Spring Security Filter chain exception: {}", e.getClass());
+            log.error("Spring Security Filter chain auth header exception: {}", e.getClass());
+            resolver.resolveException(request, response, null, e);
+        } catch (JwtException e) {
+            log.error("Spring Security Filter chain jwt exception: {}", e.getClass());
             resolver.resolveException(request, response, null, e);
         } catch (RuntimeException e) {
-            log.error(e.getMessage());
+            log.error("Spring Security Filter runtime exception: {}",e.getMessage());
         }
     }
 }

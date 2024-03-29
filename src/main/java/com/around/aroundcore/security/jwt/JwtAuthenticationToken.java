@@ -34,7 +34,7 @@ public class JwtAuthenticationToken implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return user.getUsername();
+        return session.getSessionUuid();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class JwtAuthenticationToken implements Authentication {
 
     @Override
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-        this.authenticated = authenticated;
+        this.authenticated = isAuthenticated;
     }
 
     @Override
