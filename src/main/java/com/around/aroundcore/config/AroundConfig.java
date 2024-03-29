@@ -12,6 +12,7 @@ public class AroundConfig {
     public static final String API_V1_AUTH = API_V1+"auth/";
     public static final String API_V1_LOGIN = API_V1_AUTH+"login";
     public static final String API_V1_REGISTRATION = API_V1_AUTH+"registration";
+    public static final String API_V1_USER = API_V1+"user";
     @Bean
     public GsonParser getGsonParser(){
         return new GsonParser();
