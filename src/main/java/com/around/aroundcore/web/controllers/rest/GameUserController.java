@@ -5,11 +5,12 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.web.dto.ApiError;
 import com.around.aroundcore.web.dto.ApiOk;
 import com.around.aroundcore.web.dto.GameUserDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.ApiException;
+import com.around.aroundcore.web.exceptions.api.ApiException;
+import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
+import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import com.around.aroundcore.web.gson.GsonParser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -38,25 +39,22 @@ public class GameUserController {
         ApiResponse response;
         String body = "";
         GameUser user = null;
+        Session session;
 
         UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Session session = sessionService.findByUuid(sessionUuid);
+
         try {
-            if(session==null){
-                response = ApiResponse.SESSION_DOES_NOT_EXIST;
-            }
-            else{
-                user = session.getUser();
-                if(user==null){
-                    response = ApiResponse.USER_DOES_NOT_EXIST;
-                }
-                else{
-                    response = ApiResponse.OK;
-                }
-            }
+            session = sessionService.findByUuid(sessionUuid);
+            user = session.getUser();
+            response = ApiResponse.OK;
+        }catch (SessionNullException e) {
+            response = ApiResponse.SESSION_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        } catch (GameUserNullException e) {
+            response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
         } catch (Exception e) {
             response = ApiResponse.UNKNOWN_ERROR;
-            //response.setMessage(e.getMessage());
             log.error(e.getMessage());
         }
         switch (response){

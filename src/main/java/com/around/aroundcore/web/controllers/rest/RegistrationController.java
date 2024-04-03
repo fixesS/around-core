@@ -6,9 +6,8 @@ import com.around.aroundcore.database.models.Role;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.security.AuthService;
 import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.ApiException;
+import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.gson.GsonParser;
-import com.around.aroundcore.web.dto.ApiError;
 import com.around.aroundcore.web.dto.ApiOk;
 import com.around.aroundcore.web.dto.RegistrationDTO;
 import com.around.aroundcore.web.dto.TokenData;
@@ -40,11 +39,11 @@ public class RegistrationController {
     public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");//mobile-front
         String ip_address = request.getRemoteAddr();
-        GameUser user =  userService.findByEmail(registrationDTO.getUsername());
+        GameUser user = null;
         String body = "";
         ApiResponse response;
         try {
-            if(user==null){
+            if(!userService.existByEmail(registrationDTO.getEmail())){
                 user = GameUser.builder()
                         .username(registrationDTO.getUsername())
                         .email(registrationDTO.getEmail())

@@ -1,6 +1,8 @@
 package com.around.aroundcore.security.filters;
 
-import com.around.aroundcore.web.exceptions.AuthHeaderException;
+import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
+import com.around.aroundcore.web.exceptions.entity.EntityException;
+import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,9 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
@@ -27,6 +26,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
         } catch (AuthHeaderException e) {
             log.error("Spring Security Filter chain auth header exception: {}", e.getClass());
+            resolver.resolveException(request, response, null, e);
+        } catch (SessionNullException e) {
+            log.error("Spring Security Filter chain session null exception: {}", e.getClass());
             resolver.resolveException(request, response, null, e);
         } catch (JwtException e) {
             log.error("Spring Security Filter chain jwt exception: {}", e.getClass());

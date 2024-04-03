@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.exceptions;
+package com.around.aroundcore.web.exceptions.auth;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -34,7 +34,7 @@ public class GameUser implements UserDetails {
     @Column(name = "username")
     private String username;
 
-    @Column
+    @Column(unique=true)
     private String email;
     @Column
     private String password;

@@ -3,6 +3,7 @@ package com.around.aroundcore.config;
 import com.around.aroundcore.web.gson.GsonParser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration
 public class AroundConfig {
@@ -16,6 +17,15 @@ public class AroundConfig {
     @Bean
     public GsonParser getGsonParser(){
         return new GsonParser();
+    }
+    @Bean
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
+        ThreadPoolTaskScheduler threadPoolTaskScheduler
+                = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setPoolSize(2);
+        threadPoolTaskScheduler.setThreadNamePrefix(
+                "ThreadPoolTaskScheduler");
+        return threadPoolTaskScheduler;
     }
 
 }

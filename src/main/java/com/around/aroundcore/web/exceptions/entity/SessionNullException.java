@@ -1,6 +1,6 @@
-package com.around.aroundcore.web.exceptions;
+package com.around.aroundcore.web.exceptions.entity;
 
-public class SessionNullException extends SessionException{
+public class SessionNullException extends EntityNullException {
     public SessionNullException() {
         super();
     }

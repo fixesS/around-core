@@ -2,6 +2,7 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.repositories.GameUserRepository;
+import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,15 +27,20 @@ public class GameUserService {
         userRepository.save(user);
     }
     @Transactional
-    public GameUser findById(Integer id){
-        return userRepository.findById(id).orElse(null);
+    public GameUser findById(Integer id) throws GameUserNullException{
+        return userRepository.findById(id).orElseThrow(GameUserNullException::new);
     }
     @Transactional
-    public GameUser findByEmail(String email){
-        return userRepository.findByEmail(email).orElse(null);
+    public GameUser findByEmail(String email) throws GameUserNullException{
+        return userRepository.findByEmail(email).orElseThrow(GameUserNullException::new);
     }
     @Transactional
     public List<GameUser> findAll(){
         return userRepository.findAll();
+    }
+
+    @Transactional
+    public boolean existByEmail(String email){
+        return userRepository.existsByEmail(email);
     }
 }

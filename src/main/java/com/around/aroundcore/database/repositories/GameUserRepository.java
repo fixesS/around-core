@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface GameUserRepository extends JpaRepository<GameUser, Integer> {
     Optional<GameUser> findByEmail(String email);
+    boolean existsByEmail(String email);
 }

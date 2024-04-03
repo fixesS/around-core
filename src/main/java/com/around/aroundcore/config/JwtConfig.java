@@ -7,6 +7,7 @@ import com.around.aroundcore.security.GameUserDetailsServiceImpl;
 import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
 import com.around.aroundcore.security.filters.JwtFilter;
 import com.around.aroundcore.security.jwt.JwtService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -39,10 +40,10 @@ public class JwtConfig {
     public JwtService jwtService(){
         return new JwtService();
     }
-    @Bean
-    public JwtFilter jwtAuthenticationFilter(){
-        return new JwtFilter(jwtService(),sessionService);
-    }
+//    @Bean
+//    public JwtFilter jwtAuthenticationFilter(){
+//        return new JwtFilter(jwtService(),sessionService);
+//    }
     @Bean
     public ExceptionHandlerFilter exceptionHandlerFilter(){
         return new ExceptionHandlerFilter(resolver);

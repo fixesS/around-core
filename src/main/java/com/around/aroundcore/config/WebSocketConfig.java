@@ -2,6 +2,7 @@ package com.around.aroundcore.config;
 
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.web.interceptors.AuthorizationSocketInterceptor;
+import com.around.aroundcore.web.interceptors.HttpHandshakeInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -45,7 +46,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(authorizationInterceptor());
+        //registration.interceptors(authorizationInterceptor());
     }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -61,5 +62,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Bean
     public AuthorizationSocketInterceptor authorizationInterceptor(){
         return new AuthorizationSocketInterceptor(sessionService, jwtConfig.jwtService());
+    }
+    @Bean
+    public HttpHandshakeInterceptor httpHandshakeInterceptor(){
+        return new HttpHandshakeInterceptor(jwtConfig.jwtService());
     }
 }

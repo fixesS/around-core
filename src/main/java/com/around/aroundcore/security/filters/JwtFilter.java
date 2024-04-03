@@ -1,13 +1,14 @@
 package com.around.aroundcore.security.filters;
 
 import com.around.aroundcore.config.AroundConfig;
+import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.jwt.JwtAuthenticationToken;
 import com.around.aroundcore.security.jwt.JwtService;
-import com.around.aroundcore.web.exceptions.AuthHeaderNotStartsWithPrefixException;
-import com.around.aroundcore.web.exceptions.AuthHeaderNullException;
-import com.around.aroundcore.web.exceptions.SessionNullException;
+import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
+import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
+import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,17 +28,17 @@ import java.util.Date;
 @Slf4j
 @AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    private final RequestMatcher ignoredPaths = new AntPathRequestMatcher(AroundConfig.API_V1_AUTH);
+    private final RequestMatcher ignoredPaths = new AntPathRequestMatcher(AroundConfig.API_V1_AUTH, WebSocketConfig.REGISTRY);
     private JwtService jwtService;
     private SessionService sessionService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (this.ignoredPaths.matches(request)) {
+            log.error("IGNORED");
             filterChain.doFilter(request, response);
             return;
         }
-        boolean auth = false;
         final String authHeader;
         try {
             authHeader = jwtService.resolveAuthHeader(request);

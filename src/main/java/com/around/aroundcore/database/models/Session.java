@@ -1,5 +1,6 @@
 package com.around.aroundcore.database.models;
 
+import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,5 +35,10 @@ public class Session {
     @Column(name = "expires")
     private LocalDateTime expiresIn;
 
-
+    public GameUser getUser() throws GameUserNullException {
+        if(user == null){
+            throw new GameUserNullException();
+        }
+        return user;
+    }
 }

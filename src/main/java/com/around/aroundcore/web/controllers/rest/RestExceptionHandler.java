@@ -1,8 +1,9 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.ApiException;
-import com.around.aroundcore.web.exceptions.AuthHeaderException;
+import com.around.aroundcore.web.exceptions.api.ApiException;
+import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
+import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.dto.ApiError;
 import io.jsonwebtoken.JwtException;
@@ -40,7 +41,11 @@ public class RestExceptionHandler {
     }
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<String> handleUnAuthorizedException(JwtException exception) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+    @ExceptionHandler(SessionNullException.class)
+    public ResponseEntity<String> handleUnAuthorizedException(SessionNullException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<String> handleApiException(ApiException exception) {

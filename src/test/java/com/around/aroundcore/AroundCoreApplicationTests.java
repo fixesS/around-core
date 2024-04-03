@@ -2,6 +2,8 @@ package com.around.aroundcore;
 
 import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.web.controllers.ws.ChunkWsController;
+import com.around.aroundcore.web.dto.ChunkDTO;
+import com.around.aroundcore.web.gson.GsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -52,8 +54,11 @@ class AroundCoreApplicationTests {
 	@Autowired
 	MockMvc mockMvc;
 
-	private String tok = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiIwMTYxOWRhYi03OTcwLTRlMDQtOTg4Yi0zYzY5Y2FmZTg5NzIiLCJpYXQiOjE3MTE0NTk0NjAsImV4cCI6MTcxMTU1OTQ2MH0.Kf8quwKa8e0n6GhUYwY_0RGHxsz0Ks4p2xLUKFsv4DqkAke2WvWhWUJZLEMd-M_-";
-
+	@Autowired
+	GsonParser gsonParser;
+	private String tok = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiIxMzhkOGFkNy00NTZlLTQzMjgtOGI5Mi0wNmU5NjFjMWNkNTQiLCJpYXQiOjE3MTIxNDg0NTQsImV4cCI6MTcxMjI0ODQ1NH0.a_5IKUTwemBuhG1FfgXQjOo-ExY9VvutvsyOBdafQcIwZ644LJ7oUDlqUyHcUhiO";
+	//password@gmail.com(team 2) = eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiIxMzhkOGFkNy00NTZlLTQzMjgtOGI5Mi0wNmU5NjFjMWNkNTQiLCJpYXQiOjE3MTIxNDg0NTQsImV4cCI6MTcxMjI0ODQ1NH0.a_5IKUTwemBuhG1FfgXQjOo-ExY9VvutvsyOBdafQcIwZ644LJ7oUDlqUyHcUhiO
+	//password1@gmail.com(team 1) = eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiIzY2RlNTUwMy02MTJlLTRlMTgtYWRjNy03YzVkNDFlYTEyZTUiLCJpYXQiOjE3MTIxNDc3NDYsImV4cCI6MTcxMjI0Nzc0Nn0.HuGXw62GEUZL94txaH1nOTgfTWCq3ZKr-WMxFE05qTaNdIaP17_Q6q-g2ld1t1_6
 	@BeforeAll
 	public void setup() throws Exception {
 
@@ -100,21 +105,15 @@ class AroundCoreApplicationTests {
 
 		RunStopFrameHandler handler = client.getHandler();
 
-		String json = "{\n" +
-				"    {\n" +
-				"        \"id\":\"1\",\n" +
-				"        \"chunkOwner\":\"RED\"\n" +
-				"    },\n" +
-				"    {\n" +
-				"        \"id\":\"2\",\n" +
-				"        \"chunkOwner\":\"RED\"\n" +
-				"    }\n" +
-				"}";
+		ChunkDTO chunkDTO = ChunkDTO.builder()
+				.id("1")
+				.build();
+
+		String json = gsonParser.toJson(chunkDTO);
+
 
 		StompHeaders headers1 = new StompHeaders();
 		headers1.setDestination(ChunkWsController.FETCH_CHUNK_CHANGES_EVENT);
-		headers1.add("Authorization", "Bearer "+tok);
-
 		stompSession.subscribe(headers1, new StompFrameHandler() {
 			@Override
 			public Type getPayloadType(StompHeaders headers) {
@@ -123,25 +122,25 @@ class AroundCoreApplicationTests {
 
 			@Override
 			public void handleFrame(StompHeaders headers, Object payload) {
-				log.error(headers.toString());
-				log.error((String) payload);
-				log.error(payload.toString());
 				blockingQueue.offer((String) payload);
 			}
 		});
 
 		StompHeaders headers2 = new StompHeaders();
 		headers2.setDestination(ChunkWsController.CHUNK_CHANGES_FROM_USER);
-		headers2.add("Authorization", "Bearer "+tok);
 
 		stompSession.send(
 				headers2,
 				json
 		);
-		System.out.println("SENT");
 
+		chunkDTO.setTeam_id(2);
+		List<ChunkDTO> exceptedList = new ArrayList<>();
+		exceptedList.add(chunkDTO);
 
-		Assertions.assertEquals(json, blockingQueue.poll(5, SECONDS));
+		String exceptedJson = gsonParser.toJson(exceptedList);
+
+		Assertions.assertEquals(exceptedJson, blockingQueue.poll(5, SECONDS));
 	}
 
 	private List<Transport> createTransportClient() {

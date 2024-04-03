@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.exceptions;
+package com.around.aroundcore.web.exceptions.api;
 
 import com.around.aroundcore.web.enums.ApiResponse;
 import lombok.Getter;

@@ -5,9 +5,9 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.security.AuthService;
 import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.ApiException;
+import com.around.aroundcore.web.exceptions.api.ApiException;
+import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
 import com.around.aroundcore.web.gson.GsonParser;
-import com.around.aroundcore.web.dto.ApiError;
 import com.around.aroundcore.web.dto.ApiOk;
 import com.around.aroundcore.web.dto.AuthDTO;
 import com.around.aroundcore.web.dto.TokenData;
@@ -19,7 +19,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,27 +47,28 @@ public class LoginController {
         String ip_address = request.getRemoteAddr();
         String body = "";
         ApiResponse response;
-        GameUser user = userService.findByEmail(authDTO.getEmail());
+        GameUser user = null;
 
         try {
+            user = userService.findByEmail(authDTO.getEmail());
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(authDTO.getEmail(), authDTO.getPassword());
+            Authentication auth = authenticationManager.authenticate(authenticationToken);
+
+            user = (GameUser) auth.getPrincipal();
+            response = ApiResponse.OK;
             if (user == null) {
                 response = ApiResponse.USER_DOES_NOT_EXIST;
-            } else {
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(authDTO.getEmail(), authDTO.getPassword());
-                Authentication auth = authenticationManager.authenticate(authenticationToken);
-
-                user = (GameUser) auth.getPrincipal();
-                response = ApiResponse.OK;
-                if (user == null) {
-                    response = ApiResponse.USER_DOES_NOT_EXIST;
-                }
             }
+        }catch (GameUserNullException e){
+            response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        }catch (BadCredentialsException e){
+            //response = ApiResponse.LOG_INCORRECT_PASSWORD_OR_LOGIN; do not show that password is incorrect
+            response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
         }catch (Exception e){
             response = ApiResponse.UNKNOWN_ERROR;
-            if(e instanceof BadCredentialsException){
-                response = ApiResponse.USER_DOES_NOT_EXIST;
-            }
             log.error(e.getMessage());
         }
 

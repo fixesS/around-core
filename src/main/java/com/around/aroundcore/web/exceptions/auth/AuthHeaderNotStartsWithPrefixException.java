@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.exceptions;
+package com.around.aroundcore.web.exceptions.auth;
 
 public class AuthHeaderNotStartsWithPrefixException extends AuthHeaderException{
     public AuthHeaderNotStartsWithPrefixException() {

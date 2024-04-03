@@ -1,10 +1,11 @@
 package com.around.aroundcore.security.jwt;
 
 import com.around.aroundcore.security.models.Token;
-import com.around.aroundcore.web.exceptions.AuthHeaderEmptyException;
-import com.around.aroundcore.web.exceptions.AuthHeaderException;
-import com.around.aroundcore.web.exceptions.AuthHeaderNotStartsWithPrefixException;
-import com.around.aroundcore.web.exceptions.AuthHeaderNullException;
+import com.around.aroundcore.web.exceptions.auth.AuthHeaderEmptyException;
+import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
+import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
+import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
+import com.around.aroundcore.web.exceptions.jwt.WrongJwtType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -56,7 +57,7 @@ public class JwtService {
                 .setIssuer(issuer)
                 .setId(sessionUuid.toString())
                 .setIssuedAt(now)
-                .setExpiration(expiration);
+                .setExpiration(expiration).build();
 
         String token = Jwts.builder()
                 .setClaims(claims)
@@ -76,16 +77,17 @@ public class JwtService {
         Date expiration = new Date(now.getTime()+refreshExp);
 
         Claims claims = Jwts.claims()
-                .setSubject(JWT_REFRESH)
-                .setIssuer(issuer)
-                .setId(sessionUuid.toString())
-                .setIssuedAt(now)
-                .setExpiration(expiration);
+                .subject(JWT_REFRESH)
+                .issuer(issuer)
+                .id(sessionUuid.toString())
+                .issuedAt(now)
+                .expiration(expiration)
+                .build();
 
         String token = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiration)
+                .claims(claims)
+                .issuedAt(now)
+                .expiration(expiration)
                 .signWith(refreshSecret)
                 .compact();
 
@@ -95,19 +97,23 @@ public class JwtService {
                 .expiresIn(expiration)
                 .build();
     }
-    private boolean validateToken(String token, Key secret, String type) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(secret)
+    private void validateToken(String token, SecretKey secret, String type) {
+        Claims claims = Jwts.parser()
+                .verifyWith(secret)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return type.equals(claims.getSubject());
+                .parseSignedClaims(token)
+                .getPayload();
+
+        if(!type.equals(claims.getSubject())){
+            String errmsg = String.format("Wrong JWT type: %s",claims.getSubject());
+            throw new WrongJwtType(errmsg);
+        }
     }
-    public boolean validateAccessToken(String accessToken) {
-        return validateToken(accessToken,accessSecret,JWT_ACCESS);
+    public void validateAccessToken(String accessToken) {
+        validateToken(accessToken,accessSecret,JWT_ACCESS);
     }
-    public boolean validateRefreshToken(String refreshToken) {
-        return validateToken(refreshToken,refreshSecret,JWT_REFRESH);
+    public void validateRefreshToken(String refreshToken) {
+        validateToken(refreshToken,refreshSecret,JWT_REFRESH);
     }
     public Claims getAccessClaims( String accessToken) {
         return getClaims(accessToken, accessSecret);
@@ -117,12 +123,12 @@ public class JwtService {
         return getClaims(refreshToken, refreshSecret);
     }
 
-    private Claims getClaims( String token,  Key secret) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secret)
+    private Claims getClaims( String token,  SecretKey secret) {
+        return Jwts.parser()
+                .verifyWith(secret)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public UUID getSessionIdAccess(String accessToken){

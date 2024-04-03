@@ -24,7 +24,7 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
             String authHeader = jwtService.resolveAuthHeader(request);
             ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
             HttpSession session = servletRequest.getServletRequest().getSession();
-            attributes.put("sessionId", "mySessiond");
+            attributes.put("sessionId", session.getId());
         }
         return true;
     }
