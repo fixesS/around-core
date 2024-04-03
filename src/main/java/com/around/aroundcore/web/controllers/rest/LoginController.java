@@ -42,7 +42,8 @@ public class LoginController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping
-    public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO) throws UnknownHostException {
+    public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO)
+            throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");
         String ip_address = request.getRemoteAddr();
         String body = "";

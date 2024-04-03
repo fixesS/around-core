@@ -2,15 +2,16 @@ package com.around.aroundcore.web.enums;
 
 import com.around.aroundcore.web.dto.ApiError;
 import com.around.aroundcore.web.dto.ApiOk;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
 
 public enum ApiResponse {
     OK(200, HttpStatus.OK),
     UNKNOWN_ERROR(-1000, "Unknown error.",HttpStatus.BAD_REQUEST),
     USER_DOES_NOT_EXIST(-2001,"User does not exist", HttpStatus.BAD_REQUEST),
     USER_ALREADY_EXIST(-2002,"User does not exist", HttpStatus.BAD_REQUEST),
+    USER_HAS_NO_TEAM(-2003,"User has no team", HttpStatus.BAD_REQUEST),
     LOG_INCORRECT_PASSWORD_OR_LOGIN(-3001,"Incorrect password or login.", HttpStatus.BAD_REQUEST),
     REG_INCORRECT_EMAIL_FORMAT(-3002,"Incorrect format of email.", HttpStatus.BAD_REQUEST),
     REG_INCORRECT_PASSWORD_FORMAT(-3003,"Password length must be between 5 and 20 symbols.", HttpStatus.BAD_REQUEST),

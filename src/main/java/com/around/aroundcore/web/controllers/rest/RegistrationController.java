@@ -36,7 +36,9 @@ public class RegistrationController {
     private GsonParser gsonParser;
 
     @PostMapping
-    public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
+    public ResponseEntity<String> handle(HttpServletRequest request,
+                                         @Validated @RequestBody RegistrationDTO registrationDTO)
+            throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");//mobile-front
         String ip_address = request.getRemoteAddr();
         GameUser user = null;
