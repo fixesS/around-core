@@ -31,7 +31,7 @@ public class GameUser implements UserDetails {
     @Column(name = "coins")
     private Integer coins;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(unique=true)

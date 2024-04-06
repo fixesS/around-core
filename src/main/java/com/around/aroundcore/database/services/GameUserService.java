@@ -2,10 +2,13 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.repositories.GameUserRepository;
+import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;
 import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
+import com.around.aroundcore.web.exceptions.entity.GameUserUsernameNotUnique;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class GameUserService {
     private GameUserRepository userRepository;
@@ -42,5 +46,20 @@ public class GameUserService {
     @Transactional
     public boolean existByEmail(String email){
         return userRepository.existsByEmail(email);
+    }
+    public void checkEmail(String email){
+        if (existByEmail(email)){
+            throw new GameUserEmailNotUnique();
+        }
+    }
+    @Transactional
+    public boolean existByUsername(String username){
+        return userRepository.existsByUsername(username);
+    }
+
+    public void checkUsername(String username){
+        if (existByUsername(username)){
+            throw new GameUserUsernameNotUnique();
+        }
     }
 }

@@ -7,8 +7,8 @@ import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.security.AuthService;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.gson.GsonParser;
-import com.around.aroundcore.web.dto.ApiOk;
+import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;
+import com.around.aroundcore.web.exceptions.entity.GameUserUsernameNotUnique;
 import com.around.aroundcore.web.dto.RegistrationDTO;
 import com.around.aroundcore.web.dto.TokenData;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,19 +49,24 @@ public class RegistrationController {
         String body = "";
         ApiResponse response;
         try {
-            if(!userService.existByEmail(registrationDTO.getEmail())){
-                user = GameUser.builder()
-                        .username(registrationDTO.getUsername())
-                        .email(registrationDTO.getEmail())
-                        .password(passwordEncoder.encode(registrationDTO.getPassword()))
-                        .role(Role.USER)
-                        .build();
-                userService.create(user);
+            userService.checkEmail(registrationDTO.getEmail());
+            userService.checkUsername(registrationDTO.getUsername());
 
-                response = ApiResponse.OK;
-            }else{
-                response = ApiResponse.USER_ALREADY_EXIST;
-            }
+            user = GameUser.builder()
+                    .username(registrationDTO.getUsername())
+                    .email(registrationDTO.getEmail())
+                    .password(passwordEncoder.encode(registrationDTO.getPassword()))
+                    .role(Role.USER)
+                    .build();
+            userService.create(user);
+
+            response = ApiResponse.OK;
+        } catch (GameUserEmailNotUnique e) {
+            response = ApiResponse.USER_ALREADY_EXIST;
+            log.error(e.getMessage());
+        }catch (GameUserUsernameNotUnique e) {
+            response = ApiResponse.USER_NOT_UNIQUE_USERNAME;
+            log.error(e.getMessage());
         } catch (Exception e) {
             response = ApiResponse.UNKNOWN_ERROR;
             log.error(e.getMessage());

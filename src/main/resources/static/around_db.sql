@@ -15,7 +15,8 @@ city varchar(23) NULL DEFAULT 'Екатеринбург'::character varying,
 "role" varchar NOT NULL,
 email varchar NOT NULL,
 CONSTRAINT game_user_pkey PRIMARY KEY (id),
-CONSTRAINT game_user_un UNIQUE (email)
+CONSTRAINT game_user_un UNIQUE (email),
+CONSTRAINT game_user_un1 UNIQUE (username)
 );
 
 CREATE TABLE public.game_chunk (
