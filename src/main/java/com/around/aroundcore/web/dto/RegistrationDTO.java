@@ -3,6 +3,7 @@ package com.around.aroundcore.web.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
 @Data
 @Schema(description = "DTO for registration")
@@ -18,5 +19,13 @@ public class RegistrationDTO {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,20}$", message = "-3003")
     @Schema(example = "Password1!")
     private String password;
+
+    @NotNull(message = "-3006")
+    @Min(value = 0, message = "-3007")
+    @Schema(example = "1")
+    private Integer team_id;
+    @NotBlank(message = "-3008")
+    @Schema(example = "Yekaterinburg")
+    private String city;
 
 }

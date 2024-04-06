@@ -18,11 +18,15 @@ public enum ApiResponse {
     AUTH_INCORRECT_PASSWORD_LENGTH(-3003,"Password length must be between 8 and 20 symbols,at least one uppercase letter, one lowercase letter, one number and one special character(@,$,!,%,*,?,&)"),
     AUTH_INCORRECT_USERNAME_FORMAT(-3004,"Username cannot be empty."),
     AUTH_INCORRECT_USERNAME_SIZE(-3005,"Username length must be more than 2."),
+    AUTH_INCORRECT_TEAM_ID_NULL(-3006,"Team id cannot be empty."),
+    AUTH_INCORRECT_TEAM_ID_FORMAT(-3007,"Team id cannot less than 0."),
+    AUTH_INCORRECT_CITY_FORMAT(-3008,"City cannot be empty."),
     INVALID_TOKEN(-4001, "Token is invalid."),
     REFRESH_TOKEN_ALREADY_USED(-4002,"Refresh token already has been used."),
     SESSION_DOES_NOT_EXIST(-5001,"Session does not exist."),
     SESSION_EXPIRED(-5002,"Session is expired."),
-    CHUNK_DOES_NOT_EXIST(-6001,"Chunk you trying get does not exist or has not been captured by any user.");
+    CHUNK_DOES_NOT_EXIST(-6001,"Chunk you trying get does not exist or has not been captured by any user."),
+    TEAM_DOES_NOT_EXIST(-7001,"Team does not exist.");
 
     @Getter
     private Integer statusCode;
@@ -73,6 +77,10 @@ public enum ApiResponse {
         apiError.setMessage(message);
 
         return apiError;
+    }
+    @Override
+    public String toString(){
+        return this.statusCode.toString();
     }
 }
 

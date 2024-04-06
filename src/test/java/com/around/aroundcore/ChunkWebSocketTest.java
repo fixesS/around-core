@@ -43,7 +43,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Slf4j
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -54,6 +54,15 @@ class ChunkWebSocketTest {
 	private String host = "127.0.0.1:";
 	@Value("${local.server.port}")
 	private int port;
+
+	@Value("testing.team1.email")
+	private String email1;
+	@Value("testing.team1.password")
+	private String pass1;
+	@Value("testing.team2.email")
+	private String email2;
+	@Value("testing.team2.password")
+	private String pass2;
 
 	private static WebClient client;
 
@@ -67,16 +76,12 @@ class ChunkWebSocketTest {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private TestRestTemplate restTemplate;
-	private TokenData tokenTeam1;
-	private TokenData tokenTeam2;
+	private TokenData token;
 
-	//password@gmail.com(team 2)
-	//password1@gmail.com(team 1)
 	@BeforeAll
 	public void setup() throws Exception {
 
-		//tokenTeam1 = getTokenData("password1@gmail.com","password1");
-		tokenTeam2 = getTokenData("password@gmail.com","password");
+		token = getTokenData(email1,pass1);
 
 		blockingQueue = new LinkedBlockingQueue<ArrayList<ChunkDTO>>();
 
@@ -89,7 +94,7 @@ class ChunkWebSocketTest {
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-		headers.set("Authorization", "Bearer "+tokenTeam2.getAccess_token());
+		headers.set("Authorization", "Bearer "+token.getAccess_token());
 		log.info(" HEADERS: "+headers.toString());
 
 		StompSession stompSession = stompClient
