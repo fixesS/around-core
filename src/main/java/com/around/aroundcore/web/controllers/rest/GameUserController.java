@@ -35,8 +35,6 @@ import java.util.UUID;
 @Tag(name="Game User Controller", description="Controller to get info about user")
 @SecurityRequirement(name = "JWT")
 public class GameUserController {
-
-    private GsonParser gsonParser;
     private SessionService sessionService;
 
     @GetMapping("/me")

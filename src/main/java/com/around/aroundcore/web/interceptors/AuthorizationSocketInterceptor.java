@@ -21,6 +21,7 @@ import static java.util.Objects.nonNull;
 
 @Slf4j
 @AllArgsConstructor
+@Deprecated
 public class AuthorizationSocketInterceptor implements ChannelInterceptor {
 
     private SessionService sessionService;

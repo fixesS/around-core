@@ -32,4 +32,8 @@ public class ChunkDTO {
 
         return sameSame;
     }
+    @Override
+    public String toString(){
+        return "ChunkDTO(id = "+this.id+",team_id = "+this.team_id+")";
+    }
 }

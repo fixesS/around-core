@@ -40,8 +40,6 @@ public class LoginController {
 
     private GameUserService userService;
 
-    private GsonParser gsonParser;
-
     private AuthenticationManager authenticationManager;
 
     @PostMapping

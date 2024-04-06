@@ -42,7 +42,6 @@ import java.util.UUID;
 @Tag(name="Game Chunk  Controller", description="Controller to get info about controllers")
 @SecurityRequirement(name = "JWT")
 public class GameChunkController {
-
     private SessionService sessionService;
     private GameChunkService gameChunkService;
 

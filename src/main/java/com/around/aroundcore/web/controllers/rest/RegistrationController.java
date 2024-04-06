@@ -36,7 +36,6 @@ public class RegistrationController {
 
     private GameUserService userService;
 
-    private GsonParser gsonParser;
 
     @PostMapping
     @Operation(

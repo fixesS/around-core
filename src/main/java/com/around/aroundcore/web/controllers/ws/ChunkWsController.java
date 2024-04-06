@@ -12,11 +12,13 @@ import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.services.ChunkQueueService;
 import com.around.aroundcore.web.tasks.ChunkEventTask;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -43,21 +45,16 @@ import static java.util.Objects.isNull;
 @AllArgsConstructor
 @Controller
 public class ChunkWsController {
-
-    private SimpMessagingTemplate messagingTemplate;
-
     private ThreadPoolTaskScheduler taskScheduler;
-
     private ChunkQueueService chunkQueueService;
     private GameChunkService gameChunkService;
     private SessionService sessionService;
-    private GsonParser gsonParser;
+    private ChunkEventTask chunkEventTask;
     public static final String CHUNK_CHANGES_FROM_USER = "/topic/chunk.changes";
     public static final String FETCH_CHUNK_CHANGES_EVENT = "/topic/chunk.event";
 
     @PostConstruct
     public void executeSendingUpdates(){
-        ChunkEventTask chunkEventTask = new ChunkEventTask(chunkQueueService,messagingTemplate,gsonParser);
         Duration duration = Duration.of(100, TimeUnit.MILLISECONDS.toChronoUnit());
         taskScheduler.scheduleWithFixedDelay(chunkEventTask, duration);
     }
@@ -68,7 +65,7 @@ public class ChunkWsController {
     }
 
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
-    public void handleChunkChanges(@Payload String json, StompHeaderAccessor stompHeaderAccessor, Principal principal){
+    public void handleChunkChanges(@Payload ChunkDTO chunkDTO, StompHeaderAccessor stompHeaderAccessor, Principal principal){
         GameUser user = null;
 
         try {
@@ -80,9 +77,6 @@ public class ChunkWsController {
             log.error(e.getMessage());
             return;
         }
-
-        ChunkDTO chunkDTO = gsonParser.parseObjectOfClassType(json, ChunkDTO.class);
-
 
         GameChunk gameChunk = null;
         try {

@@ -23,9 +23,9 @@ import java.util.List;
 @AllArgsConstructor
 @Hidden
 public class RestExceptionHandler {
-    GsonParser gsonParser;
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiError> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<ObjectError> errors = ex.getBindingResult().getAllErrors();
         ObjectError lastErr = errors.get(errors.size()-1);
 
@@ -34,8 +34,7 @@ public class RestExceptionHandler {
 
         ApiResponse response = ApiResponse.findByStatusCode(statusCode);
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
-        String body = gsonParser.toJson(apiError);
-        return new ResponseEntity<>(body, response.getStatus());
+        return new ResponseEntity<>(apiError, response.getStatus());
     }
     @ExceptionHandler(AuthHeaderException.class)
     public ResponseEntity<String> handleUnAuthorizedException(AuthHeaderException exception) {
@@ -50,10 +49,9 @@ public class RestExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<String> handleApiException(ApiException exception) {
+    public ResponseEntity<ApiError> handleApiException(ApiException exception) {
         ApiResponse response = exception.getResponse();
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
-        String body = gsonParser.toJson(apiError);
-        return new ResponseEntity<>(body, response.getStatus());
+        return new ResponseEntity<>(apiError, response.getStatus());
     }
 }

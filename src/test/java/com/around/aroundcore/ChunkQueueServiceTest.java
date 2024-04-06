@@ -1,32 +1,17 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.web.dto.ChunkDTO;
-import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.services.ChunkQueueService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.messaging.converter.StringMessageConverter;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.socket.WebSocketHttpHeaders;
-import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.messaging.WebSocketStompClient;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingDeque;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Slf4j
 @ActiveProfiles("dev")
@@ -37,8 +22,6 @@ public class ChunkQueueServiceTest {
     @Autowired
     ChunkQueueService chunkQueueService;
 
-    @Autowired
-    GsonParser gsonParser;
 
 
     private void fillQueue(){
@@ -107,56 +90,20 @@ public class ChunkQueueServiceTest {
             }
         }
         Assertions.assertTrue(chunkQueueService.isEmpty());
-        String json = gsonParser.toJson(chunks);
-        String exceptedJson = "[" +
-                "  {\n" +
-                "    \"id\": \"1\",\n" +
-                "    \"team_id\": 4\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"2\",\n" +
-                "    \"team_id\": 1\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"3\",\n" +
-                "    \"team_id\": 2\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"4\",\n" +
-                "    \"team_id\": 2\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"5\",\n" +
-                "    \"team_id\": 3\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"6\",\n" +
-                "    \"team_id\": 7\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"7\",\n" +
-                "    \"team_id\": 5\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"8\",\n" +
-                "    \"team_id\": 5\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"9\",\n" +
-                "    \"team_id\": 6\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"10\",\n" +
-                "    \"team_id\": 4\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"id\": \"11\",\n" +
-                "    \"team_id\": 11\n" +
-                "  }\n" +
-                "]\n";
-        json = json.replaceAll("\n","").replaceAll(" ","");
-        exceptedJson = exceptedJson.replaceAll("\n","").replaceAll(" ","");
-        Assertions.assertEquals(exceptedJson,json);
-    }
 
+        List<ChunkDTO> exceptedChunks = new ArrayList<>();
+        exceptedChunks.add(new ChunkDTO("1",4));
+        exceptedChunks.add(new ChunkDTO("2",1));
+        exceptedChunks.add(new ChunkDTO("3",2));
+        exceptedChunks.add(new ChunkDTO("4",2));
+        exceptedChunks.add(new ChunkDTO("5",3));
+        exceptedChunks.add(new ChunkDTO("6",7));
+        exceptedChunks.add(new ChunkDTO("7",5));
+        exceptedChunks.add(new ChunkDTO("8",5));
+        exceptedChunks.add(new ChunkDTO("9",6));
+        exceptedChunks.add(new ChunkDTO("10",4));
+        exceptedChunks.add(new ChunkDTO("11",11));
+
+        Assertions.assertEquals(exceptedChunks.toString(),chunks.toString());
+    }
 }
