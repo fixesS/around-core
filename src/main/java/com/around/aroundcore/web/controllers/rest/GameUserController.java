@@ -35,7 +35,7 @@ public class GameUserController {
     private SessionService sessionService;
 
     @GetMapping("/me")
-    public ResponseEntity<String> handleGetMe(HttpServletRequest request) throws UnknownHostException {
+    public ResponseEntity<String> handleGetMe(){
         ApiResponse response;
         String body = "";
         GameUser user = null;

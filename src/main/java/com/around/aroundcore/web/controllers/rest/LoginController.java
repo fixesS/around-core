@@ -44,7 +44,7 @@ public class LoginController {
     @PostMapping
     public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");
-        String ip_address = request.getRemoteAddr();
+        String ip = request.getRemoteAddr();
         String body = "";
         ApiResponse response;
         GameUser user = null;
@@ -74,7 +74,7 @@ public class LoginController {
 
         switch (response){
             case OK -> {
-                TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip_address));
+                TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));
                 ApiOk<TokenData> apiOk = ApiResponse.getApiOk(response.getStatusCode(), response.getMessage(), tokenData);
                 body = gsonParser.toJson(apiOk);
             }

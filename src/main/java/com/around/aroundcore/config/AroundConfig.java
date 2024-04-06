@@ -14,6 +14,7 @@ public class AroundConfig {
     public static final String API_V1_LOGIN = API_V1_AUTH+"login";
     public static final String API_V1_REGISTRATION = API_V1_AUTH+"registration";
     public static final String API_V1_USER = API_V1+"user";
+    public static final String API_V1_CHUNKS = API_V1+"chunks";
     @Bean
     public GsonParser getGsonParser(){
         return new GsonParser();
