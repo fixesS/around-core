@@ -7,6 +7,7 @@ import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.dto.ApiError;
 import io.jsonwebtoken.JwtException;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestControllerAdvice
 @AllArgsConstructor
+@Hidden
 public class RestExceptionHandler {
     GsonParser gsonParser;
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -11,6 +11,8 @@ import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.dto.ApiOk;
 import com.around.aroundcore.web.dto.RegistrationDTO;
 import com.around.aroundcore.web.dto.TokenData;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import java.net.UnknownHostException;
 @RestController
 @AllArgsConstructor
 @RequestMapping(AroundConfig.API_V1_REGISTRATION)
+@Tag(name="Registration controller", description="Handles registration requests")
 public class RegistrationController {
     private PasswordEncoder passwordEncoder;
 
@@ -36,7 +39,11 @@ public class RegistrationController {
     private GsonParser gsonParser;
 
     @PostMapping
-    public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
+    @Operation(
+            summary = "Registration",
+            description = "Registration user by email and password"
+    )
+    public ResponseEntity<TokenData> handle(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");//mobile-front
         String ip_address = request.getRemoteAddr();
         GameUser user = null;
@@ -64,12 +71,9 @@ public class RegistrationController {
         switch (response){
             case OK -> {
                 TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip_address));
-                ApiOk<TokenData> apiOk = ApiResponse.getApiOk(response.getStatusCode(), response.getMessage(), tokenData);
-                body = gsonParser.toJson(apiOk);
+                return new ResponseEntity<>(tokenData, response.getStatus());
             }
             default -> throw new ApiException(response);
         }
-
-        return new ResponseEntity<>(body, response.getStatus());
     }
 }

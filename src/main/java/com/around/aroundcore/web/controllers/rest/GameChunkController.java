@@ -16,6 +16,10 @@ import com.around.aroundcore.web.exceptions.entity.GameChunkNullException;
 import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import com.around.aroundcore.web.gson.GsonParser;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +39,18 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 @RequestMapping(AroundConfig.API_V1_CHUNKS)
+@Tag(name="Game Chunk  Controller", description="Controller to get info about controllers")
+@SecurityRequirement(name = "JWT")
 public class GameChunkController {
 
     private SessionService sessionService;
     private GameChunkService gameChunkService;
 
     @GetMapping("/all")
+    @Operation(
+            summary = "Gives all captured chunks",
+            description = "Allows to get all captured chunks by users. Chunk not in list => chunk does not exist or has not been captured by any user."
+    )
     public ResponseEntity<List<ChunkDTO>> handleGetAll(){
         ApiResponse response;
 
@@ -56,6 +66,10 @@ public class GameChunkController {
         }
     }
     @GetMapping("/my")
+    @Operation(
+            summary = "Gives all captured chunks by certain user",
+            description = "Allows to get all captured chunks in game field by certain user."
+    )
     public ResponseEntity<List<ChunkDTO>> handleGetMy(){
         ApiResponse response;
         Session session = null;
@@ -90,7 +104,11 @@ public class GameChunkController {
         }
     }
     @GetMapping("/{id}")
-    public ResponseEntity<ChunkDTO> handleGetChunkById(@PathVariable String id){
+    @Operation(
+            summary = "Gives chunk info by chunk id",
+            description = "Allows to get chunk info by chunk id."
+    )
+    public ResponseEntity<ChunkDTO> handleGetChunkById(@PathVariable @Parameter(description = "Chunk id") String id){
         ApiResponse response;
         GameChunk chunk;
         ChunkDTO chunkDTO = null;

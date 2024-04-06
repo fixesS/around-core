@@ -1,5 +1,6 @@
 package com.around.aroundcore.web.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
@@ -11,9 +12,12 @@ import java.util.Objects;
 @Data
 @Builder
 @AllArgsConstructor
+@Schema(description = "DTO for chunk info")
 public class ChunkDTO {
+    @Schema(description = "Chunk id")
     private String id;
     @Nullable
+    @Schema(description = "Chunk owner team id")
     private Integer team_id;
 
     @Override

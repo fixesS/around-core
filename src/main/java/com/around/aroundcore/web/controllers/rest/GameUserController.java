@@ -12,6 +12,9 @@ import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import com.around.aroundcore.web.gson.GsonParser;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +32,19 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 @RequestMapping(AroundConfig.API_V1_USER)
+@Tag(name="Game User Controller", description="Controller to get info about user")
+@SecurityRequirement(name = "JWT")
 public class GameUserController {
 
     private GsonParser gsonParser;
     private SessionService sessionService;
 
     @GetMapping("/me")
-    public ResponseEntity<String> handleGetMe(){
+    @Operation(
+            summary = "Gives all info about certain user",
+            description = "Allows to get all info about certain user."
+    )
+    public ResponseEntity<GameUserDTO> handleGetMe(){
         ApiResponse response;
         String body = "";
         GameUser user = null;
@@ -68,13 +77,10 @@ public class GameUserController {
                         .team_id(Optional.ofNullable(user.getTeam()).map(Team::getId).orElse(-1000))
                         .build();
 
+                return new ResponseEntity<>(gameUserDTO,response.getStatus());
 
-                ApiOk<GameUserDTO> apiOk = ApiResponse.getApiOk(response.getStatusCode(), response.getMessage(), gameUserDTO);
-                body = gsonParser.toJson(apiOk);
             }
             default -> throw new ApiException(response);
         }
-        return new ResponseEntity<>(body,response.getStatus());
     }
-
 }

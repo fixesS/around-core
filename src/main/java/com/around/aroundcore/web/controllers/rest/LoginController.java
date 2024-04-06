@@ -11,6 +11,8 @@ import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.dto.ApiOk;
 import com.around.aroundcore.web.dto.AuthDTO;
 import com.around.aroundcore.web.dto.TokenData;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,7 @@ import java.net.UnknownHostException;
 @RestController
 @AllArgsConstructor
 @RequestMapping(AroundConfig.API_V1_LOGIN)
+@Tag(name="Login controller", description="Handles login requests")
 public class LoginController {
     private AuthService authService;
 
@@ -42,7 +45,11 @@ public class LoginController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping
-    public ResponseEntity<String> handle(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO) throws UnknownHostException {
+    @Operation(
+            summary = "Login",
+            description = "Auth by email and password"
+    )
+    public ResponseEntity<TokenData> handle(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");
         String ip = request.getRemoteAddr();
         String body = "";
@@ -75,11 +82,9 @@ public class LoginController {
         switch (response){
             case OK -> {
                 TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));
-                ApiOk<TokenData> apiOk = ApiResponse.getApiOk(response.getStatusCode(), response.getMessage(), tokenData);
-                body = gsonParser.toJson(apiOk);
+                return new ResponseEntity<>(tokenData,response.getStatus());
             }
             default -> throw new ApiException(response);
         }
-        return new ResponseEntity<>(body,response.getStatus());
     }
 }

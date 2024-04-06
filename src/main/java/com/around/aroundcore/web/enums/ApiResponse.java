@@ -19,7 +19,7 @@ public enum ApiResponse {
     REFRESH_TOKEN_DELETED(-4002,"Refresh token you use have been deleted(New one was created)."),
     SESSION_DOES_NOT_EXIST(-5001,"Session does not exist"),
     SESSION_EXPIRED(-5002,"Session is expired"),
-    CHUNK_DOES_NOT_EXIST(-6001,"Chunk you trying get does not exist or not registered by any user");
+    CHUNK_DOES_NOT_EXIST(-6001,"Chunk you trying get does not exist or has not been captured by any user");
 
     @Getter
     private Integer statusCode;
