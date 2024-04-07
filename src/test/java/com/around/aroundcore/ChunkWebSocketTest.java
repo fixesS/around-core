@@ -209,7 +209,9 @@ class ChunkWebSocketTest {
 	}
 	private TokenData getTokenData(String email, String password){
 		AuthDTO authDTO = new AuthDTO(email,password);
+		log.info(authDTO.toString());
 		TokenData tokenData = restTemplate.postForEntity(Http+host+port+"/"+AroundConfig.API_V1_LOGIN,authDTO,TokenData.class).getBody();
+		log.info(tokenData.toString());
 		return tokenData;
 	}
 

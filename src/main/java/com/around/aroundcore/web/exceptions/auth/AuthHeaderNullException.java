@@ -2,7 +2,7 @@ package com.around.aroundcore.web.exceptions.auth;
 
 public class AuthHeaderNullException extends AuthHeaderException{
     public AuthHeaderNullException() {
-        super();
+        super("Auth header is null");
     }
 
     public AuthHeaderNullException(String message) {

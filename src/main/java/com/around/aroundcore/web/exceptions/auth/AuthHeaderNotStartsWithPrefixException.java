@@ -2,7 +2,7 @@ package com.around.aroundcore.web.exceptions.auth;
 
 public class AuthHeaderNotStartsWithPrefixException extends AuthHeaderException{
     public AuthHeaderNotStartsWithPrefixException() {
-        super();
+        super("Auth header does not starts with prefix");
     }
 
     public AuthHeaderNotStartsWithPrefixException(String message) {

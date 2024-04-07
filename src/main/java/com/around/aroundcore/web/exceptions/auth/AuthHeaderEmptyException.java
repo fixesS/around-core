@@ -2,7 +2,7 @@ package com.around.aroundcore.web.exceptions.auth;
 
 public class AuthHeaderEmptyException extends AuthHeaderException{
     public AuthHeaderEmptyException() {
-        super();
+        super("Auth header is empty.");
     }
 
     public AuthHeaderEmptyException(String message) {
