@@ -7,6 +7,5 @@ public class SessionNullException extends EntityNullException {
 
     public SessionNullException(String message) {
         super(message);
-        this.setMessage(message);
     }
 }

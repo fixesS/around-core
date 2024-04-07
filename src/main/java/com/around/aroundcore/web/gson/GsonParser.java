@@ -8,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 
 import java.time.LocalDateTime;
 
+@Deprecated
 public class GsonParser {
     private Gson gson;
 

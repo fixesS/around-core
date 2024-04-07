@@ -15,6 +15,7 @@ import java.util.Map;
 
 @Slf4j
 @AllArgsConstructor
+@Deprecated
 public class HttpHandshakeInterceptor implements HandshakeInterceptor {
     JwtService jwtService;
 

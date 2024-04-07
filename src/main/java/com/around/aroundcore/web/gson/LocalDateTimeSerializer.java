@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-
+@Deprecated
 public class LocalDateTimeSerializer implements JsonSerializer<LocalDateTime> {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss").withLocale(Locale.ENGLISH);
     @Override

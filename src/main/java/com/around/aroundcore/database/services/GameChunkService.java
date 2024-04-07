@@ -28,6 +28,10 @@ public class GameChunkService {
         return gameChunkRepository.findById(id).orElseThrow(GameChunkNullException::new);
     }
     @Transactional
+    public List<GameChunk> findAll(){
+        return gameChunkRepository.findAll();
+    }
+    @Transactional
     public List<GameChunk> findAllByOwner(GameUser gameUser){
         return gameChunkRepository.findAllByOwner(gameUser);
     }

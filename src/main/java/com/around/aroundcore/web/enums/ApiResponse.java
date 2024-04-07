@@ -8,18 +8,25 @@ import org.springframework.http.HttpStatus;
 
 public enum ApiResponse {
     OK(200, HttpStatus.OK),
-    UNKNOWN_ERROR(-1000, "Unknown error.",HttpStatus.BAD_REQUEST),
-    USER_DOES_NOT_EXIST(-2001,"User does not exist", HttpStatus.BAD_REQUEST),
-    USER_ALREADY_EXIST(-2002,"User does not exist", HttpStatus.BAD_REQUEST),
-    USER_HAS_NO_TEAM(-2003,"User has no team", HttpStatus.BAD_REQUEST),
-    LOG_INCORRECT_PASSWORD_OR_LOGIN(-3001,"Incorrect password or login.", HttpStatus.BAD_REQUEST),
-    REG_INCORRECT_EMAIL_FORMAT(-3002,"Incorrect format of email.", HttpStatus.BAD_REQUEST),
-    REG_INCORRECT_PASSWORD_FORMAT(-3003,"Password length must be between 5 and 20 symbols.", HttpStatus.BAD_REQUEST),
-    REG_INCORRECT_USERNAME_FORMAT(-3004,"Username cannot be empty.", HttpStatus.BAD_REQUEST),
-    INVALID_TOKEN(-4001, "Token is invalid.",HttpStatus.BAD_REQUEST),
-    REFRESH_TOKEN_DELETED(-4002,"Refresh token you use have been deleted(New one was created).", HttpStatus.BAD_REQUEST),
-    SESSION_DOES_NOT_EXIST(-5001,"Session does not exist", HttpStatus.BAD_REQUEST),
-    SESSION_EXPIRED(-5002,"Session is expired",HttpStatus.BAD_REQUEST);
+    UNKNOWN_ERROR(-1000, "Unknown error."),
+    USER_DOES_NOT_EXIST(-2001,"User does not exist."),
+    USER_ALREADY_EXIST(-2002,"User already exist."),
+    USER_NOT_UNIQUE_EMAIL(-2003,"User email is not unique."),
+    USER_NOT_UNIQUE_USERNAME(-2004,"User username is not unique."),
+    LOG_INCORRECT_PASSWORD_OR_LOGIN(-3001,"Incorrect password or login."),
+    AUTH_INCORRECT_EMAIL_FORMAT(-3002,"Incorrect format of email."),
+    AUTH_INCORRECT_PASSWORD_LENGTH(-3003,"Password length must be between 8 and 20 symbols,at least one uppercase letter, one lowercase letter, one number and one special character(@,$,!,%,*,?,&)"),
+    AUTH_INCORRECT_USERNAME_FORMAT(-3004,"Username cannot be empty."),
+    AUTH_INCORRECT_USERNAME_SIZE(-3005,"Username length must be more than 2."),
+    AUTH_INCORRECT_TEAM_ID_NULL(-3006,"Team id cannot be empty."),
+    AUTH_INCORRECT_TEAM_ID_FORMAT(-3007,"Team id cannot less than 0."),
+    AUTH_INCORRECT_CITY_FORMAT(-3008,"City cannot be empty."),
+    INVALID_TOKEN(-4001, "Token is invalid."),
+    REFRESH_TOKEN_ALREADY_USED(-4002,"Refresh token already has been used."),
+    SESSION_DOES_NOT_EXIST(-5001,"Session does not exist."),
+    SESSION_EXPIRED(-5002,"Session is expired."),
+    CHUNK_DOES_NOT_EXIST(-6001,"Chunk you trying get does not exist or has not been captured by any user."),
+    TEAM_DOES_NOT_EXIST(-7001,"Team does not exist.");
 
     @Getter
     private Integer statusCode;
@@ -33,6 +40,11 @@ public enum ApiResponse {
     ApiResponse(Integer statusCode, HttpStatus status) {
         this.statusCode = statusCode;
         this.status = status;
+    }
+    ApiResponse(Integer statusCode, String message) {
+        this.statusCode = statusCode;
+        this.message = message;
+        this.status = HttpStatus.BAD_REQUEST;
     }
     ApiResponse(Integer statusCode, String message, HttpStatus status) {
         this.statusCode = statusCode;
@@ -65,6 +77,10 @@ public enum ApiResponse {
         apiError.setMessage(message);
 
         return apiError;
+    }
+    @Override
+    public String toString(){
+        return this.statusCode.toString();
     }
 }
 
