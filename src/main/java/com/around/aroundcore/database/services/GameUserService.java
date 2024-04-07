@@ -12,39 +12,39 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class GameUserService {
-    private GameUserRepository userRepository;
+
+    private final GameUserRepository userRepository;
 
     @Transactional
-    public void create(GameUser user){
+    public void create(GameUser user) {
         userRepository.save(user);
     }
 
     @Transactional
-    public void update(GameUser user){
+    public void update(GameUser user) {
         userRepository.save(user);
     }
     @Transactional
-    public GameUser findById(Integer id) throws GameUserNullException{
+    public GameUser findById(Integer id) throws GameUserNullException {
         return userRepository.findById(id).orElseThrow(GameUserNullException::new);
     }
     @Transactional
-    public GameUser findByEmail(String email) throws GameUserNullException{
+    public GameUser findByEmail(String email) throws GameUserNullException {
         return userRepository.findByEmail(email).orElseThrow(GameUserNullException::new);
     }
     @Transactional
-    public List<GameUser> findAll(){
+    public List<GameUser> findAll() {
         return userRepository.findAll();
     }
-
     @Transactional
-    public boolean existByEmail(String email){
+    public boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
     public void checkEmail(String email){

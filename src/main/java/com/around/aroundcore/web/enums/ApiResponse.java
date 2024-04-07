@@ -2,9 +2,9 @@ package com.around.aroundcore.web.enums;
 
 import com.around.aroundcore.web.dto.ApiError;
 import com.around.aroundcore.web.dto.ApiOk;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
 
 public enum ApiResponse {
     OK(200, HttpStatus.OK),
