@@ -1,5 +1,6 @@
 package com.around.aroundcore.database.models;
 
+import com.around.aroundcore.web.exceptions.entity.TeamNullException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -65,6 +66,12 @@ public class GameUser implements UserDetails {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    public Team  getTeam(){
+        if(this.team == null){
+            throw new TeamNullException();
+        }
+        return team;
+    }
     @Override
     public String getPassword() {
         return password;

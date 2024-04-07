@@ -21,6 +21,7 @@ public class AroundConfig {
     public static final String API_V1_REGISTRATION = API_V1_AUTH+"registration";
     public static final String API_V1_USER = API_V1+"user";
     public static final String API_V1_CHUNKS = API_V1+"chunks";
+    public static final String API_V1_STATISTIC = API_V1+"stat";
 
     private ChunkQueueService chunkQueueService;
     private SimpMessagingTemplate messagingTemplate;

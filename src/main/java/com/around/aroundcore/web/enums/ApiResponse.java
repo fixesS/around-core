@@ -13,6 +13,7 @@ public enum ApiResponse {
     USER_ALREADY_EXIST(-2002,"User already exist."),
     USER_NOT_UNIQUE_EMAIL(-2003,"User email is not unique."),
     USER_NOT_UNIQUE_USERNAME(-2004,"User username is not unique."),
+    USER_HAS_NO_TEAM(-2005,"User has no team."),
     LOG_INCORRECT_PASSWORD_OR_LOGIN(-3001,"Incorrect password or login."),
     AUTH_INCORRECT_EMAIL_FORMAT(-3002,"Incorrect format of email."),
     AUTH_INCORRECT_PASSWORD_LENGTH(-3003,"Password length must be between 8 and 20 symbols,at least one uppercase letter, one lowercase letter, one number and one special character(@,$,!,%,*,?,&)"),

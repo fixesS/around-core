@@ -2,6 +2,7 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
 import com.around.aroundcore.web.exceptions.entity.GameChunkNullException;
 import jakarta.transaction.Transactional;
@@ -34,5 +35,9 @@ public class GameChunkService {
     @Transactional
     public List<GameChunk> findAllByOwner(GameUser gameUser){
         return gameChunkRepository.findAllByOwner(gameUser);
+    }
+    @Transactional
+    public List<GameChunk> findAllByOwnerTeam(Team team){
+        return gameChunkRepository.findAllByOwnerTeam(team);
     }
 }

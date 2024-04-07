@@ -9,6 +9,7 @@ import com.around.aroundcore.web.dto.ApiError;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,11 +17,13 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
 
 @RestControllerAdvice
 @AllArgsConstructor
+@Slf4j
 @Hidden
 public class RestExceptionHandler {
 
@@ -51,6 +54,17 @@ public class RestExceptionHandler {
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiError> handleApiException(ApiException exception) {
         ApiResponse response = exception.getResponse();
+        ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
+        return new ResponseEntity<>(apiError, response.getStatus());
+    }
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiError> handleNoResourceFoundException(NoResourceFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiError> handleUnknownException(Exception exception) {
+        ApiResponse response = ApiResponse.UNKNOWN_ERROR;
+        log.error(exception.getMessage());
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         return new ResponseEntity<>(apiError, response.getStatus());
     }
