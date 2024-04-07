@@ -1,6 +1,7 @@
 package com.around.aroundcore.security.filters;
 
 import com.around.aroundcore.config.AroundConfig;
+import com.around.aroundcore.config.SecurityConfig;
 import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
@@ -10,6 +11,7 @@ import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixEx
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import io.jsonwebtoken.*;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,27 +20,26 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    private final RequestMatcher ignoredPaths = new AntPathRequestMatcher(AroundConfig.API_V1_AUTH, WebSocketConfig.REGISTRY);
+
     private JwtService jwtService;
     private SessionService sessionService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (this.ignoredPaths.matches(request)) {
-            log.error("IGNORED");
-            filterChain.doFilter(request, response);
-            return;
-        }
         final String authHeader;
         try {
             authHeader = jwtService.resolveAuthHeader(request);
@@ -101,4 +102,5 @@ public class JwtFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
+
 }

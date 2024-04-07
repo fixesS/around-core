@@ -18,14 +18,20 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 public class JwtConfig {
     @Autowired
     private GameUserRepository userRepository;
     @Autowired
-    private SessionService sessionService;
+    public SessionService sessionService;
     @Autowired
     @Qualifier("handlerExceptionResolver")
     HandlerExceptionResolver resolver;

@@ -4,6 +4,7 @@ import com.around.aroundcore.database.models.Role;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
 import com.around.aroundcore.security.filters.JwtFilter;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -26,11 +27,10 @@ public class SecurityConfig {
     @Autowired
     private JwtConfig jwtConfig;
     @Autowired
-    private SessionService sessionService;
-    @Autowired
     @Qualifier("handlerExceptionResolver")
     HandlerExceptionResolver resolver;
-    private static final String[] WHITE_LIST = {
+
+    public static final String[] WHITE_LIST = {
             "/v3/api-docs/**",
             "/v3/api-docs.yaml",
             "/swagger-ui/**",
@@ -52,7 +52,7 @@ public class SecurityConfig {
                 )
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(jwtConfig.authenticationManager())
-                .addFilterBefore(new JwtFilter(jwtConfig.jwtService(), sessionService), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtConfig.jwtService(), jwtConfig.sessionService), BasicAuthenticationFilter.class)
                 .addFilterBefore(jwtConfig.exceptionHandlerFilter(), JwtFilter.class)
         ;
         return http.build();

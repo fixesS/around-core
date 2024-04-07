@@ -17,7 +17,7 @@ public class AuthService {
 
     private JwtService jwtService;
 
-    public SessionService sessionService;
+    private SessionService sessionService;
 
 
     public TokenData createSession(GameUser user, String userAgent, InetAddress address){

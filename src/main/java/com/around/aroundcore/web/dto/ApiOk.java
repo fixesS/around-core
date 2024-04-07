@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Deprecated
 @Data
 @Schema(description = "DTO for ok response")
 public class ApiOk<E> {

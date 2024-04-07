@@ -64,6 +64,7 @@ public enum ApiResponse {
         }
         return ApiResponse.UNKNOWN_ERROR;
     }
+    @Deprecated
     public static <T> ApiOk<T> getApiOk(Integer statusCode, String message, T data){
         ApiOk<T> apiOk = new ApiOk<>();
         apiOk.setStatus(statusCode);
