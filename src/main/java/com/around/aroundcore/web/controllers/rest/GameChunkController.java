@@ -45,69 +45,12 @@ public class GameChunkController {
     private SessionService sessionService;
     private GameChunkService gameChunkService;
 
-    @GetMapping("/all")
-    @Operation(
-            summary = "Gives all captured chunks",
-            description = "Allows to get all captured chunks by users. Chunk not in list => chunk does not exist or has not been captured by any user."
-    )
-    public ResponseEntity<List<ChunkDTO>> handleGetAll(){
-        ApiResponse response;
-
-        List<GameChunk> chunkList = gameChunkService.findAll();
-        List<ChunkDTO> chunkDTOList = chunkList.stream().map(gameChunk -> new ChunkDTO(gameChunk.getId(), gameChunk.getOwner().getTeam().getId())).toList();
-        response = ApiResponse.OK;
-
-        switch (response){
-            case OK -> {
-                return new ResponseEntity<>(chunkDTOList,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
-    }
-    @GetMapping("/my")
-    @Operation(
-            summary = "Gives all captured chunks by certain user",
-            description = "Allows to get all captured chunks in game field by certain user."
-    )
-    public ResponseEntity<List<ChunkDTO>> handleGetMy(){
-        ApiResponse response;
-        Session session = null;
-        GameUser user = null;
-        List<ChunkDTO> chunkDTOList = null;
-
-        UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        try {
-            session = sessionService.findByUuid(sessionUuid);
-            user = session.getUser();
-
-            List<GameChunk> chunkList = gameChunkService.findAllByOwner(user);
-            chunkDTOList = chunkList.stream().map(gameChunk -> new ChunkDTO(gameChunk.getId(), gameChunk.getOwner().getTeam().getId())).toList();
-            response = ApiResponse.OK;
-        }catch (SessionNullException e) {
-            response = ApiResponse.SESSION_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        } catch (Exception e) {
-            response = ApiResponse.UNKNOWN_ERROR;
-            log.error(e.getMessage());
-        }
-
-        switch (response){
-            case OK -> {
-                return new ResponseEntity<>(chunkDTOList,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
-    }
     @GetMapping("/{id}")
     @Operation(
             summary = "Gives chunk info by chunk id",
             description = "Allows to get chunk info by chunk id."
     )
-    public ResponseEntity<ChunkDTO> handleGetChunkById(@PathVariable @Parameter(description = "Chunk id") String id){
+    public ResponseEntity<ChunkDTO> getChunkById(@PathVariable @Parameter(description = "Chunk id", example = "123fff") String id){
         ApiResponse response;
         GameChunk chunk;
         ChunkDTO chunkDTO = null;
@@ -124,9 +67,6 @@ public class GameChunkController {
         }catch (GameChunkNullException e) {
             response = ApiResponse.CHUNK_DOES_NOT_EXIST;
             log.error(e.getMessage());
-        } catch (Exception e) {
-            response = ApiResponse.UNKNOWN_ERROR;
-            log.error(e.getMessage());
         }
 
         switch (response){
@@ -137,4 +77,23 @@ public class GameChunkController {
         }
     }
 
+    @GetMapping("/all")
+    @Operation(
+            summary = "Gives all captured chunks",
+            description = "Allows to get all captured chunks by users. Chunk not in list => chunk does not exist or has not been captured by any user."
+    )
+    public ResponseEntity<List<ChunkDTO>> getAll(){
+        ApiResponse response;
+
+        List<GameChunk> chunkList = gameChunkService.findAll();
+        List<ChunkDTO> chunkDTOList = chunkList.stream().map(gameChunk -> new ChunkDTO(gameChunk.getId(), gameChunk.getOwner().getTeam().getId())).toList();
+        response = ApiResponse.OK;
+
+        switch (response){
+            case OK -> {
+                return new ResponseEntity<>(chunkDTOList,response.getStatus());
+            }
+            default -> throw new ApiException(response);
+        }
+    }
 }

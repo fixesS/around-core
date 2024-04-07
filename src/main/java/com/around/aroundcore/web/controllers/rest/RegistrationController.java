@@ -46,7 +46,7 @@ public class RegistrationController {
             summary = "Registration",
             description = "Registration user by email and password"
     )
-    public ResponseEntity<TokenData> handle(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
+    public ResponseEntity<TokenData> registration(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");//mobile-front
         String ip_address = request.getRemoteAddr();
         GameUser user = null;
@@ -78,9 +78,6 @@ public class RegistrationController {
             log.error(e.getMessage());
         } catch (TeamNullException e) {
             response = ApiResponse.TEAM_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }catch (Exception e) {
-            response = ApiResponse.UNKNOWN_ERROR;
             log.error(e.getMessage());
         }
 

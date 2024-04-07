@@ -55,13 +55,13 @@ class ChunkWebSocketTest {
 	@Value("${local.server.port}")
 	private int port;
 
-	@Value("testing.team1.email")
+	@Value("${testing.team1.email}")
 	private String email1;
-	@Value("testing.team1.password")
+	@Value("${testing.team1.password}")
 	private String pass1;
-	@Value("testing.team2.email")
+	@Value("${testing.team2.email}")
 	private String email2;
-	@Value("testing.team2.password")
+	@Value("${testing.team2.password}")
 	private String pass2;
 
 	private static WebClient client;
@@ -119,7 +119,7 @@ class ChunkWebSocketTest {
 
 	@SneakyThrows
 	@Test
-	public void should_PassSuccessfully_When_CreateChat() {
+	public void testAddingChunk() {
 
 		StompSession stompSession = client.getStompSession();
 
@@ -151,7 +151,7 @@ class ChunkWebSocketTest {
 				chunkDTO
 		);
 
-		chunkDTO.setTeam_id(2);
+		chunkDTO.setTeam_id(1);
 		List<ChunkDTO> exceptedList = new ArrayList<>();
 		exceptedList.add(chunkDTO);
 		List<ChunkDTO> receivedList = objectMapper.convertValue(blockingQueue.poll(5, SECONDS),new TypeReference<ArrayList<ChunkDTO>>(){});

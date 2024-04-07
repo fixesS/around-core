@@ -47,7 +47,7 @@ public class LoginController {
             summary = "Login",
             description = "Auth by email and password"
     )
-    public ResponseEntity<TokenData> handle(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO) throws UnknownHostException {
+    public ResponseEntity<TokenData> login(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");
         String ip = request.getRemoteAddr();
         String body = "";
@@ -71,9 +71,6 @@ public class LoginController {
         }catch (BadCredentialsException e){
             //response = ApiResponse.LOG_INCORRECT_PASSWORD_OR_LOGIN; do not show that password is incorrect
             response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }catch (Exception e){
-            response = ApiResponse.UNKNOWN_ERROR;
             log.error(e.getMessage());
         }
 
