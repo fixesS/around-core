@@ -102,10 +102,6 @@ public class ChunkWsController {
          */
 
         chunkQueueService.addToQueue(chunkDTO);
-//        messagingTemplate.convertAndSend(
-//                FETCH_CHUNK_CHANGES_EVENT,
-//                json
-//        );
     }
 
 
