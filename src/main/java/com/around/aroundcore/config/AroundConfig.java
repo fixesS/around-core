@@ -1,9 +1,7 @@
 package com.around.aroundcore.config;
 
-import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.services.ChunkQueueService;
 import com.around.aroundcore.web.tasks.ChunkEventTask;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,14 +23,9 @@ public class AroundConfig {
 
     private ChunkQueueService chunkQueueService;
     private SimpMessagingTemplate messagingTemplate;
-    private ObjectMapper objectMapper;
     @Bean
     public ChunkEventTask chunkEventTask(){
-        return new ChunkEventTask(chunkQueueService, messagingTemplate, objectMapper);
-    }
-    @Bean
-    public GsonParser getGsonParser(){
-        return new GsonParser();
+        return new ChunkEventTask(chunkQueueService, messagingTemplate);
     }
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler(){

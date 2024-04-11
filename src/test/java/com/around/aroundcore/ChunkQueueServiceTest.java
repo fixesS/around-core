@@ -18,11 +18,9 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ChunkQueueServiceTest {
+class ChunkQueueServiceTest {
     @Autowired
     ChunkQueueService chunkQueueService;
-
-
 
     private void fillQueue(){
         chunkQueueService.addToQueue(ChunkDTO.builder().id("1").team_id(1).build());
@@ -39,7 +37,7 @@ public class ChunkQueueServiceTest {
     }
 
     @Test
-    public void testAddingToQueueOldChunkWithNewTeamId_1(){
+    void testAddingToQueueOldChunkWithNewTeamId_1(){
         fillQueue();
         chunkQueueService.addToQueue(ChunkDTO.builder().id("10").team_id(7).build());
 
@@ -54,7 +52,7 @@ public class ChunkQueueServiceTest {
 
     }
     @Test
-    public void testAddingToQueueOldChunkWithNewTeamId_2(){
+    void testAddingToQueueOldChunkWithNewTeamId_2(){
         fillQueue();
         chunkQueueService.addToQueue(ChunkDTO.builder().id("10").team_id(4).build());
         chunkQueueService.addToQueue(ChunkDTO.builder().id("1").team_id(4).build());
@@ -73,7 +71,7 @@ public class ChunkQueueServiceTest {
         Assertions.assertTrue(chunkQueueService.isEmpty());
     }
     @Test
-    public void testAddingToQueueOldChunkWithNewTeamId_and_gettingJson(){
+    void testAddingToQueueOldChunkWithNewTeamId_and_gettingJson(){
         fillQueue();
         chunkQueueService.addToQueue(ChunkDTO.builder().id("10").team_id(4).build());
         chunkQueueService.addToQueue(ChunkDTO.builder().id("1").team_id(4).build());
