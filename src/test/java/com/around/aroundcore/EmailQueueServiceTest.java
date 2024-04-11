@@ -1,6 +1,6 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.web.services.EmailService;
+import com.around.aroundcore.web.services.EmailQueueService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,20 +16,20 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class EmailServiceTest {
+class EmailQueueServiceTest {
 
     @Value("${testing.mail}")
     private String toAddress;
 
     @Autowired
-    private EmailService emailService;
+    private EmailQueueService emailQueueService;
 
     @Test
     void testSendEmail(){
         String subject = "TEST";
         String text = "Testing spring mail sender";
 
-        emailService.sendMessage(toAddress,subject,text);
+        emailQueueService.addToQueue(toAddress,subject,text);
         Assertions.assertTrue(true);
     }
 }
