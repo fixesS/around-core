@@ -4,6 +4,8 @@ import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.security.services.JwtService;
+import com.around.aroundcore.web.enums.ApiResponse;
+import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
@@ -84,10 +86,15 @@ public class JwtFilter extends OncePerRequestFilter {
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(session,session.getUser());
         Date iat = claims.getIssuedAt();
         if(!iat.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().isAfter(session.getLastRefresh())){
-            authentication.setAuthenticated(true);
+            if(session.getUser().getVerified()){
+                authentication.setAuthenticated(true);
+            }else{
+                log.debug("User is not verified");
+                throw new ApiException(ApiResponse.USER_IS_NOT_VERIFIED);
+            }
         }else{
             log.debug("Session expired");
-            authentication.setAuthenticated(false);
+            throw new ApiException(ApiResponse.SESSION_EXPIRED);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
