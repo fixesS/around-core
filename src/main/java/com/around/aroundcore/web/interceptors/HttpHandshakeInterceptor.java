@@ -1,9 +1,8 @@
 package com.around.aroundcore.web.interceptors;
 
-import com.around.aroundcore.security.jwt.JwtService;
+import com.around.aroundcore.security.services.JwtService;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;

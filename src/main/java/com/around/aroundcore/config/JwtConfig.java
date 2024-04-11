@@ -2,12 +2,10 @@ package com.around.aroundcore.config;
 
 import com.around.aroundcore.database.repositories.GameUserRepository;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.security.AuthService;
-import com.around.aroundcore.security.GameUserDetailsServiceImpl;
+import com.around.aroundcore.security.services.AuthService;
+import com.around.aroundcore.security.services.GameUserDetailsServiceImpl;
 import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
-import com.around.aroundcore.security.filters.JwtFilter;
-import com.around.aroundcore.security.jwt.JwtService;
-import lombok.AllArgsConstructor;
+import com.around.aroundcore.security.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -18,13 +16,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 public class JwtConfig {

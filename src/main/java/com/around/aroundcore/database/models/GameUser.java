@@ -2,10 +2,7 @@ package com.around.aroundcore.database.models;
 
 import com.around.aroundcore.web.exceptions.entity.TeamNullException;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,6 +36,9 @@ public class GameUser implements UserDetails {
     private String email;
     @Column
     private String password;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean verified;
 
     @Column
     @Enumerated(EnumType.STRING)

@@ -6,15 +6,12 @@ import com.around.aroundcore.web.controllers.ws.ChunkWsController;
 import com.around.aroundcore.web.dto.AuthDTO;
 import com.around.aroundcore.web.dto.ChunkDTO;
 import com.around.aroundcore.web.dto.TokenData;
-import com.around.aroundcore.web.gson.GsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.reflect.TypeToken;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,7 +23,6 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
@@ -37,7 +33,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -68,11 +63,6 @@ class ChunkWebSocketTest {
 
 	LinkedBlockingQueue<ArrayList<ChunkDTO>> blockingQueue;
 	@Autowired
-	ObjectMapper mapper;
-
-	@Autowired
-	MockMvc mockMvc;
-	@Autowired
 	private ObjectMapper objectMapper;
 	@Autowired
 	private TestRestTemplate restTemplate;
@@ -83,7 +73,7 @@ class ChunkWebSocketTest {
 
 		token = getTokenData(email1,pass1);
 
-		blockingQueue = new LinkedBlockingQueue<ArrayList<ChunkDTO>>();
+		blockingQueue = new LinkedBlockingQueue<>();
 
 		RunStopFrameHandler runStopFrameHandler = new RunStopFrameHandler(new CompletableFuture<>());
 
@@ -95,7 +85,7 @@ class ChunkWebSocketTest {
 
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 		headers.set("Authorization", "Bearer "+token.getAccess_token());
-		log.info(" HEADERS: "+headers.toString());
+		log.info(" HEADERS: "+headers);
 
 		StompSession stompSession = stompClient
 				.connect(wsUrl, headers, new StompSessionHandlerAdapter() {})
@@ -119,7 +109,7 @@ class ChunkWebSocketTest {
 
 	@SneakyThrows
 	@Test
-	public void testAddingChunk() {
+	void testAddingChunk() {
 
 		StompSession stompSession = client.getStompSession();
 

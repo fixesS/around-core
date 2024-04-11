@@ -5,41 +5,24 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.GameChunkService;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.security.jwt.JwtAuthenticationToken;
-import com.around.aroundcore.security.jwt.JwtService;
+import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.dto.ChunkDTO;
-import com.around.aroundcore.web.exceptions.entity.SessionNullException;
-import com.around.aroundcore.web.gson.GsonParser;
 import com.around.aroundcore.web.services.ChunkQueueService;
 import com.around.aroundcore.web.tasks.ChunkEventTask;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.socket.WebSocketSession;
 
 import java.security.Principal;
-import java.sql.Time;
 import java.time.Duration;
-import java.time.temporal.TemporalUnit;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import static java.util.Objects.isNull;
 
 @Slf4j
 @AllArgsConstructor

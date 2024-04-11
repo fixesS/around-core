@@ -1,17 +1,15 @@
 package com.around.aroundcore.security.filters;
 
-import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.config.SecurityConfig;
-import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.security.jwt.JwtAuthenticationToken;
-import com.around.aroundcore.security.jwt.JwtService;
+import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
+import com.around.aroundcore.security.services.JwtService;
+import com.around.aroundcore.web.enums.ApiResponse;
+import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import io.jsonwebtoken.*;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,17 +17,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @AllArgsConstructor
@@ -94,10 +86,15 @@ public class JwtFilter extends OncePerRequestFilter {
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(session,session.getUser());
         Date iat = claims.getIssuedAt();
         if(!iat.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().isAfter(session.getLastRefresh())){
-            authentication.setAuthenticated(true);
+            if(session.getUser().getVerified()){
+                authentication.setAuthenticated(true);
+            }else{
+                log.debug("User is not verified");
+                throw new ApiException(ApiResponse.USER_IS_NOT_VERIFIED);
+            }
         }else{
             log.debug("Session expired");
-            authentication.setAuthenticated(false);
+            throw new ApiException(ApiResponse.SESSION_EXPIRED);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);

@@ -1,11 +1,12 @@
-package com.around.aroundcore.security.jwt;
+package com.around.aroundcore.security.services;
 
+import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.security.models.Token;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderEmptyException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
-import com.around.aroundcore.web.exceptions.jwt.WrongJwtType;
+import com.around.aroundcore.web.exceptions.jwt.WrongJwtTypeException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -19,7 +20,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -30,39 +30,71 @@ public class JwtService {
     public static final String JWT_PREFIX = "Bearer ";
     private static final String JWT_ACCESS = "access";
     private static final String JWT_REFRESH = "refresh";
+    private static final String JWT_VERIFICATION = "verification";
     @Value("${jwt.token.access.secret}")
     private String accessSecretStr;
     private SecretKey accessSecret;
     @Value("${jwt.token.refresh.secret}")
     private String refreshSecretStr;
     private SecretKey refreshSecret;
+    @Value("${jwt.token.verification.secret}")
+    private String verificationSecretStr;
+    private SecretKey verificationSecret;
     @Value("${jwt.token.access.expired}")
     private long accessExp;
 
     @Value("${jwt.token.refresh.expired}")
     private long refreshExp;
+    @Value("${jwt.token.verification.expired}")
+    private long verificationExp;
     private String issuer;
 
     @PostConstruct
     public void doInit(){
         accessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecretStr));
         refreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecretStr));
+        verificationSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(verificationSecretStr));
+    }
+    public Token generateVerificationToken(String email){
+        Date now = new Date();
+        Date expiration = new Date(now.getTime()+verificationExp);
+
+        Claims claims = Jwts.claims()
+                .subject(JWT_VERIFICATION)
+                .issuer(issuer)
+                .id(email)
+                .issuedAt(now)
+                .expiration(expiration).build();
+
+        String token = Jwts.builder()
+                .claims(claims)
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(verificationSecret)
+                .compact();
+
+        return Token.builder()
+                .token(token)
+                .created(now)
+                .expiresIn(expiration)
+                .build();
+
     }
     public Token generateAccessToken(UUID sessionUuid){
         Date now = new Date();
         Date expiration = new Date(now.getTime()+accessExp);
 
         Claims claims = Jwts.claims()
-                .setSubject(JWT_ACCESS)
-                .setIssuer(issuer)
-                .setId(sessionUuid.toString())
-                .setIssuedAt(now)
-                .setExpiration(expiration).build();
+                .subject(JWT_ACCESS)
+                .issuer(issuer)
+                .id(sessionUuid.toString())
+                .issuedAt(now)
+                .expiration(expiration).build();
 
         String token = Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiration)
+                .claims(claims)
+                .issuedAt(now)
+                .expiration(expiration)
                 .signWith(accessSecret)
                 .compact();
 
@@ -106,14 +138,20 @@ public class JwtService {
 
         if(!type.equals(claims.getSubject())){
             String errmsg = String.format("Wrong JWT type: %s",claims.getSubject());
-            throw new WrongJwtType(errmsg);
+            throw new WrongJwtTypeException(errmsg);
         }
+    }
+    public void validateVerificationToken(String verificationToken){
+        validateToken(verificationToken,verificationSecret,JWT_VERIFICATION);
     }
     public void validateAccessToken(String accessToken) {
         validateToken(accessToken,accessSecret,JWT_ACCESS);
     }
     public void validateRefreshToken(String refreshToken) {
         validateToken(refreshToken,refreshSecret,JWT_REFRESH);
+    }
+    public Claims getVerificationClaims( String verificationToken) {
+        return getClaims(verificationToken, verificationSecret);
     }
     public Claims getAccessClaims( String accessToken) {
         return getClaims(accessToken, accessSecret);

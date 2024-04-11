@@ -1,4 +1,4 @@
-package com.around.aroundcore.security.jwt;
+package com.around.aroundcore.security.tokens;
 
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Session;
