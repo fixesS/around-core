@@ -6,7 +6,7 @@ import com.around.aroundcore.database.models.Role;
 import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.TeamService;
-import com.around.aroundcore.security.AuthService;
+import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;

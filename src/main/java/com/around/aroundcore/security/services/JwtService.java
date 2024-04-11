@@ -1,4 +1,4 @@
-package com.around.aroundcore.security.jwt;
+package com.around.aroundcore.security.services;
 
 import com.around.aroundcore.security.models.Token;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderEmptyException;
@@ -19,7 +19,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
