@@ -1,4 +1,4 @@
-package com.around.aroundcore.security;
+package com.around.aroundcore.security.services;
 
 import com.around.aroundcore.database.repositories.GameUserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -17,7 +17,7 @@ public class ChunkQueueService {
     }
     public List<ChunkDTO> getAllFromQueue() {
         List<ChunkDTO> chunks = new ArrayList<>();
-        while (!chunkChangesQueue.isEmpty()) {
+        while (!isEmpty()) {
             ChunkDTO chunkDTOFromQueue = getFromQueue();
             if(chunks.contains(chunkDTOFromQueue)){
                 ChunkDTO chunkDTOInList = chunks.get(chunks.indexOf(chunkDTOFromQueue));

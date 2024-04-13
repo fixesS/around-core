@@ -37,8 +37,7 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/v2/api-docs/**",
             "/swagger-resources/**",
-            AroundConfig.API_V1_LOGIN,
-            AroundConfig.API_V1_REGISTRATION
+            AroundConfig.API_V1_AUTH+"/**"
     };
 
     @Bean
