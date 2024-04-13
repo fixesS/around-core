@@ -1,6 +1,7 @@
 package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.models.VerificationToken;
 import com.around.aroundcore.database.repositories.VerificationTokenRepository;
 import com.around.aroundcore.security.models.Token;
@@ -15,8 +16,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -42,22 +45,25 @@ public class VerificationTokenService {
     @Transactional
     public VerificationToken findById(Integer id) throws VerificationTokenNullException {
         VerificationToken verificationToken =  tokenRepository.findById(id).orElseThrow(VerificationTokenNullException::new);
-        validateToken(verificationToken);
+        jwtService.validateVerificationToken(verificationToken.getToken());
         return verificationToken;
     }
     @Transactional
     public VerificationToken findByToken(String token) throws VerificationTokenNullException {
-        VerificationToken verificationToken = tokenRepository.findByToken(token).orElseThrow(VerificationTokenNullException::new);
-        validateToken(verificationToken);
-        return verificationToken;
+        jwtService.validateVerificationToken(token);
+        return tokenRepository.findByToken(token).orElseThrow(VerificationTokenNullException::new);
     }
 
     @Transactional
-    public void delete(VerificationToken verificationToken) {
-        tokenRepository.delete(verificationToken);
+    public void delete(VerificationToken token) {
+        tokenRepository.delete(token);
     }
-    private void validateToken(VerificationToken verificationToken){
-        String token = verificationToken.getToken();
-        jwtService.validateVerificationToken(token);
+    public void removeExpired(){
+        List<VerificationToken> tokens = tokenRepository.findAll();
+        tokens.forEach(token ->{
+            if(LocalDateTime.now().isAfter(token.getExpiresIn())){
+                delete(token);
+            }
+        });
     }
 }

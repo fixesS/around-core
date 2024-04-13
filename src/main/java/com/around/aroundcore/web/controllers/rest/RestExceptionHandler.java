@@ -28,7 +28,7 @@ import java.util.List;
 public class RestExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiError> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         List<ObjectError> errors = ex.getBindingResult().getAllErrors();
         ObjectError lastErr = errors.get(errors.size()-1);
 
@@ -40,15 +40,15 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(apiError, response.getStatus());
     }
     @ExceptionHandler(AuthHeaderException.class)
-    public ResponseEntity<String> handleUnAuthorizedException(AuthHeaderException exception) {
+    public ResponseEntity<String> handleAuthHeaderException(AuthHeaderException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @ExceptionHandler(JwtException.class)
-    public ResponseEntity<String> handleUnAuthorizedException(JwtException exception) {
+    public ResponseEntity<String> handleJwtException(JwtException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @ExceptionHandler(SessionNullException.class)
-    public ResponseEntity<String> handleUnAuthorizedException(SessionNullException exception) {
+    public ResponseEntity<String> handleSessionNullException(SessionNullException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @ExceptionHandler(ApiException.class)

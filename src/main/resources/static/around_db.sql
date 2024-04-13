@@ -74,3 +74,21 @@ CREATE TABLE public.sessions
     useragent varchar   NULL,
     CONSTRAINT sessions_pk PRIMARY KEY (uuid)
 );
+
+CREATE TABLE public.verification_tokens (
+                                            user_id int8 NOT NULL,
+                                            "token" varchar NOT NULL,
+                                            created timestamp NOT NULL,
+                                            expires timestamp NOT NULL,
+                                            CONSTRAINT verification_tokens_pk PRIMARY KEY (user_id)
+);
+ALTER TABLE public.verification_tokens ADD CONSTRAINT verification_tokens_fk FOREIGN KEY (user_id) REFERENCES public.game_user(id);
+
+CREATE TABLE public.recovery_tokens (
+                                        user_id int8 NOT NULL,
+                                        "token" varchar NOT NULL,
+                                        created timestamp NOT NULL,
+                                        expires timestamp NOT NULL,
+                                        CONSTRAINT recovery_tokens_pk PRIMARY KEY (user_id)
+);
+ALTER TABLE public.recovery_tokens ADD CONSTRAINT recovery_tokens_fk FOREIGN KEY (user_id) REFERENCES public.game_user(id);

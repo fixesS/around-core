@@ -47,7 +47,7 @@ class ChunkWebSocketTest {
 	private String Http = "http://";
 	private String ws = "ws://";
 	private String host = "127.0.0.1:";
-	@Value("${local.server.port}")
+	@Value("${server.port}")
 	private int port;
 
 	@Value("${testing.team1.email}")

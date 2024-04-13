@@ -1,5 +1,6 @@
 package com.around.aroundcore.database.models;
 
+import com.around.aroundcore.web.exceptions.entity.GameUserPasswordSame;
 import com.around.aroundcore.web.exceptions.entity.TeamNullException;
 import jakarta.persistence.*;
 import lombok.*;
@@ -71,6 +72,12 @@ public class GameUser implements UserDetails {
             throw new TeamNullException();
         }
         return team;
+    }
+    public void setPassword(String newPassword){
+        if(this.password.equals(newPassword)){
+            throw new GameUserPasswordSame();
+        }
+        this.password = newPassword;
     }
     @Override
     public String getPassword() {

@@ -31,6 +31,7 @@ public class JwtService {
     private static final String JWT_ACCESS = "access";
     private static final String JWT_REFRESH = "refresh";
     private static final String JWT_VERIFICATION = "verification";
+    private static final String JWT_RECOVERY = "recovery";
     @Value("${jwt.token.access.secret}")
     private String accessSecretStr;
     private SecretKey accessSecret;
@@ -40,13 +41,17 @@ public class JwtService {
     @Value("${jwt.token.verification.secret}")
     private String verificationSecretStr;
     private SecretKey verificationSecret;
+    @Value("${jwt.token.recovery.secret}")
+    private String recoverySecretStr;
+    private SecretKey recoverySecret;
     @Value("${jwt.token.access.expired}")
     private long accessExp;
-
     @Value("${jwt.token.refresh.expired}")
     private long refreshExp;
     @Value("${jwt.token.verification.expired}")
     private long verificationExp;
+    @Value("${jwt.token.recovery.expired}")
+    private long recoveryExp;
     private String issuer;
 
     @PostConstruct
@@ -54,6 +59,32 @@ public class JwtService {
         accessSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecretStr));
         refreshSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecretStr));
         verificationSecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(verificationSecretStr));
+        recoverySecret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(recoverySecretStr));
+    }
+    public Token generateRecoveryToken(String email){
+        Date now = new Date();
+        Date expiration = new Date(now.getTime()+recoveryExp);
+
+        Claims claims = Jwts.claims()
+                .subject(JWT_RECOVERY)
+                .issuer(issuer)
+                .id(email)
+                .issuedAt(now)
+                .expiration(expiration).build();
+
+        String token = Jwts.builder()
+                .claims(claims)
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(recoverySecret)
+                .compact();
+
+        return Token.builder()
+                .token(token)
+                .created(now)
+                .expiresIn(expiration)
+                .build();
+
     }
     public Token generateVerificationToken(String email){
         Date now = new Date();
@@ -140,6 +171,9 @@ public class JwtService {
             String errmsg = String.format("Wrong JWT type: %s",claims.getSubject());
             throw new WrongJwtTypeException(errmsg);
         }
+    }
+    public void validateRecoveryToken(String verificationToken){
+        validateToken(verificationToken,recoverySecret,JWT_RECOVERY);
     }
     public void validateVerificationToken(String verificationToken){
         validateToken(verificationToken,verificationSecret,JWT_VERIFICATION);
