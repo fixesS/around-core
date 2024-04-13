@@ -29,7 +29,7 @@ class EmailQueueServiceTest {
         String subject = "TEST";
         String text = "Testing spring mail sender";
 
-        emailQueueService.addToQueue(toAddress,subject,text);
+        emailQueueService.addSimpleMessageToQueue(toAddress,subject,text);
         Assertions.assertTrue(true);
     }
 }
