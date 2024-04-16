@@ -1,6 +1,6 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.web.dto.ChunkDTO;
+import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.services.ChunkQueueService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;

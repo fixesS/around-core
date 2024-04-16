@@ -1,8 +1,6 @@
-package com.around.aroundcore.web.dto;
+package com.around.aroundcore.web.dtos;
 
-import com.around.aroundcore.web.enums.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Payload;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

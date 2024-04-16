@@ -16,7 +16,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Deprecated
 public class HttpHandshakeInterceptor implements HandshakeInterceptor {
-    JwtService jwtService;
+    private final JwtService jwtService;
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {

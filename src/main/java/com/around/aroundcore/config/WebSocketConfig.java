@@ -46,17 +46,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        //registration.interceptors(authorizationInterceptor());
+        registration.interceptors(authorizationInterceptor());
     }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-//        config.enableStompBrokerRelay(TOPIC_DESTINATION_PREFIX)
-//                .setRelayPort(port)
-//                .setRelayHost(host)
-//                .setClientLogin(username)
-//                .setClientPasscode(password)
-//                .setSystemLogin(username)
-//                .setSystemPasscode(password);
+        config.enableStompBrokerRelay(TOPIC_DESTINATION_PREFIX)
+                .setRelayPort(port)
+                .setRelayHost(host)
+                .setClientLogin(username)
+                .setClientPasscode(password)
+                .setSystemLogin(username)
+                .setSystemPasscode(password);
     }
 
     @Bean

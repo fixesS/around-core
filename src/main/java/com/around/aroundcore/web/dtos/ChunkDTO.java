@@ -1,8 +1,7 @@
-package com.around.aroundcore.web.dto;
+package com.around.aroundcore.web.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

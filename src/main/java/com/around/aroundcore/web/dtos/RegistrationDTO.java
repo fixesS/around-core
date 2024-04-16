@@ -1,9 +1,8 @@
-package com.around.aroundcore.web.dto;
+package com.around.aroundcore.web.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
 @Data
 @Schema(description = "DTO for registration")

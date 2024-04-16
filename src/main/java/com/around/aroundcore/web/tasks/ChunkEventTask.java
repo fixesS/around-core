@@ -1,7 +1,7 @@
 package com.around.aroundcore.web.tasks;
 
 import com.around.aroundcore.web.controllers.ws.ChunkWsController;
-import com.around.aroundcore.web.dto.ChunkDTO;
+import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.services.ChunkQueueService;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
