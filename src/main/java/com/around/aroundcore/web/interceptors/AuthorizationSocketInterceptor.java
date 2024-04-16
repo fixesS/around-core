@@ -37,22 +37,16 @@ public class AuthorizationSocketInterceptor implements ChannelInterceptor {
         if(accessor.isHeartbeat()){
             return message;
         }
-        switch (Objects.requireNonNull(accessor.getCommand())) {
-            case SEND-> {
-                JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) message.getHeaders().get("simpUser");
-                UUID sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
-                Session session = sessionService.findByUuid(sessionUuid);
-                log.info("USER:"+session.getUser().getEmail());
-                log.info("msfmfmfsjf headers:"+message.getHeaders());
-                return message;
-            }
-            default -> {
-
-                log.info("MSGMSGMSG:"+message.toString());
-                log.info("msfmfmfsjf headers:"+message.getHeaders());
-                return message;
-            }
+        if (Objects.requireNonNull(accessor.getCommand()) == StompCommand.SUBSCRIBE) {
+            JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) message.getHeaders().get("simpUser");
+            UUID sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
+            Session session = sessionService.findByUuid(sessionUuid);
+            log.info("USER:" + session.getUser().getEmail());
+            log.info("msfmfmfsjf headers:" + message.getHeaders());
+            accessor.setHeader("sessionUuid", sessionUuid);
+            return message;
         }
+        return message;
     }
     private void sendMesasge(MessageChannel channel, String message){
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.create(StompCommand.SEND);

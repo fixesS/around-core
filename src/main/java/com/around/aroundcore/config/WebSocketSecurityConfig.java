@@ -15,6 +15,8 @@ public class WebSocketSecurityConfig{
     AuthorizationManager<Message<?>> messageAuthorizationManager(MessageMatcherDelegatingAuthorizationManager.Builder messages) {
         messages
                 .simpDestMatchers("/topic/**").authenticated()
+                .simpDestMatchers("/app/**").authenticated()
+                .simpDestMatchers("/queue/**").authenticated()
                 .simpTypeMatchers(
                         SimpMessageType.CONNECT,
                         SimpMessageType.MESSAGE,

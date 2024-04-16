@@ -19,7 +19,7 @@ public class ChunkEventTask implements Runnable{
         if(!queueService.isEmpty()){
             List<ChunkDTO> chunks = queueService.getAllFromQueue();
             messagingTemplate.convertAndSend(
-                    ChunkWsController.FETCH_CHUNK_CHANGES_EVENT,
+                    ChunkWsController.CHUNK_CHANGES_EVENT,
                     chunks
             );
         }

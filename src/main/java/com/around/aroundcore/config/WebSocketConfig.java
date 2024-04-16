@@ -35,22 +35,24 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Value("${spring.rabbitmq.password}")
     String password;
 
-    public static final String TOPIC_DESTINATION_PREFIX = "/topic/";
+    public static final String TOPIC_DESTINATION_PREFIX = "/topic";
+    public static final String QUEUE_DESTINATION_PREFIX = "/queue";
     public static final String REGISTRY = "/ws";
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint(REGISTRY).setAllowedOrigins("*");
-        //registry.addEndpoint(REGISTRY);
+        registry.addEndpoint(REGISTRY)
+                .setAllowedOrigins("*");
     }
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(authorizationInterceptor());
+//        registration.interceptors(authorizationInterceptor());
     }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableStompBrokerRelay(TOPIC_DESTINATION_PREFIX)
+        config
+                .enableStompBrokerRelay(TOPIC_DESTINATION_PREFIX,QUEUE_DESTINATION_PREFIX)
                 .setRelayPort(port)
                 .setRelayHost(host)
                 .setClientLogin(username)
@@ -67,4 +69,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public HttpHandshakeInterceptor httpHandshakeInterceptor(){
         return new HttpHandshakeInterceptor(jwtConfig.jwtService());
     }
+
 }

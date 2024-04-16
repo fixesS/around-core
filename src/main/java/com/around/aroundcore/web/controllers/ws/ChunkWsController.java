@@ -2,7 +2,6 @@ package com.around.aroundcore.web.controllers.ws;
 
 import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.GameChunkService;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
@@ -34,7 +33,7 @@ public class ChunkWsController {
     private SessionService sessionService;
     private ChunkEventTask chunkEventTask;
     public static final String CHUNK_CHANGES_FROM_USER = "/topic/chunk.changes";
-    public static final String FETCH_CHUNK_CHANGES_EVENT = "/topic/chunk.event";
+    public static final String CHUNK_CHANGES_EVENT = "/topic/chunk.event";
 
     @PostConstruct
     public void executeSendingUpdates(){
@@ -42,26 +41,33 @@ public class ChunkWsController {
         taskScheduler.scheduleWithFixedDelay(chunkEventTask, duration);
     }
 
-    @SubscribeMapping(FETCH_CHUNK_CHANGES_EVENT)
-    public void fetchChunkChangesEvent(){
-        log.info("Got new subscription");
+    @SubscribeMapping(CHUNK_CHANGES_EVENT)
+    public void fetchChunkChangesEvent(Principal principal){
+        try {
+            JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+            var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
+            var session = sessionService.findByUuid(sessionUuid);
+            log.info("Got new subscription from: {}",session.getUser().getEmail());
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
     }
 
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
-    public void handleChunkChanges(@Payload ChunkDTO chunkDTO, StompHeaderAccessor stompHeaderAccessor, Principal principal){
-        GameUser user = null;
+    public void handleChunkChanges(@Payload ChunkDTO chunkDTO, Principal principal){
+        GameUser user;
 
         try {
             JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
-            UUID sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
-            Session session = sessionService.findByUuid(sessionUuid);
+            var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
+            var session = sessionService.findByUuid(sessionUuid);
             user = session.getUser();
         }catch (Exception e){
             log.error(e.getMessage());
             return;
         }
 
-        GameChunk gameChunk = null;
+        GameChunk gameChunk;
         try {
             gameChunk = gameChunkService.findById(chunkDTO.getId());
             gameChunk.setOwner(user);
@@ -86,7 +92,5 @@ public class ChunkWsController {
 
         chunkQueueService.addToQueue(chunkDTO);
     }
-
-
 
 }

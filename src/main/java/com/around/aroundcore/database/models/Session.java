@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "sessions", schema = "public")
-public class Session {
+public class Session implements Serializable {
     @Id
     @Column(columnDefinition = "BINARY(16)", name = "uuid")
     private UUID sessionUuid;

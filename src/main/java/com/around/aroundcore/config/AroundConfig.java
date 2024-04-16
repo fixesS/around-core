@@ -1,22 +1,9 @@
 package com.around.aroundcore.config;
 
-import com.around.aroundcore.web.services.ChunkQueueService;
-import com.around.aroundcore.web.tasks.CheckTokensTask;
-import com.around.aroundcore.web.tasks.ChunkEventTask;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.security.core.parameters.P;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 @AllArgsConstructor

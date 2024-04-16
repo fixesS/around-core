@@ -84,7 +84,6 @@ class ChunkWebSocketTest {
 
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 		headers.set("Authorization", "Bearer "+token.getAccess_token());
-		//log.info(" HEADERS: "+headers);
 
 		StompSession stompSession = stompClient
 				.connectAsync(wsUrl, headers, new StompSessionHandlerAdapter() {})
@@ -119,7 +118,7 @@ class ChunkWebSocketTest {
 				.build();
 
 		StompHeaders headers1 = new StompHeaders();
-		headers1.setDestination(ChunkWsController.FETCH_CHUNK_CHANGES_EVENT);
+		headers1.setDestination(ChunkWsController.CHUNK_CHANGES_EVENT);
 		stompSession.subscribe(headers1, new StompFrameHandler() {
 			@Override
 			public Type getPayloadType(StompHeaders headers) {
@@ -128,15 +127,13 @@ class ChunkWebSocketTest {
 
 			@Override
 			public void handleFrame(StompHeaders headers, Object payload) {
+				log.info(payload.toString());
 				blockingQueue.offer((ArrayList<ChunkDTO>) payload);
 			}
 		});
 
-		StompHeaders headers2 = new StompHeaders();
-		headers2.setDestination(ChunkWsController.CHUNK_CHANGES_FROM_USER);
-
 		stompSession.send(
-				headers2,
+				ChunkWsController.CHUNK_CHANGES_FROM_USER,
 				chunkDTO
 		);
 
@@ -146,6 +143,7 @@ class ChunkWebSocketTest {
 		List<ChunkDTO> receivedList = objectMapper.convertValue(blockingQueue.poll(5, SECONDS),new TypeReference<ArrayList<ChunkDTO>>(){});
 
 		Assertions.assertEquals(exceptedList, receivedList);
+
 	}
 
 	private List<Transport> createTransportClient() {
