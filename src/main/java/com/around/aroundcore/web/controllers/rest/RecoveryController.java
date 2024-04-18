@@ -5,6 +5,7 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.RecoveryToken;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.RecoveryTokenService;
+import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.web.dtos.ForgotPasswordDTO;
 import com.around.aroundcore.web.dtos.ResetPasswordDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
@@ -37,12 +38,13 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(AroundConfig.API_V1_RECOVERY)
 @Tag(name="Recovery controller", description="Handles requests for recovery access to user account")
 public class RecoveryController {
-    private ApplicationEventPublisher eventPublisher;
-    private RecoveryTokenService recoveryTokenService;
-    private GameUserService userService;
-    private ThreadPoolTaskScheduler taskScheduler;
-    private CheckTokensTask checkTokensTask;
-    private PasswordEncoder passwordEncoder;
+    private final ApplicationEventPublisher eventPublisher;
+    private final RecoveryTokenService recoveryTokenService;
+    private final GameUserService userService;
+    private final ThreadPoolTaskScheduler taskScheduler;
+    private final CheckTokensTask checkTokensTask;
+    private final PasswordEncoder passwordEncoder;
+    private final SessionService sessionService;
 
     @PostConstruct
     public void executeSendingEmails(){
@@ -82,6 +84,7 @@ public class RecoveryController {
             user = recoveryToken.getUser();
             user.setPassword(passwordEncoder.encode(resetPasswordDTO.getPassword()));
             recoveryTokenService.delete(recoveryToken);
+            sessionService.deleteAllByGameUser(user);
             userService.update(user);
             response = ApiResponse.OK;
         } catch (GameUserPasswordSame e) {
