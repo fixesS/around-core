@@ -5,9 +5,8 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.RecoveryToken;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.RecoveryTokenService;
-import com.around.aroundcore.web.dto.ForgotPasswordDTO;
-import com.around.aroundcore.web.dto.ResetPasswordDTO;
-import com.around.aroundcore.web.dto.TokenData;
+import com.around.aroundcore.web.dtos.ForgotPasswordDTO;
+import com.around.aroundcore.web.dtos.ResetPasswordDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.events.OnPasswordRecoveryEvent;
 import com.around.aroundcore.web.exceptions.api.ApiException;
@@ -29,7 +28,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.InetAddress;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 

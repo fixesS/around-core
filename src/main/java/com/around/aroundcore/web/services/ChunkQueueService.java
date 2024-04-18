@@ -1,6 +1,6 @@
 package com.around.aroundcore.web.services;
 
-import com.around.aroundcore.web.dto.ChunkDTO;
+import com.around.aroundcore.web.dtos.ChunkDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
