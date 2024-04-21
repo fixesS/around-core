@@ -2,9 +2,6 @@ package com.around.aroundcore.database.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.List;
 
 @Entity
@@ -22,4 +19,9 @@ public class Team {
 
     @OneToMany(mappedBy = "team")
     private List<GameUser> members;
+
+    @Override
+    public String toString(){
+        return String.format("team_id:{}, color:{}",this.id,this.color);
+    }
 }

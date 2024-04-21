@@ -6,6 +6,7 @@ import com.around.aroundcore.database.models.Role;
 import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.models.VerificationToken;
 import com.around.aroundcore.database.services.GameUserService;
+import com.around.aroundcore.database.services.GameUserSkillsService;
 import com.around.aroundcore.database.services.TeamService;
 import com.around.aroundcore.database.services.VerificationTokenService;
 import com.around.aroundcore.security.services.AuthService;

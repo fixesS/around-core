@@ -62,6 +62,10 @@ public class GameUser implements UserDetails {
     )
     private List<GameUser> friends;
 
+    @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
+    private List<GameUserSkill> userSkills;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

@@ -1,9 +1,14 @@
 package com.around.aroundcore.config;
 
+import com.around.aroundcore.web.mappers.StringGameChunkDTOMapper;
+import com.around.aroundcore.web.services.H3ChunkService;
+import com.uber.h3core.H3Core;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+
+import java.io.IOException;
 
 @Configuration
 @AllArgsConstructor
@@ -17,6 +22,7 @@ public class AroundConfig {
     public static final String API_V1_USER = API_V1+"/user";
     public static final String API_V1_CHUNKS = API_V1+"/chunks";
     public static final String API_V1_STATISTIC = API_V1+"/stat";
+    public static final String API_V1_SKILLS = API_V1+"/skills";
 
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
@@ -26,5 +32,17 @@ public class AroundConfig {
         threadPoolTaskScheduler.setThreadNamePrefix(
                 "ThreadPoolTaskScheduler");
         return threadPoolTaskScheduler;
+    }
+    @Bean
+    public H3Core h3Core() throws IOException {
+        return H3Core.newInstance();
+    }
+    @Bean
+    public StringGameChunkDTOMapper stringGameChunkDTOMapper(){
+        return new StringGameChunkDTOMapper();
+    }
+    @Bean
+    public H3ChunkService h3ChunkService() throws IOException {
+        return new H3ChunkService(h3Core(),stringGameChunkDTOMapper());
     }
 }

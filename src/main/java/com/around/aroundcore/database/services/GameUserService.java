@@ -1,6 +1,9 @@
 package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.GameUserSkillEmbedded;
+import com.around.aroundcore.database.models.GameUserSkill;
+import com.around.aroundcore.database.models.Skills;
 import com.around.aroundcore.database.repositories.GameUserRepository;
 import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;
 import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
@@ -9,6 +12,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,9 +22,21 @@ import java.util.List;
 public class GameUserService {
 
     private final GameUserRepository userRepository;
+    private final SkillService skillService;
 
     @Transactional
     public void create(GameUser user) {
+        List<GameUserSkill> gameUserSkillList = new ArrayList<>();
+        for (Skills skill : Skills.values()){
+            GameUserSkill gameUserSkill = new GameUserSkill();
+            gameUserSkill.setCurrentLevel(0);
+            GameUserSkillEmbedded gameUserSkillEmbedded = new GameUserSkillEmbedded();
+            gameUserSkillEmbedded.setGameUser(user);
+            gameUserSkillEmbedded.setSkill(skillService.findById(skill.getId()));
+            gameUserSkill.setGameUserSkillEmbedded(gameUserSkillEmbedded);
+            gameUserSkillList.add(gameUserSkill);
+        }
+        user.setUserSkills(gameUserSkillList);
         userRepository.save(user);
     }
 
