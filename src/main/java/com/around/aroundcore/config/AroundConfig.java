@@ -22,6 +22,7 @@ public class AroundConfig {
     public static final String API_V1_USER = API_V1+"/user";
     public static final String API_V1_CHUNKS = API_V1+"/chunks";
     public static final String API_V1_STATISTIC = API_V1+"/stat";
+    public static final String API_V1_SKILLS = API_V1+"/skills";
 
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
