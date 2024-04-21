@@ -64,6 +64,7 @@ public class RestExceptionHandler {
     public ResponseEntity<ApiError> handleUnknownException(Exception exception) {
         ApiResponse response = ApiResponse.UNKNOWN_ERROR;
         log.error(exception.getMessage());
+        exception.printStackTrace();
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         return new ResponseEntity<>(apiError, response.getStatus());
     }

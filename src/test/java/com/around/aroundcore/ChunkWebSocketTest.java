@@ -114,7 +114,7 @@ class ChunkWebSocketTest {
 		RunStopFrameHandler handler = client.getHandler();
 
 		ChunkDTO chunkDTO = ChunkDTO.builder()
-				.id("1")
+				.id("8b10dc93422efff")
 				.build();
 
 		StompHeaders headers1 = new StompHeaders();
@@ -140,7 +140,9 @@ class ChunkWebSocketTest {
 		chunkDTO.setTeam_id(1);
 		List<ChunkDTO> exceptedList = new ArrayList<>();
 		exceptedList.add(chunkDTO);
+		exceptedList.add(ChunkDTO.builder().id("8b10dc934223fff").team_id(1).build());
 		List<ChunkDTO> receivedList = objectMapper.convertValue(blockingQueue.poll(5, SECONDS),new TypeReference<ArrayList<ChunkDTO>>(){});
+		log.info("{}",receivedList.size());
 
 		Assertions.assertEquals(exceptedList, receivedList);
 

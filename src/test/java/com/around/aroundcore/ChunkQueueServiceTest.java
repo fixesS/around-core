@@ -35,6 +35,20 @@ class ChunkQueueServiceTest {
         chunkQueueService.addToQueue(ChunkDTO.builder().id("10").team_id(6).build());
 
     }
+    private void fillQueueAsList(){
+        List<ChunkDTO> chunks = new ArrayList<>();
+        chunks.add(ChunkDTO.builder().id("1").team_id(1).build());
+        chunks.add(ChunkDTO.builder().id("2").team_id(1).build());
+        chunks.add(ChunkDTO.builder().id("3").team_id(2).build());
+        chunks.add(ChunkDTO.builder().id("4").team_id(2).build());
+        chunks.add(ChunkDTO.builder().id("5").team_id(3).build());
+        chunks.add(ChunkDTO.builder().id("6").team_id(4).build());
+        chunks.add(ChunkDTO.builder().id("7").team_id(5).build());
+        chunks.add(ChunkDTO.builder().id("8").team_id(5).build());
+        chunks.add(ChunkDTO.builder().id("9").team_id(6).build());
+        chunks.add(ChunkDTO.builder().id("10").team_id(6).build());
+        chunkQueueService.addToQueue(chunks);
+    }
 
     @Test
     void testAddingToQueueOldChunkWithNewTeamId_1(){
@@ -49,15 +63,35 @@ class ChunkQueueServiceTest {
             }
         }
         Assertions.assertTrue(chunkQueueService.isEmpty());
-
     }
     @Test
     void testAddingToQueueOldChunkWithNewTeamId_2(){
-        fillQueue();
+        fillQueueAsList();
         chunkQueueService.addToQueue(ChunkDTO.builder().id("10").team_id(4).build());
         chunkQueueService.addToQueue(ChunkDTO.builder().id("1").team_id(4).build());
         chunkQueueService.addToQueue(ChunkDTO.builder().id("6").team_id(7).build());
         chunkQueueService.addToQueue(ChunkDTO.builder().id("11").team_id(11).build());
+
+        List<ChunkDTO> chunks = chunkQueueService.getAllFromQueue();
+
+        for(ChunkDTO chunkDTO : chunks){
+            switch (chunkDTO.getId()) {
+                case "10", "1" -> Assertions.assertEquals(4, chunkDTO.getTeam_id());
+                case "6" -> Assertions.assertEquals(7, chunkDTO.getTeam_id());
+                case "11" -> Assertions.assertEquals(11, chunkDTO.getTeam_id());
+            }
+        }
+        Assertions.assertTrue(chunkQueueService.isEmpty());
+    }
+    @Test
+    void testAddingToQueueOldChunkWithNewTeamId_3(){
+        fillQueue();
+        List<ChunkDTO> new_chunks = new ArrayList<>();
+        new_chunks.add(ChunkDTO.builder().id("10").team_id(4).build());
+        new_chunks.add(ChunkDTO.builder().id("1").team_id(4).build());
+        new_chunks.add(ChunkDTO.builder().id("6").team_id(7).build());
+        new_chunks.add(ChunkDTO.builder().id("11").team_id(11).build());
+        chunkQueueService.addToQueue(new_chunks);
 
         List<ChunkDTO> chunks = chunkQueueService.getAllFromQueue();
 

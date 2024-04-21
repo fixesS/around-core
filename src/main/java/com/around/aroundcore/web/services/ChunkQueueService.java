@@ -12,6 +12,9 @@ public class ChunkQueueService {
     public void addToQueue(ChunkDTO chunkDTO) {
         chunkChangesQueue.add(chunkDTO);
     }
+    public void addToQueue(List<ChunkDTO> chunkDTOList){
+        chunkDTOList.forEach(this::addToQueue);
+    }
     public ChunkDTO getFromQueue() {
         return chunkChangesQueue.poll();
     }
