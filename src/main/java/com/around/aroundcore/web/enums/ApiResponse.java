@@ -1,8 +1,7 @@
 package com.around.aroundcore.web.enums;
 
-import com.around.aroundcore.web.dto.ApiError;
-import com.around.aroundcore.web.dto.ApiOk;
-import lombok.AllArgsConstructor;
+import com.around.aroundcore.web.dtos.ApiError;
+import com.around.aroundcore.web.dtos.ApiOk;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -31,7 +30,8 @@ public enum ApiResponse {
     SESSION_DOES_NOT_EXIST(-5001,"Session does not exist."),
     SESSION_EXPIRED(-5002,"Session is expired."),
     CHUNK_DOES_NOT_EXIST(-6001,"Chunk you trying get does not exist or has not been captured by any user."),
-    TEAM_DOES_NOT_EXIST(-7001,"Team does not exist.");
+    TEAM_DOES_NOT_EXIST(-7001,"Team does not exist."),
+    SKILL_DOES_NOT_EXIST(-8001,"Skill does not exist");
 
     @Getter
     private Integer statusCode;

@@ -1,5 +1,6 @@
 package com.around.aroundcore.database.services;
 
+import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.repositories.SessionRepository;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
@@ -16,8 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Slf4j
 public class SessionService {
-
-    private SessionRepository sessionRepository;
+    private final SessionRepository sessionRepository;
 
     @Transactional
     public void create(Session session){
@@ -38,6 +38,10 @@ public class SessionService {
     @Transactional
     public void delete(Session session){
         sessionRepository.delete(session);
+    }
+    @Transactional
+    public void deleteAllByGameUser(GameUser gameUser){
+        sessionRepository.deleteAllByUser(gameUser);
     }
     public void removeExpired(){
         List<Session> sessions = findAll();

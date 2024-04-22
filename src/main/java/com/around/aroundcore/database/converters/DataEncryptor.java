@@ -1,4 +1,4 @@
-package com.around.aroundcore.security.encryptors;
+package com.around.aroundcore.database.converters;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.AttributeConverter;

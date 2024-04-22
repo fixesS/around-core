@@ -30,9 +30,12 @@ public class Skill implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "upgrade_cost")
-    private Integer upgradeCost;
-
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name="rule_id")
+    private SkillRule rule;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name="cost_id")
+    private SkillCost cost;
     @Column(name = "image_name")
     private String imageName;
 }

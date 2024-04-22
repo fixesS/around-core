@@ -1,6 +1,6 @@
 package com.around.aroundcore.web.services;
 
-import com.around.aroundcore.web.dto.ChunkDTO;
+import com.around.aroundcore.web.dtos.ChunkDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -11,6 +11,9 @@ public class ChunkQueueService {
     private LinkedBlockingQueue<ChunkDTO> chunkChangesQueue = new LinkedBlockingQueue<>();
     public void addToQueue(ChunkDTO chunkDTO) {
         chunkChangesQueue.add(chunkDTO);
+    }
+    public void addToQueue(List<ChunkDTO> chunkDTOList){
+        chunkDTOList.forEach(this::addToQueue);
     }
     public ChunkDTO getFromQueue() {
         return chunkChangesQueue.poll();

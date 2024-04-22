@@ -21,4 +21,9 @@ public class GameChunk {
     @ManyToOne
     @JoinColumn(name = "owner", referencedColumnName = "id")
     private GameUser owner;
+
+    @Override
+    public String toString(){
+        return String.format("chunk_id:{}",this.id);
+    }
 }

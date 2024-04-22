@@ -49,7 +49,7 @@ public class JwtAuthenticationToken implements Authentication {
 
     @Override
     public String getName() {
-        return null;
+        return session.getUser().getEmail();
     }
 
     public JwtAuthenticationToken(

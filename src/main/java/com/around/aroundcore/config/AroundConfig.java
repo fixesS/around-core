@@ -1,22 +1,14 @@
 package com.around.aroundcore.config;
 
-import com.around.aroundcore.web.services.ChunkQueueService;
-import com.around.aroundcore.web.tasks.CheckTokensTask;
-import com.around.aroundcore.web.tasks.ChunkEventTask;
-import jakarta.annotation.PostConstruct;
+import com.around.aroundcore.web.mappers.StringGameChunkDTOMapper;
+import com.around.aroundcore.web.services.H3ChunkService;
+import com.uber.h3core.H3Core;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.security.core.parameters.P;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
 
 @Configuration
 @AllArgsConstructor
@@ -30,6 +22,7 @@ public class AroundConfig {
     public static final String API_V1_USER = API_V1+"/user";
     public static final String API_V1_CHUNKS = API_V1+"/chunks";
     public static final String API_V1_STATISTIC = API_V1+"/stat";
+    public static final String API_V1_SKILLS = API_V1+"/skills";
 
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
@@ -40,5 +33,16 @@ public class AroundConfig {
                 "ThreadPoolTaskScheduler");
         return threadPoolTaskScheduler;
     }
-
+    @Bean
+    public H3Core h3Core() throws IOException {
+        return H3Core.newInstance();
+    }
+    @Bean
+    public StringGameChunkDTOMapper stringGameChunkDTOMapper(){
+        return new StringGameChunkDTOMapper();
+    }
+    @Bean
+    public H3ChunkService h3ChunkService() throws IOException {
+        return new H3ChunkService(h3Core(),stringGameChunkDTOMapper());
+    }
 }

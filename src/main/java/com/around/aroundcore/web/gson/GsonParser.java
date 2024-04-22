@@ -1,7 +1,5 @@
 package com.around.aroundcore.web.gson;
 
-import com.around.aroundcore.database.models.GameChunk;
-import com.around.aroundcore.web.dto.ChunkDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jakarta.annotation.PostConstruct;

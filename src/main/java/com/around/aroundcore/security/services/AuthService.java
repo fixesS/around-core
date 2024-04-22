@@ -3,9 +3,8 @@ package com.around.aroundcore.security.services;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.security.services.JwtService;
 import com.around.aroundcore.security.models.Token;
-import com.around.aroundcore.web.dto.TokenData;
+import com.around.aroundcore.web.dtos.TokenData;
 import lombok.AllArgsConstructor;
 
 import java.net.InetAddress;
