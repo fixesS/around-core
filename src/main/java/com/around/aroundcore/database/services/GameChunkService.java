@@ -4,6 +4,7 @@ import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
+import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.entity.GameChunkNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,11 @@ public class GameChunkService {
     public void update(GameChunk gameChunk){
         gameChunkRepository.save(gameChunk);
     }
+
+    @Transactional
+    public void saveListOfChunks(List<GameChunk> gameChunks){
+        gameChunkRepository.saveAll(gameChunks);
+    }
     @Transactional
     public GameChunk findById(String id) throws GameChunkNullException{
         return gameChunkRepository.findById(id).orElseThrow(GameChunkNullException::new);
@@ -39,5 +45,11 @@ public class GameChunkService {
     @Transactional
     public List<GameChunk> findAllByOwnerTeam(Team team){
         return gameChunkRepository.findAllByOwnerTeam(team);
+    }
+    public void saveListOfChunkDTOs(List<ChunkDTO> chunkDTOList, GameUser user){
+        List<GameChunk> gameChunkList = chunkDTOList.stream().map(chunk -> {
+            return GameChunk.builder().owner(user).id(chunk.getId()).build();
+        }).toList();
+        gameChunkRepository.saveAll(gameChunkList);
     }
 }

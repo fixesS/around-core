@@ -63,8 +63,9 @@ public class ChunkWsController {
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
     public void handleChunkChanges(@Payload ChunkDTO chunkDTO, Principal principal){
         GameUser user;
+        GameUserSkill userWidthSkill;
 
-        try {
+        try {// getting user
             JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
             var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
             var session = sessionService.findByUuid(sessionUuid);
@@ -74,37 +75,17 @@ public class ChunkWsController {
             return;
         }
 
-        GameChunk gameChunk;
-        try {
-            gameChunk = gameChunkService.findById(chunkDTO.getId());
-            gameChunk.setOwner(user);
-            gameChunkService.update(gameChunk);
-
-        }catch (Exception e){
-            gameChunk = GameChunk.builder()
-                    .owner(user)
-                    .id(chunkDTO.getId())
-                    .build();
-
-            gameChunkService.create(gameChunk);
-        }
-
-        /*
-         * TODO: user skills on chunks
-         *  skills:
-         *  width +
-         *  bomb
-         *  ...
-         */
-        GameUserSkill userWidthSkill;
-        try{
+        try{// getting width userskill
             userWidthSkill = user.getUserSkills().stream().filter(gameUserSkill -> gameUserSkill.getSkillId().equals(Skills.WIDTH.getId()))
                     .findAny().orElseThrow(SkillNullException::new);
         }catch (SkillNullException e){
             log.error(e.getMessage());
             return;
         }
+        // getting neighbours for width userskill level
         List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill);
+
+        gameChunkService.saveListOfChunkDTOs(chunksDTOList, user);
 
         chunkQueueService.addToQueue(chunksDTOList);
     }
