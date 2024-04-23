@@ -11,17 +11,15 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class SkillService {
     private final SkillRepository skillRepository;
-    @Transactional
     public Skill findById(Integer id) throws SkillNullException {
         return skillRepository.findById(id).orElseThrow(SkillNullException::new);
     }
-    @Transactional
     public List<Skill> findAll(){
         return skillRepository.findAll();
     }
-    @Transactional
     public boolean existById(Integer id){
         return skillRepository.existsById(id);
     }

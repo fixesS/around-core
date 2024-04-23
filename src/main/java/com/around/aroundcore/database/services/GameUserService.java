@@ -19,12 +19,12 @@ import java.util.List;
 @Service
 @Slf4j
 @AllArgsConstructor
+@Transactional
 public class GameUserService {
 
     private final GameUserRepository userRepository;
     private final SkillService skillService;
 
-    @Transactional
     public void create(GameUser user) {
         List<GameUserSkill> gameUserSkillList = new ArrayList<>();
         for (Skills skill : Skills.values()){
@@ -40,23 +40,18 @@ public class GameUserService {
         userRepository.save(user);
     }
 
-    @Transactional
     public void update(GameUser user) {
         userRepository.save(user);
     }
-    @Transactional
     public GameUser findById(Integer id) throws GameUserNullException {
         return userRepository.findById(id).orElseThrow(GameUserNullException::new);
     }
-    @Transactional
     public GameUser findByEmail(String email) throws GameUserNullException {
         return userRepository.findByEmail(email).orElseThrow(GameUserNullException::new);
     }
-    @Transactional
     public List<GameUser> findAll() {
         return userRepository.findAll();
     }
-    @Transactional
     public boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
@@ -65,7 +60,6 @@ public class GameUserService {
             throw new GameUserEmailNotUnique();
         }
     }
-    @Transactional
     public boolean existByUsername(String username){
         return userRepository.existsByUsername(username);
     }

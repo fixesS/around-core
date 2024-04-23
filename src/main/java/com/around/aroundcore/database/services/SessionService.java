@@ -16,30 +16,25 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class SessionService {
     private final SessionRepository sessionRepository;
 
-    @Transactional
     public void create(Session session){
         sessionRepository.save(session);
     }
-    @Transactional
     public void update(Session session){
         sessionRepository.save(session);
     }
-    @Transactional
     public Session findByUuid(UUID uuid) throws SessionNullException {
         return sessionRepository.findBySessionUuid(uuid).orElseThrow(SessionNullException::new);
     }
-    @Transactional
     public List<Session> findAll(){
         return sessionRepository.findAll();
     }
-    @Transactional
     public void delete(Session session){
         sessionRepository.delete(session);
     }
-    @Transactional
     public void deleteAllByGameUser(GameUser gameUser){
         sessionRepository.deleteAllByUser(gameUser);
     }
