@@ -78,6 +78,17 @@ ALTER TABLE public.user_friends
 ALTER TABLE public.user_friends
     ADD CONSTRAINT user_friends_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.game_user (id);
 
+CREATE TABLE public.user_followers
+(
+    user_id   int4 NOT NULL,
+    follower_id int4 NOT NULL,
+    CONSTRAINT user_followers_pkey PRIMARY KEY (user_id, follower_id)
+);
+ALTER TABLE public.user_followers
+    ADD CONSTRAINT user_followers_follower_id_fkey FOREIGN KEY (follower_id) REFERENCES public.game_user (id);
+ALTER TABLE public.user_followers
+    ADD CONSTRAINT user_followers_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.game_user (id);
+
 CREATE TABLE public.sessions (
     uuid uuid NOT NULL,
     user_id int8 NOT NULL,

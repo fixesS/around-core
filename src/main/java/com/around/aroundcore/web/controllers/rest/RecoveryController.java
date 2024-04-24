@@ -20,6 +20,7 @@ import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -56,6 +57,7 @@ public class RecoveryController {
             summary = "Sends email message",
             description = "Sends email message to recover password"
     )
+    @Transactional
     public ResponseEntity<String> forgotPassword(@Validated @RequestBody ForgotPasswordDTO forgotPasswordDTO) {
         ApiResponse response = ApiResponse.OK;
         GameUser user = null;
@@ -74,6 +76,7 @@ public class RecoveryController {
             summary = "Resets user password",
             description = "Resets user password with token from email message"
     )
+    @Transactional
     public ResponseEntity<String> resetPassword(@Validated @RequestBody ResetPasswordDTO resetPasswordDTO, @RequestParam("token") String token ) {
         ApiResponse response;
         RecoveryToken recoveryToken;

@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,6 +36,12 @@ public class RestExceptionHandler {
         int statusCode = Integer.parseInt(message);
 
         ApiResponse response = ApiResponse.findByStatusCode(statusCode);
+        ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
+        return new ResponseEntity<>(apiError, response.getStatus());
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleAuthHeaderException(HttpMessageNotReadableException exception) {
+        ApiResponse response = ApiResponse.AUTH_INCORRECT_TYPE_OF_FIELD;
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         return new ResponseEntity<>(apiError, response.getStatus());
     }

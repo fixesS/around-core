@@ -1,15 +1,18 @@
 package com.around.aroundcore.database.models;
 
+import com.around.aroundcore.web.exceptions.entity.GameUserAlreadyFollowed;
 import com.around.aroundcore.web.exceptions.entity.GameUserPasswordSame;
+import com.around.aroundcore.web.exceptions.entity.GameUserUsernameNotUnique;
 import com.around.aroundcore.web.exceptions.entity.TeamNullException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "game_user")
@@ -52,7 +55,7 @@ public class GameUser implements UserDetails {
     private Team team;
 
     @OneToMany(mappedBy = "owner")
-    private List<GameChunk> capturedChunks;
+    private Set<GameChunk> capturedChunks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
@@ -61,9 +64,16 @@ public class GameUser implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id")
     )
     private List<GameUser> friends;
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "user_followers",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id")
+    )
+    protected List<GameUser> followers;
 
     @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
-    private List<GameUserSkill> userSkills;
+    private Set<GameUserSkill> userSkills;
 
 
     @Override
@@ -82,6 +92,34 @@ public class GameUser implements UserDetails {
             throw new GameUserPasswordSame();
         }
         this.password = newPassword;
+    }
+    public void followUser(GameUser user){
+        if(Objects.equals(user.getUsername(), getUsername())){
+            throw new GameUserUsernameNotUnique();
+        }
+        if(user.followers.contains(this)){
+            throw new GameUserAlreadyFollowed();
+        }
+        if(friends.contains(user)){
+            return;
+        }
+        if(followers.contains(user)){
+            followers.remove(user);
+            friends.add(user);
+            user.friends.add(this);
+        }else{
+            user.followers.add(this);
+        }
+    }
+    public void unfollowUser(GameUser user){
+        user.followers.remove(this);
+    }
+    public void removeUserFromFriends(GameUser user){
+        if(friends.contains(user)){
+            friends.remove(user);
+            user.friends.remove(this);
+            followers.add(user);
+        }
     }
     @Override
     public String getPassword() {

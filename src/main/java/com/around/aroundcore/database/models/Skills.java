@@ -4,8 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Skills {
-    WIDTH(1),
-    BOMB(2);
+    WIDTH(1);
 
     private final Integer id;
 

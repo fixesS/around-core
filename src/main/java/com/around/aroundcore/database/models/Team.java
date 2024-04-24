@@ -22,6 +22,6 @@ public class Team {
 
     @Override
     public String toString(){
-        return String.format("team_id:{}, color:{}",this.id,this.color);
+        return String.format("team_id: %d, color: %s",this.id,this.color);
     }
 }

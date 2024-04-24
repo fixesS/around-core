@@ -13,8 +13,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -26,7 +27,7 @@ public class GameUserService {
     private final SkillService skillService;
 
     public void create(GameUser user) {
-        List<GameUserSkill> gameUserSkillList = new ArrayList<>();
+        Set<GameUserSkill> gameUserSkillList = new HashSet<>();
         for (Skills skill : Skills.values()){
             GameUserSkill gameUserSkill = new GameUserSkill();
             gameUserSkill.setCurrentLevel(0);
@@ -48,6 +49,9 @@ public class GameUserService {
     }
     public GameUser findByEmail(String email) throws GameUserNullException {
         return userRepository.findByEmail(email).orElseThrow(GameUserNullException::new);
+    }
+    public GameUser findByUsername(String username) throws GameUserNullException {
+        return userRepository.findByUsername(username).orElseThrow(GameUserNullException::new);
     }
     public List<GameUser> findAll() {
         return userRepository.findAll();

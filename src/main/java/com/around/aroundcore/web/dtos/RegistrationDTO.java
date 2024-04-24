@@ -20,7 +20,7 @@ public class RegistrationDTO {
     private String password;
 
     @NotNull(message = "-3006")
-    @Min(value = 0, message = "-3007")
+    @Min(value = 1, message = "-3007")
     @Schema(example = "1")
     private Integer team_id;
     @NotBlank(message = "-3008")
