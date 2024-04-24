@@ -36,5 +36,8 @@ build/
 
 .docker/
 
+.env
+.env-test
+.env-dev
 src/main/resources/application-dev.properties
 src/main/resources/application-test.properties

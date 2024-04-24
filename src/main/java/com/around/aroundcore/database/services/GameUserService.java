@@ -13,20 +13,21 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
 @AllArgsConstructor
+@Transactional
 public class GameUserService {
 
     private final GameUserRepository userRepository;
     private final SkillService skillService;
 
-    @Transactional
     public void create(GameUser user) {
-        List<GameUserSkill> gameUserSkillList = new ArrayList<>();
+        Set<GameUserSkill> gameUserSkillList = new HashSet<>();
         for (Skills skill : Skills.values()){
             GameUserSkill gameUserSkill = new GameUserSkill();
             gameUserSkill.setCurrentLevel(0);
@@ -40,23 +41,21 @@ public class GameUserService {
         userRepository.save(user);
     }
 
-    @Transactional
     public void update(GameUser user) {
         userRepository.save(user);
     }
-    @Transactional
     public GameUser findById(Integer id) throws GameUserNullException {
         return userRepository.findById(id).orElseThrow(GameUserNullException::new);
     }
-    @Transactional
     public GameUser findByEmail(String email) throws GameUserNullException {
         return userRepository.findByEmail(email).orElseThrow(GameUserNullException::new);
     }
-    @Transactional
+    public GameUser findByUsername(String username) throws GameUserNullException {
+        return userRepository.findByUsername(username).orElseThrow(GameUserNullException::new);
+    }
     public List<GameUser> findAll() {
         return userRepository.findAll();
     }
-    @Transactional
     public boolean existByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
@@ -65,7 +64,6 @@ public class GameUserService {
             throw new GameUserEmailNotUnique();
         }
     }
-    @Transactional
     public boolean existByUsername(String username){
         return userRepository.existsByUsername(username);
     }

@@ -18,6 +18,7 @@ public class AroundConfig {
     public static final String API_V1_AUTH = API_V1+"/auth";
     public static final String API_V1_LOGIN = API_V1_AUTH+"/login";
     public static final String API_V1_REGISTRATION = API_V1_AUTH+"/registration";
+    public static final String API_V1_REFRESH= API_V1_AUTH+"/refresh";
     public static final String API_V1_RECOVERY = API_V1_AUTH+"/recovery";
     public static final String API_V1_USER = API_V1+"/user";
     public static final String API_V1_CHUNKS = API_V1+"/chunks";

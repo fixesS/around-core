@@ -1,8 +1,6 @@
 package com.around.aroundcore.web.mappers;
 
-import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.database.models.Skill;
-import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.dtos.SkillDTO;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +12,7 @@ public class SkillDTOMapper implements Function<Skill, SkillDTO> {
     @Override
     public SkillDTO apply(Skill skill) {
         return SkillDTO.builder()
+                .id(Optional.ofNullable(skill.getId()).orElse(-1000))
                 .name(Optional.ofNullable(skill.getName()).orElse(""))
                 .description(Optional.ofNullable(skill.getDescription()).orElse(""))
                 .image(Optional.ofNullable(skill.getImageName()).orElse(""))

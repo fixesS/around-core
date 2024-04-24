@@ -1,4 +1,4 @@
-version: '1'
+version: '2'
 
 services:
   rabbitmq-stomp:
@@ -7,3 +7,19 @@ services:
       - "5672:5672"
       - "15672:15672"
       - "61613:61613"
+  around_db:
+    image: postgres:16
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  migrations:
+    image: flyway/flyway:10.11.1
+    env_file:
+      - .env
+    command: -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+    volumes:
+      - ./src/main/resources/sql_versions/:/flyway/sql
+    depends_on:
+      - around_db

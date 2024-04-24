@@ -2,7 +2,6 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.RecoveryToken;
-import com.around.aroundcore.database.models.VerificationToken;
 import com.around.aroundcore.database.repositories.RecoveryTokenRepository;
 import com.around.aroundcore.security.models.Token;
 import com.around.aroundcore.security.services.JwtService;
@@ -17,11 +16,11 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class RecoveryTokenService {
     private RecoveryTokenRepository tokenRepository;
     private JwtService jwtService;
 
-    @Transactional
     public RecoveryToken createTokenWithUser(GameUser user) {
         Token token = jwtService.generateRecoveryToken(user.getEmail());
         RecoveryToken recoveryToken = RecoveryToken.builder()
@@ -37,19 +36,15 @@ public class RecoveryTokenService {
         tokenRepository.save(recoveryToken);
         return recoveryToken;
     }
-    @Transactional
     public RecoveryToken findById(Integer id) throws RecoveryTokenNullException {
         RecoveryToken recoveryToken = tokenRepository.findById(id).orElseThrow(RecoveryTokenNullException::new);
         jwtService.validateRecoveryToken(recoveryToken.getToken());
         return recoveryToken;
     }
-    @Transactional
     public RecoveryToken findByToken(String token) throws RecoveryTokenNullException {
         jwtService.validateRecoveryToken(token);
         return tokenRepository.findByToken(token).orElseThrow(RecoveryTokenNullException::new);
     }
-
-    @Transactional
     public void delete(RecoveryToken token) {
         tokenRepository.delete(token);
     }

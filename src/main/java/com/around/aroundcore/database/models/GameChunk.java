@@ -24,6 +24,6 @@ public class GameChunk {
 
     @Override
     public String toString(){
-        return String.format("chunk_id:{}",this.id);
+        return String.format("chunk_id: %s ",this.id);
     }
 }

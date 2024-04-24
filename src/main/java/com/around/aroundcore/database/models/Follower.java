@@ -8,12 +8,12 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "user_friends")
-public class Friend {
+@Table(name = "user_followers")
+public class Follower {
     @Id
     @Column(name = "user_id")
     private int user_id;
     @Id
-    @Column(name = "friend_id")
-    private int friend_id;
+    @Column(name = "follower_id")
+    private int follower_id;
 }

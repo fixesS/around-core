@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -66,6 +67,7 @@ public class RegistrationController {
             summary = "Registration",
             description = "Registration user by email and password"
     )
+    @Transactional
     public ResponseEntity<String> registration(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
         GameUser user;
         ApiResponse response;
@@ -113,6 +115,7 @@ public class RegistrationController {
             summary = "Confirming registration",
             description = "Confirming registration with token from email message"
     )
+    @Transactional
     public ResponseEntity<TokenData> registrationConfrim(HttpServletRequest request, @RequestParam("token") String token) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");//mobile-front
         String ip_address = request.getRemoteAddr();

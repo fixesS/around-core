@@ -1,7 +1,6 @@
 package com.around.aroundcore.web.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @Schema(description = "DTO for skill info")
 public class SkillDTO {
+
+    private Integer id;
     @Schema(description = "Skill name")
     private String name;
     @Schema(description = "Max level of skill")
