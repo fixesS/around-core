@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
@@ -45,5 +46,9 @@ public class AroundConfig {
     @Bean
     public H3ChunkService h3ChunkService() throws IOException {
         return new H3ChunkService(h3Core(),stringGameChunkDTOMapper());
+    }
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }
