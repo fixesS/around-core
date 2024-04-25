@@ -1,7 +1,7 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.web.dtos.timepad.TimepadEvent;
-import com.around.aroundcore.web.dtos.timepad.TimepadLocation;
+import com.around.aroundcore.web.dtos.events.timepad.TimepadEvent;
+import com.around.aroundcore.web.dtos.events.timepad.TimepadLocation;
 import com.kuliginstepan.dadata.client.DadataClient;
 import com.kuliginstepan.dadata.client.domain.Suggestion;
 import com.kuliginstepan.dadata.client.domain.address.Address;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
 import java.util.List;

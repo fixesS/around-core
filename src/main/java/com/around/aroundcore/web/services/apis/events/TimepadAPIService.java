@@ -1,6 +1,6 @@
-package com.around.aroundcore.web.services;
+package com.around.aroundcore.web.services.apis.events;
 
-import com.around.aroundcore.web.dtos.timepad.TimepadEvents;
+import com.around.aroundcore.web.dtos.events.timepad.TimepadEvents;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;

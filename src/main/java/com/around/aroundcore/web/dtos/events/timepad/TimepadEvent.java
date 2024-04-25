@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.dtos.timepad;
+package com.around.aroundcore.web.dtos.events.timepad;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

@@ -1,9 +1,9 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.web.dtos.timepad.TimepadEvent;
-import com.around.aroundcore.web.dtos.timepad.TimepadEvents;
-import com.around.aroundcore.web.dtos.timepad.TimepadLocation;
-import com.around.aroundcore.web.services.TimepadAPIService;
+import com.around.aroundcore.web.dtos.events.timepad.TimepadEvent;
+import com.around.aroundcore.web.dtos.events.timepad.TimepadEvents;
+import com.around.aroundcore.web.dtos.events.timepad.TimepadLocation;
+import com.around.aroundcore.web.services.apis.events.TimepadAPIService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
