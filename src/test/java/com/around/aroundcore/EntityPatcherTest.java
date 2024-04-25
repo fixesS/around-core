@@ -21,13 +21,13 @@ import java.lang.reflect.InvocationTargetException;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class EntityPatcherTest {
+class EntityPatcherTest {
 
     @Autowired
     private EntityPatcher patcher;
 
     @Test
-    public void patchFieldsFromDtoToEntity1() throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+    void patchFieldsFromDtoToEntity1() throws IntrospectionException, InvocationTargetException, IllegalAccessException {
         Team team = new Team();
         GameUser gameUser = new GameUser();
         gameUser.setTeam(team);
@@ -49,7 +49,7 @@ public class EntityPatcherTest {
         log.info(gameUser.toString());
     }
     @Test
-    public void patchFieldsFromDtoToEntity2() throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+    void patchFieldsFromDtoToEntity2() throws IntrospectionException, InvocationTargetException, IllegalAccessException {
         Team team = new Team();
         GameUser gameUser = new GameUser();
         gameUser.setTeam(team);
@@ -70,7 +70,7 @@ public class EntityPatcherTest {
         log.info(gameUser.toString());
     }
     @Test
-    public void patchFieldsFromDtoToEntity3() throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+    void patchFieldsFromDtoToEntity3() throws IntrospectionException, InvocationTargetException, IllegalAccessException {
         Team team = new Team();
         GameUser gameUser = new GameUser();
         gameUser.setTeam(team);
@@ -92,7 +92,7 @@ public class EntityPatcherTest {
         log.info(gameUser.toString());
     }
     @Test
-    public void patchFieldsFromDtoToEntity4() throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+    void patchFieldsFromDtoToEntity4() throws IntrospectionException, InvocationTargetException, IllegalAccessException {
         Team team = new Team();
         GameUser gameUser = new GameUser();
         gameUser.setTeam(team);

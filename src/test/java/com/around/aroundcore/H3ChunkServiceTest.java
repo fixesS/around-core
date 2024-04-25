@@ -19,12 +19,12 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class H3ChunkServiceTest {
+class H3ChunkServiceTest {
     @Autowired
     H3ChunkService h3ChunkService;
 
     @Test
-    public void getChunksWithSkillLevels(){
+    void getChunksWithSkillLevels(){
         String chunkId = "8b10dc93422efff";
         List<String> exceptedNeighbours = new ArrayList<>();
         exceptedNeighbours.add(chunkId);
@@ -44,7 +44,7 @@ public class H3ChunkServiceTest {
     }
 
     @Test
-    public void getCellByLATLon(){
+    void getCellByLATLon(){
         Double lat = 56.8308147;
         Double lon = 60.6216886;
         List<ChunkDTO> chunkDTO = h3ChunkService.getChunkByLatLon(lat,lon,2);
