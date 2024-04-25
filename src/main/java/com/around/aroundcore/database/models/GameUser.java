@@ -55,7 +55,7 @@ public class GameUser implements UserDetails {
     private Team team;
 
     @OneToMany(mappedBy = "owner")
-    private Set<GameChunk> capturedChunks;
+    private List<GameChunk> capturedChunks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
