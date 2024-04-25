@@ -3,11 +3,13 @@ package com.around.aroundcore.database.models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
+
 
 @Entity
 @Table(name = "user_skills")
 @Data
-public class GameUserSkill {
+public class GameUserSkill implements Serializable {
 
     @EmbeddedId
     private GameUserSkillEmbedded gameUserSkillEmbedded;

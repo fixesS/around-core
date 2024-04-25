@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class GameUserService {
     private final SkillService skillService;
 
     public void create(GameUser user) {
-        Set<GameUserSkill> gameUserSkillList = new HashSet<>();
+        List<GameUserSkill> gameUserSkillList = new ArrayList<>();
         for (Skills skill : Skills.values()){
             GameUserSkill gameUserSkill = new GameUserSkill();
             gameUserSkill.setCurrentLevel(0);

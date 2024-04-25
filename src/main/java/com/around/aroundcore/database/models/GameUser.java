@@ -70,10 +70,10 @@ public class GameUser implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id")
     )
-    protected List<GameUser> followers;
+    private List<GameUser> followers;
 
     @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
-    private Set<GameUserSkill> userSkills;
+    private List<GameUserSkill> userSkills;
 
 
     @Override
