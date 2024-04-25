@@ -1,13 +1,14 @@
 package com.around.aroundcore.web.dtos.timepad;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import java.util.Date;
 import java.util.List;
 
 @Data
+@Builder
 @AllArgsConstructor
 public class TimepadEvent {
     private Integer id;

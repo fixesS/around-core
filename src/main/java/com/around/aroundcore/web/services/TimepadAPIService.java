@@ -1,11 +1,8 @@
 package com.around.aroundcore.web.services;
 
-import com.around.aroundcore.web.dtos.timepad.TimepadEvent;
 import com.around.aroundcore.web.dtos.timepad.TimepadEvents;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
