@@ -22,18 +22,20 @@ public class DadataAPIService extends CoordsAPI{
 
     @Override
     public Double[] getCoordsForLocation(Location location) throws CoordsNotFoundException{
-        Address addressObj = getAddress(location.toString());
+        Address addressObj = getAddress(location.toStringWithoutCountry());
         Double[] coords = new Double[2];
         if(addressObj != null && (addressObj.getGeoLat()!=null && addressObj.getGeoLon()!=null)){
                 coords[0] = addressObj.getGeoLat();
                 coords[1] = addressObj.getGeoLon();
                 return coords;
         }
+        log.error("Coords not found in location :{}", location.toString());
         throw new CoordsNotFoundException();
     }
     public Address getAddress(String addressAsString){
         List<Suggestion<Address>> addresses = dadataClient.suggestAddress(AddressRequestBuilder.create(addressAsString).build()).collectList().block();
-        if(addresses == null || addresses.get(0) == null){
+        if(addresses == null || addresses.isEmpty() ||addresses.get(0) == null){
+            log.error(addresses.toString());
             return null;
         }
         return addresses.get(0).getData();

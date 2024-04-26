@@ -1,8 +1,11 @@
 package com.around.aroundcore.web.services.apis.events;
 
 import com.around.aroundcore.web.dtos.events.timepad.TimepadEvents;
+import com.around.aroundcore.web.exceptions.api.EventsNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +20,18 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class TimepadAPIService {
+    @Value("${timepad.api.token}")
+    private String token;
+    @Value("${timepad.api.url}")
+    private String mainUrl;
     RestTemplate restTemplate;
 
-    public TimepadEvents getEventsForCity(Integer number, String city, String token, String mainUrl){
+    public TimepadAPIService(RestTemplate restTemplate){
+        this.restTemplate = restTemplate;
+    }
+
+    public TimepadEvents getEventsForCity(Integer number, String city) throws EventsNotFoundException{
         if(number<1){
             number =1;
         }
@@ -50,9 +60,10 @@ public class TimepadAPIService {
                 .toUriString();
         ResponseEntity<TimepadEvents> response = restTemplate.exchange(urlTemplate, HttpMethod.GET,entity, TimepadEvents.class,variables);
         if(response.getStatusCode().is2xxSuccessful()){
-            return response.getBody();
-        }else{
-            throw new RuntimeException();
+            if(response.getBody()!=null && response.getBody().getValues()!= null && !response.getBody().getValues().isEmpty()){
+                return response.getBody();
+            }
         }
+        throw new EventsNotFoundException();
     }
 }
