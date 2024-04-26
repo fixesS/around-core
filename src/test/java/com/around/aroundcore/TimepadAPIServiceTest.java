@@ -28,13 +28,9 @@ import java.util.stream.Stream;
 class TimepadAPIServiceTest {
     @Autowired
     TimepadAPIService timepadAPIService;
-    @Value("${timepad.api.token}")
-    private String token;
-    @Value("${timepad.api.url}")
-    private String mainUrl;
     @Test
     void getOneEventInEKB(){
-        TimepadEvents timepadEvents = timepadAPIService.getEventsForCity(20,"Екатеринбург", token, mainUrl);
+        TimepadEvents timepadEvents = timepadAPIService.getEventsForCity(20,"Екатеринбург");
         List<TimepadEvent> events = timepadEvents.getValues();
         log.info(events.toString());
         for(TimepadEvent event : events){

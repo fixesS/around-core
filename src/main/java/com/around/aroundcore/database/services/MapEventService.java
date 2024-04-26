@@ -1,6 +1,7 @@
 package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.MapEvent;
+import com.around.aroundcore.database.repositories.CategoryRepository;
 import com.around.aroundcore.database.repositories.MapEventRepository;
 import com.around.aroundcore.web.exceptions.entity.MapEventNullException;
 import jakarta.transaction.Transactional;
@@ -18,6 +19,15 @@ public class MapEventService {
     public void create(MapEvent event){
         mapEventRepository.save(event);
     }
+    public void createAndFlush(MapEvent event){
+        mapEventRepository.saveAndFlush(event);
+    }
+    public void createAll(List<MapEvent> events){
+        mapEventRepository.saveAll(events);
+    }
+    public void createAllAndFlush(List<MapEvent> events){
+        mapEventRepository.saveAllAndFlush(events);
+    }
     public void update(MapEvent event){
         mapEventRepository.save(event);
     }
@@ -26,5 +36,11 @@ public class MapEventService {
     }
     public List<MapEvent> findAll(){
         return mapEventRepository.findAll();
+    }
+    public List<MapEvent> findAllVerified(){
+        return mapEventRepository.findAllByVerified(true);
+    }
+    public boolean existByUrl(String url){
+        return mapEventRepository.existsByUrl(url);
     }
 }
