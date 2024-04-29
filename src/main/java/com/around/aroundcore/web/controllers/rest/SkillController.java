@@ -1,14 +1,11 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.database.models.Skill;
 import com.around.aroundcore.database.services.SkillService;
-import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.dtos.SkillDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.exceptions.entity.GameChunkNullException;
 import com.around.aroundcore.web.exceptions.entity.SkillNullException;
 import com.around.aroundcore.web.mappers.SkillDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;

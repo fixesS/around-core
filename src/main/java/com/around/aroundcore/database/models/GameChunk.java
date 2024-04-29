@@ -6,13 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "game_chunk")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class GameChunk {
+public class GameChunk implements Serializable {
 
     @Id
     @Column

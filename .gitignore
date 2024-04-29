@@ -41,3 +41,6 @@ build/
 .env-dev
 src/main/resources/application-dev.properties
 src/main/resources/application-test.properties
+src/main/resources/application-testcoordsbase.properties
+src/main/resources/application-testdadata.properties
+src/main/resources/application-testgeotree.properties

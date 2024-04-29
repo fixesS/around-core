@@ -5,14 +5,17 @@ import com.around.aroundcore.web.exceptions.entity.GameUserPasswordSame;
 import com.around.aroundcore.web.exceptions.entity.GameUserUsernameNotUnique;
 import com.around.aroundcore.web.exceptions.entity.TeamNullException;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "game_user")
@@ -55,7 +58,7 @@ public class GameUser implements UserDetails {
     private Team team;
 
     @OneToMany(mappedBy = "owner")
-    private Set<GameChunk> capturedChunks;
+    private List<GameChunk> capturedChunks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
@@ -70,10 +73,18 @@ public class GameUser implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id")
     )
-    protected List<GameUser> followers;
+    private List<GameUser> followers;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name="map_events_game_user",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
+    )
+    private List<MapEvent> visitedEvents;
 
     @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
-    private Set<GameUserSkill> userSkills;
+    private List<GameUserSkill> userSkills;
 
 
     @Override
@@ -120,6 +131,9 @@ public class GameUser implements UserDetails {
             user.friends.remove(this);
             followers.add(user);
         }
+    }
+    public void addVisitedEvents(List<MapEvent> events){
+        visitedEvents.addAll(events);
     }
     @Override
     public String getPassword() {

@@ -2,8 +2,8 @@ package com.around.aroundcore.web.interceptors;
 
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.security.services.JwtService;
+import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;

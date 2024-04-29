@@ -4,7 +4,9 @@ import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.Skill;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.web.dtos.*;
+import com.around.aroundcore.web.dtos.GameUserDTO;
+import com.around.aroundcore.web.dtos.SkillDTO;
+import com.around.aroundcore.web.dtos.UpdateGameUserDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.entity.*;
@@ -12,6 +14,7 @@ import com.around.aroundcore.web.mappers.GameUserDTOMapper;
 import com.around.aroundcore.web.mappers.SkillDTOMapper;
 import com.around.aroundcore.web.services.EntityPatcher;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
@@ -182,9 +185,9 @@ public class GameUserController {
             if(updateGameUserDTO.getUsername()!=null){
                 userService.checkUsername(updateGameUserDTO.getUsername());
             }
-            if(updateGameUserDTO.getEmail()!=null){
-                userService.checkEmail(updateGameUserDTO.getUsername());
-            }
+//            if(updateGameUserDTO.getEmail()!=null){
+//                userService.checkEmail(updateGameUserDTO.getUsername());
+//            }
             patcher.patch(user,updateGameUserDTO);
             userService.update(user);
             gameUserDTO = gameUserDTOMapper.apply(user);
@@ -210,17 +213,17 @@ public class GameUserController {
             default -> throw new ApiException(response);
         }
     }
-    @GetMapping("/{username}")
+    @GetMapping("/{id}")
     @Operation(
-            summary = "Gives all info about user by username",
-            description = "Allows to get all info about user by username."
+            summary = "Gives all info about user by uid",
+            description = "Allows to get all info about user by id."
     )
-    public ResponseEntity<GameUserDTO> getUserByIUsername(@PathVariable String username){
+    public ResponseEntity<GameUserDTO> getUserByIUsername(@PathVariable Integer id){
         ApiResponse response;
         GameUserDTO gameUserDTO = null;
 
         try {
-            var user = userService.findByUsername(username);
+            var user = userService.findById(id);
             gameUserDTO = gameUserDTOMapper.apply(user);
             response = ApiResponse.OK;
         }  catch (GameUserNullException e) {
@@ -235,17 +238,17 @@ public class GameUserController {
             default -> throw new ApiException(response);
         }
     }
-    @GetMapping("{username}/friends")
+    @GetMapping("{id}/friends")
     @Operation(
-            summary = "Gives friends of user my username",
-            description = "Allows get info about all friends of user."
+            summary = "Gives friends of user by id",
+            description = "Allows get info about all friends of user by id."
     )
-    public ResponseEntity<List<GameUserDTO>> getUserFriendsByUsername(@PathVariable String username) {
+    public ResponseEntity<List<GameUserDTO>> getUserFriendsById(@PathVariable Integer id) {
         ApiResponse response;
         List<GameUserDTO> friends = null;
 
         try {
-            var user = userService.findByUsername(username);
+            var user = userService.findById(id);
             friends = user.getFriends().stream().map(gameUserDTOMapper).toList();
             response = ApiResponse.OK;
         } catch (GameUserNullException e) {
@@ -260,17 +263,17 @@ public class GameUserController {
             default -> throw new ApiException(response);
         }
     }
-    @GetMapping("/{username}/followers")
+    @GetMapping("/{id}/followers")
     @Operation(
-            summary = "Gives friends",
-            description = "Allows get info about all friends of user."
+            summary = "Gives friends of user by id",
+            description = "Allows get info about all friends of user by id."
     )
-    public ResponseEntity<List<GameUserDTO>> getUserFollowersByUsername(@PathVariable String username) {
+    public ResponseEntity<List<GameUserDTO>> getUserFollowersById(@PathVariable Integer id) {
         ApiResponse response;
         List<GameUserDTO> followers = null;
 
         try {
-            var user = userService.findByUsername(username);
+            var user = userService.findById(id);
             followers = user.getFollowers().stream().map(gameUserDTOMapper).toList();
             response = ApiResponse.OK;
         } catch (GameUserNullException e) {
@@ -291,14 +294,14 @@ public class GameUserController {
             description = "Allows to follow user by it's username. If user have already followed you, you will be friends."
     )
     @Transactional
-    public ResponseEntity<String> postMeFollowUser(@RequestParam("username") String username){
+    public ResponseEntity<String> postMeFollowUser(@RequestParam("id") Integer id){
         ApiResponse response;
 
         try {
             var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             var session = sessionService.findByUuid(sessionUuid);
             var user = session.getUser();
-            var userToFollow = userService.findByUsername(username);
+            var userToFollow = userService.findById(id);
             user.followUser(userToFollow);
             userService.update(user);
             userService.update(userToFollow);
@@ -326,7 +329,7 @@ public class GameUserController {
             description = "Allows to unfollow user by it's username. Does nothing if user and you are friends. Unfollow you from user, if you was it's follower."
     )
     @Transactional
-    public ResponseEntity<String> postMeUnfollowUser(@RequestParam("username") String username){
+    public ResponseEntity<String> postMeUnfollowUser(@RequestParam("follower_id") @Schema(description = "follower id") Integer followerId){
         ApiResponse response;
 
         try {
@@ -334,7 +337,7 @@ public class GameUserController {
             var session = sessionService.findByUuid(sessionUuid);
             var user = session.getUser();
 
-            var userToUnfollow = userService.findByUsername(username);
+            var userToUnfollow = userService.findById(followerId);
             user.unfollowUser(userToUnfollow);
             userService.update(user);
             userService.update(userToUnfollow);
@@ -356,7 +359,7 @@ public class GameUserController {
             description = "Allows to remove user from your friends by it's username. User becomes your follower."
     )
     @Transactional
-    public ResponseEntity<String> postMeRemoveFriend(@RequestParam("username") String username){
+    public ResponseEntity<String> postMeRemoveFriend(@RequestParam("friend_id") @Schema(description = "friend id") Integer friendId){
         ApiResponse response;
 
         try {
@@ -364,10 +367,10 @@ public class GameUserController {
             var session = sessionService.findByUuid(sessionUuid);
             var user = session.getUser();
 
-            var userToRemove = userService.findByUsername(username);
-            user.removeUserFromFriends(userToRemove);
+            var friendToRemove = userService.findById(friendId);
+            user.removeUserFromFriends(friendToRemove);
             userService.update(user);
-            userService.update(userToRemove);
+            userService.update(friendToRemove);
             response = ApiResponse.OK;
         }  catch (GameUserNullException e) {
             response = ApiResponse.USER_DOES_NOT_EXIST;

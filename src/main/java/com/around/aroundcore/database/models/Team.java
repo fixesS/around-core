@@ -2,12 +2,14 @@ package com.around.aroundcore.database.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "team")
 @Data
-public class Team {
+public class Team implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
