@@ -1,5 +1,6 @@
 package com.around.aroundcore;
 
+import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.services.H3ChunkService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -18,12 +19,12 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class H3ChunkServiceTest {
+class H3ChunkServiceTest {
     @Autowired
     H3ChunkService h3ChunkService;
 
     @Test
-    public void getChunksWithSkillLevels(){
+    void getChunksWithSkillLevels(){
         String chunkId = "8b10dc93422efff";
         List<String> exceptedNeighbours = new ArrayList<>();
         exceptedNeighbours.add(chunkId);
@@ -40,5 +41,14 @@ public class H3ChunkServiceTest {
         Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillWithLevel(chunkId,5));
         exceptedNeighbours.add("8b10dc934221fff");
         Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillWithLevel(chunkId,6));
+    }
+
+    @Test
+    void getCellByLATLon(){
+        Double lat = 56.8308147;
+        Double lon = 60.6216886;
+        List<ChunkDTO> chunkDTO = h3ChunkService.getChunkByLatLon(lat,lon,2);
+        log.info(chunkDTO.toString());
+        Assertions.assertNotNull(chunkDTO);
     }
 }

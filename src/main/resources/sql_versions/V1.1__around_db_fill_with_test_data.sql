@@ -49,3 +49,7 @@ VALUES('width', 11, ''::character varying, ''::character varying, 0, 0);
 INSERT INTO public.user_skills
 (user_id, skill_id, current_level)
 VALUES(1, 1, 0);
+
+INSERT INTO public.event_providers
+(id, name, url)
+VALUES (0,'timepad','dev.timepad.ru')

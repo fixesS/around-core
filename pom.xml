@@ -133,6 +133,19 @@
 			<artifactId>h3</artifactId>
 			<version>4.1.1</version>
 		</dependency>
+		<!-- DADATA -->
+		<dependency>
+			<groupId>com.github.kuliginstepan</groupId>
+			<artifactId>dadata-client</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<!-- APACHE HTTPCLIENTS -->
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>5.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
