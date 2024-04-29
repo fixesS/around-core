@@ -6,6 +6,7 @@ import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.security.services.GameUserDetailsServiceImpl;
 import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
 import com.around.aroundcore.security.services.JwtService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +53,7 @@ public class JwtConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManager() {
         var authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
