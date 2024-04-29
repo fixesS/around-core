@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @Schema(description = "DTO for user info")
 public class GameUserDTO {
+
+    private Integer id;
     private String username;
     private String email;
     private String city;
