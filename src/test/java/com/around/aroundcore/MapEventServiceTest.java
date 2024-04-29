@@ -1,6 +1,6 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.web.services.MapEventCreationService;
+import com.around.aroundcore.database.services.MapEventService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,20 +10,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-
 @Slf4j
 @ActiveProfiles("testdadata")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MapEventCreationServiceTest {
+class MapEventServiceTest {
     @Autowired
-    MapEventCreationService mapEventCreationService;
-
+    MapEventService mapEventService;
     @Test
-    void testCreateEvents(){
-        mapEventCreationService.create();
+    void testCreateEventsFromAPI(){
+        mapEventService.createFromEventAPI();
         Assertions.assertTrue(true);
     }
 }

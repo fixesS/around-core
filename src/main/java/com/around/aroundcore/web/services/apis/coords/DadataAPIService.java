@@ -29,7 +29,7 @@ public class DadataAPIService extends CoordsAPI{
                 coords[1] = addressObj.getGeoLon();
                 return coords;
         }
-        log.error("Coords not found in location :{}", location.toString());
+        log.error("Coords not found in location :{}", location.toStringWithoutCountry());
         throw new CoordsNotFoundException();
     }
     public Address getAddress(String addressAsString){

@@ -92,7 +92,7 @@ public class MapEventParsingService {
                 mapEvents.add(mapEvent);
             }catch (EventProviderNullException | CoordsNotFoundException | EventsNotFoundException |
                     LocationNullException e){
-                log.info("Error during parsing events :{}",e.getClass().getName());
+                log.error("Error during parsing events :{}",e.getClass().getName());
             }
         }
         return mapEvents;

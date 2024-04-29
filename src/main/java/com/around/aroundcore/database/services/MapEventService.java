@@ -1,34 +1,36 @@
 package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.MapEvent;
-import com.around.aroundcore.database.repositories.CategoryRepository;
 import com.around.aroundcore.database.repositories.MapEventRepository;
 import com.around.aroundcore.web.exceptions.entity.MapEventNullException;
+import com.around.aroundcore.web.services.MapEventParsingService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 @Transactional
 public class MapEventService {
     private final MapEventRepository mapEventRepository;
-
-    public void create(MapEvent event){
+    private final MapEventParsingService mapEventParsingService;
+    private void create(MapEvent event){
         mapEventRepository.save(event);
     }
-    public void createAndFlush(MapEvent event){
+    private void createAndFlush(MapEvent event){
         mapEventRepository.saveAndFlush(event);
     }
-    public void createAll(List<MapEvent> events){
+    private void createAll(List<MapEvent> events){
         mapEventRepository.saveAll(events);
     }
-    public void createAllAndFlush(List<MapEvent> events){
+    private void createAllAndFlush(List<MapEvent> events){
         mapEventRepository.saveAllAndFlush(events);
     }
-    public void update(MapEvent event){
+    private void update(MapEvent event){
         mapEventRepository.save(event);
     }
     public MapEvent findById(Integer id){
@@ -42,5 +44,12 @@ public class MapEventService {
     }
     public boolean existByUrl(String url){
         return mapEventRepository.existsByUrl(url);
+    }
+
+    @Transactional
+    public void createFromEventAPI(){
+        List<MapEvent> events = mapEventParsingService.parseEvents();
+        log.debug("Creating {} events",events.size());
+        createAllAndFlush(events);
     }
 }
