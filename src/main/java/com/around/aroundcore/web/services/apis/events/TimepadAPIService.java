@@ -2,8 +2,6 @@ package com.around.aroundcore.web.services.apis.events;
 
 import com.around.aroundcore.web.dtos.events.timepad.TimepadEvents;
 import com.around.aroundcore.web.exceptions.api.EventsNotFoundException;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

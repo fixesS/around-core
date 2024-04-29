@@ -5,8 +5,6 @@ import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.chunk.WrongChunkResolution;
 import com.around.aroundcore.web.mappers.StringGameChunkDTOMapper;
 import com.uber.h3core.H3Core;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 

@@ -5,7 +5,6 @@ import com.around.aroundcore.web.dtos.coords.geotree.GeotreeAddress;
 import com.around.aroundcore.web.dtos.coords.geotree.GeotreeCoords;
 import com.around.aroundcore.web.enums.CoordsAPIType;
 import com.around.aroundcore.web.exceptions.api.CoordsNotFoundException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -15,7 +14,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class GeotreeAPIService extends CoordsAPI{

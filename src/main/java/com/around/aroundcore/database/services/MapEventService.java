@@ -1,7 +1,6 @@
 package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.MapEvent;
-import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.repositories.MapEventRepository;
 import com.around.aroundcore.web.exceptions.entity.MapEventNullException;
 import com.around.aroundcore.web.services.MapEventParsingService;

@@ -1,8 +1,5 @@
 package com.around.aroundcore.web.exceptions.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class EntityNullException extends EntityException{
 
     public EntityNullException() {

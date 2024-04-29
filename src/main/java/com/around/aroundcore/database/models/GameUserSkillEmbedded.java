@@ -1,8 +1,8 @@
 package com.around.aroundcore.database.models;
 
 import jakarta.persistence.*;
-import lombok.*;
-
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 

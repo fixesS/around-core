@@ -1,8 +1,8 @@
 package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.GameUserSkillEmbedded;
 import com.around.aroundcore.database.models.GameUserSkill;
+import com.around.aroundcore.database.models.GameUserSkillEmbedded;
 import com.around.aroundcore.database.models.Skills;
 import com.around.aroundcore.database.repositories.GameUserRepository;
 import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;
@@ -14,9 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j

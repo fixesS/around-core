@@ -1,10 +1,10 @@
 package com.around.aroundcore.web.controllers.rest;
 
+import com.around.aroundcore.web.dtos.ApiError;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
-import com.around.aroundcore.web.dtos.ApiError;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;

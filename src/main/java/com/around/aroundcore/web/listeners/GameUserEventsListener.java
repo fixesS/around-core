@@ -6,17 +6,13 @@ import com.around.aroundcore.database.models.RecoveryToken;
 import com.around.aroundcore.database.models.VerificationToken;
 import com.around.aroundcore.database.services.RecoveryTokenService;
 import com.around.aroundcore.database.services.VerificationTokenService;
-import com.around.aroundcore.web.events.OnPasswordRecoveryEvent;
 import com.around.aroundcore.web.events.OnEmailVerificationEvent;
+import com.around.aroundcore.web.events.OnPasswordRecoveryEvent;
 import com.around.aroundcore.web.services.EmailQueueService;
-import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
 @Component

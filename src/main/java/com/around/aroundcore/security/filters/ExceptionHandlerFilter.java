@@ -1,7 +1,6 @@
 package com.around.aroundcore.security.filters;
 
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
-import com.around.aroundcore.web.exceptions.entity.EntityException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
