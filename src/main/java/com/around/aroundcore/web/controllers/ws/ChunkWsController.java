@@ -1,19 +1,16 @@
 package com.around.aroundcore.web.controllers.ws;
 
-import com.around.aroundcore.database.models.GameChunk;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.GameUserSkill;
-import com.around.aroundcore.database.models.Skills;
-import com.around.aroundcore.database.services.GameChunkService;
-import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.database.services.SkillService;
+import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.entity.SkillNullException;
+import com.around.aroundcore.web.mappers.GameChunkMapper;
 import com.around.aroundcore.web.services.ChunkQueueService;
 import com.around.aroundcore.web.services.H3ChunkService;
 import com.around.aroundcore.web.tasks.ChunkEventTask;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +34,8 @@ public class ChunkWsController {
     private final ChunkQueueService chunkQueueService;
     private final GameChunkService gameChunkService;
     private final SessionService sessionService;
-    private final SkillService skillService;
+    private final MapEventService mapEventService;
+    private GameUserService userService;
     private final ChunkEventTask chunkEventTask;
     private final H3ChunkService h3ChunkService;
     public static final String CHUNK_CHANGES_FROM_USER = "/topic/chunk.changes";
@@ -61,6 +60,7 @@ public class ChunkWsController {
     }
 
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
+    @Transactional
     public void handleChunkChanges(@Payload ChunkDTO chunkDTO, Principal principal){
         GameUser user;
         GameUserSkill userWidthSkill;
@@ -85,7 +85,22 @@ public class ChunkWsController {
         // getting neighbours for width userskill level
         List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill);
 
-        gameChunkService.saveListOfChunkDTOs(chunksDTOList, user);
+
+        gameChunkService.saveListOfChunkDTOs(chunksDTOList, user);// adding
+
+        //getting user visited events from verified events on map
+        List<MapEvent> visitedEvents = new ArrayList<>();
+        List<MapEvent> eventsOnMap = mapEventService.findAllVerified();
+        log.info(eventsOnMap.toString());
+        eventsOnMap.forEach(event -> {
+            if (!user.getVisitedEvents().contains(event) &&
+                    event.getChunks().contains(gameChunkService.findById(chunkDTO.getId()))){
+                visitedEvents.add(event);
+            }
+        });
+
+        user.addVisitedEvents(visitedEvents);
+        userService.update(user);
 
         chunkQueueService.addToQueue(chunksDTOList);
     }

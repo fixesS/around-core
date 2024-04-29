@@ -72,6 +72,14 @@ public class GameUser implements UserDetails {
     )
     protected List<GameUser> followers;
 
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name="map_events_game_user",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
+    )
+    private List<MapEvent> visitedEvents;
+
     @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
     private Set<GameUserSkill> userSkills;
 
@@ -120,6 +128,9 @@ public class GameUser implements UserDetails {
             user.friends.remove(this);
             followers.add(user);
         }
+    }
+    public void addVisitedEvents(List<MapEvent> events){
+        visitedEvents.addAll(events);
     }
     @Override
     public String getPassword() {

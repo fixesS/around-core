@@ -160,3 +160,11 @@ CREATE TABLE public.map_events_game_chunk (
 );
 ALTER TABLE public.map_events_game_chunk ADD CONSTRAINT map_events_game_chunk_event_fk FOREIGN KEY (event_id) REFERENCES public.map_events(id);
 ALTER TABLE public.map_events_game_chunk ADD CONSTRAINT map_events_game_chunk_chunk_fk FOREIGN KEY (chunk_id) REFERENCES public.game_chunk(id);
+
+CREATE TABLE public.map_events_game_user (
+    event_id int8 NOT NULL,
+    user_id int8 NOT NULL,
+    CONSTRAINT map_events_game_user_pk PRIMARY KEY (event_id,user_id)
+);
+ALTER TABLE public.map_events_game_user ADD CONSTRAINT map_events_game_user_event_fk FOREIGN KEY (event_id) REFERENCES public.map_events(id);
+ALTER TABLE public.map_events_game_user ADD CONSTRAINT map_events_game_user_user_fk FOREIGN KEY (user_id) REFERENCES public.game_user(id);
