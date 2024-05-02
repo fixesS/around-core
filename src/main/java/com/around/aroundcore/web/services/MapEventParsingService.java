@@ -10,6 +10,7 @@ import com.around.aroundcore.web.dtos.events.timepad.TimepadEvent;
 import com.around.aroundcore.web.dtos.events.timepad.TimepadEvents;
 import com.around.aroundcore.web.dtos.events.timepad.TimepadLocation;
 import com.around.aroundcore.web.enums.CityEnum;
+import com.around.aroundcore.web.enums.EventProvidersEnum;
 import com.around.aroundcore.web.exceptions.api.CoordsNotFoundException;
 import com.around.aroundcore.web.exceptions.api.EventsNotFoundException;
 import com.around.aroundcore.web.exceptions.api.LocationNullException;

@@ -1,6 +1,7 @@
 package com.around.aroundcore.web.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,9 @@ public class SkillDTO {
     private String name;
     @Schema(description = "Max level of skill")
     private Integer max_level;
+    @Nullable
+    @Schema(description = "Current level of skill for user. Shows if you get info about user's skills")
+    private Integer current_level;
     @Schema(description = "Rule of skill by level(index in array)")
     private List<Integer> rule;
     @Schema(description = "Cost of skill by level(index in array)")

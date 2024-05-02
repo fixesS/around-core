@@ -1,9 +1,6 @@
 package com.around.aroundcore.database.models;
 
-import com.around.aroundcore.web.exceptions.entity.GameUserAlreadyFollowed;
-import com.around.aroundcore.web.exceptions.entity.GameUserPasswordSame;
-import com.around.aroundcore.web.exceptions.entity.GameUserUsernameNotUnique;
-import com.around.aroundcore.web.exceptions.entity.TeamNullException;
+import com.around.aroundcore.web.exceptions.entity.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -91,7 +88,9 @@ public class GameUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
-
+    public void addSkillToUserSkillList(GameUserSkill gameUserSkill){
+        userSkills.add(gameUserSkill);
+    }
     public Team  getTeam(){
         if(this.team == null){
             throw new TeamNullException();
@@ -134,6 +133,16 @@ public class GameUser implements UserDetails {
     }
     public void addVisitedEvents(List<MapEvent> events){
         visitedEvents.addAll(events);
+    }
+    public void addCoins(Integer value){
+        coins+=value;
+    }
+    public void reduceCoins(Integer value){
+        if(coins-value>=0){
+            coins-=value;
+        }else{
+            throw new GameUserNotEnoughCoins();
+        }
     }
     @Override
     public String getPassword() {

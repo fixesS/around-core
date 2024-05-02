@@ -1,7 +1,6 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.Skill;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.web.dtos.GameUserDTO;
@@ -11,7 +10,7 @@ import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.entity.*;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
-import com.around.aroundcore.web.mappers.SkillDTOMapper;
+import com.around.aroundcore.web.mappers.SkillDTOWithCurrentLevelMapper;
 import com.around.aroundcore.web.services.EntityPatcher;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,7 +39,7 @@ public class GameUserController {
     private final SessionService sessionService;
     private final GameUserService userService;
     private final GameUserDTOMapper gameUserDTOMapper;
-    private final SkillDTOMapper skillDTOMapper;
+    private final SkillDTOWithCurrentLevelMapper skillDTOMapper;
     private final EntityPatcher patcher;
 
     @GetMapping("/me")
@@ -147,8 +146,7 @@ public class GameUserController {
             var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             var session = sessionService.findByUuid(sessionUuid);
             var user = session.getUser();
-            List<Skill> skills = user.getUserSkills().stream().map(gameUserSkill -> gameUserSkill.getGameUserSkillEmbedded().getSkill()).toList();
-            skillDTOS = skills.stream().map(skillDTOMapper).toList();
+            skillDTOS = user.getUserSkills().stream().map(skillDTOMapper).toList();
             response = ApiResponse.OK;
         } catch (SessionNullException e) {
             response = ApiResponse.SESSION_DOES_NOT_EXIST;
@@ -342,7 +340,7 @@ public class GameUserController {
             userService.update(user);
             userService.update(userToUnfollow);
             response = ApiResponse.OK;
-        }  catch (GameUserNullException e) {
+        } catch (GameUserNullException e) {
             response = ApiResponse.USER_DOES_NOT_EXIST;
             log.error(e.getMessage());
         }
