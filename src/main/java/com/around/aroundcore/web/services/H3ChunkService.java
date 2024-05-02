@@ -1,6 +1,7 @@
 package com.around.aroundcore.web.services;
 
 import com.around.aroundcore.database.models.GameUserSkill;
+import com.around.aroundcore.database.models.Skill;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.chunk.WrongChunkResolution;
 import com.around.aroundcore.web.mappers.StringGameChunkDTOMapper;
@@ -27,23 +28,24 @@ public class H3ChunkService {
      * 5 - top
      * 6 - left-top
     */
-    public List<String> getNeighboursForSkillWithLevel(String chunkId, int level){
+    public List<String> getNeighboursForSkillRuleValue(String chunkId, int value){
         if(h3Core.getResolution(chunkId) != resolution){
             throw new WrongChunkResolution();
         }
-        level++;
         int radius = 2;
-        if(level > 18){
+        if(value > 18){
             radius+=1;
         }
         List<String> neighbours = h3Core.gridDisk(chunkId, radius);
-        while (level < neighbours.size()) {
-            neighbours.remove(level);
+        while (value < neighbours.size()) {
+            neighbours.remove(value);
         }
         return neighbours;
     }
     public List<ChunkDTO> getChunksForWidthSkill(String chunkId, GameUserSkill userSkill){
-        List<String> neighbours = getNeighboursForSkillWithLevel(chunkId, userSkill.getCurrentLevel());
+        Skill skill = userSkill.getGameUserSkillEmbedded().getSkill();
+        Integer skillRuleValue = skill.getRule().getValue().get(userSkill.getCurrentLevel());
+        List<String> neighbours = getNeighboursForSkillRuleValue(chunkId, skillRuleValue);
         List<ChunkDTO> chunkDTOList = neighbours.stream().map(stringGameChunkDTOMapper).toList();
         chunkDTOList.forEach(chunkDTO -> chunkDTO.setTeam_id(userSkill.getGameUserSkillEmbedded().getGameUser().getTeam().getId()));
         return chunkDTOList;

@@ -1,15 +1,11 @@
 package com.around.aroundcore.web.controllers.ws;
 
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.GameUserSkill;
-import com.around.aroundcore.database.models.MapEvent;
-import com.around.aroundcore.database.models.Skills;
-import com.around.aroundcore.database.services.GameChunkService;
-import com.around.aroundcore.database.services.GameUserService;
-import com.around.aroundcore.database.services.MapEventService;
-import com.around.aroundcore.database.services.SessionService;
+import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.dtos.ChunkDTO;
+import com.around.aroundcore.web.enums.Skills;
+import com.around.aroundcore.web.exceptions.entity.GameUserSkillsNullException;
 import com.around.aroundcore.web.exceptions.entity.SkillNullException;
 import com.around.aroundcore.web.services.ChunkQueueService;
 import com.around.aroundcore.web.services.H3ChunkService;
@@ -28,6 +24,7 @@ import java.security.Principal;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -81,15 +78,15 @@ public class ChunkWsController {
         }
 
         try{// getting width userskill
-            userWidthSkill = user.getUserSkills().stream().filter(gameUserSkill -> gameUserSkill.getSkillId().equals(Skills.WIDTH.getId()))
-                    .findAny().orElseThrow(SkillNullException::new);
-        }catch (SkillNullException e){
+            userWidthSkill = user.getUserSkills().stream()
+                    .filter(gameUserSkill -> Objects.equals(gameUserSkill.getGameUserSkillEmbedded().getSkill().getId(), Skills.WIDTH.getId()))
+                    .findFirst().orElseThrow(GameUserSkillsNullException::new);
+        }catch (SkillNullException | GameUserSkillsNullException e){
             log.error(e.getMessage());
             return;
         }
         // getting neighbours for width userskill level
         List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill);
-
 
         gameChunkService.saveListOfChunkDTOs(chunksDTOList, user);// adding
 
@@ -109,5 +106,4 @@ public class ChunkWsController {
 
         chunkQueueService.addToQueue(chunksDTOList);
     }
-
 }
