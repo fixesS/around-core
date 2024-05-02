@@ -28,19 +28,19 @@ class H3ChunkServiceTest {
         String chunkId = "8b10dc93422efff";
         List<String> exceptedNeighbours = new ArrayList<>();
         exceptedNeighbours.add(chunkId);
-        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillWithLevel(chunkId,0));
+        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillRuleValue(chunkId,0));
         exceptedNeighbours.add("8b10dc934223fff");
-        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillWithLevel(chunkId,1));
+        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillRuleValue(chunkId,1));
         exceptedNeighbours.add("8b10dc934205fff");
-        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillWithLevel(chunkId,2));
+        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillRuleValue(chunkId,2));
         exceptedNeighbours.add("8b10dc93422afff");
-        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillWithLevel(chunkId,3));
+        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillRuleValue(chunkId,3));
         exceptedNeighbours.add("8b10dc934228fff");
-        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillWithLevel(chunkId,4));
+        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillRuleValue(chunkId,4));
         exceptedNeighbours.add("8b10dc93422cfff");
-        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillWithLevel(chunkId,5));
+        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillRuleValue(chunkId,5));
         exceptedNeighbours.add("8b10dc934221fff");
-        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillWithLevel(chunkId,6));
+        Assertions.assertEquals(exceptedNeighbours,h3ChunkService.getNeighboursForSkillRuleValue(chunkId,6));
     }
 
     @Test

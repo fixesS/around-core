@@ -1,4 +1,4 @@
-package com.around.aroundcore.database.models;
+package com.around.aroundcore.web.enums;
 
 import lombok.Getter;
 

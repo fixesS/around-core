@@ -3,7 +3,7 @@ package com.around.aroundcore.database.services;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.GameUserSkill;
 import com.around.aroundcore.database.models.GameUserSkillEmbedded;
-import com.around.aroundcore.database.models.Skills;
+import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.database.repositories.GameUserRepository;
 import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;
 import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
