@@ -1,7 +1,10 @@
 package com.around.aroundcore.web.dtos;
 
+import com.around.aroundcore.annotations.NotRead;
+import com.around.aroundcore.annotations.SubObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,4 +30,10 @@ public class UpdateGameUserDTO {
     @Size(min=1,message = "-3008")
     @Schema(example = "Yekaterinburg")
     private String city;
+
+    @Nullable
+    @Min(value = 1, message = "-3007")
+    @Schema(example = "1")
+    @NotRead
+    private Integer team_id;
 }
