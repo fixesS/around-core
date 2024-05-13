@@ -24,5 +24,10 @@ public class TeamService {
     public boolean existById(Integer id){
         return teamRepository.existsById(id);
     }
+    public void checkById(Integer id){
+        if(!existById(id)){
+            throw new TeamNullException();
+        }
+    }
 
 }

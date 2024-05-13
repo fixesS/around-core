@@ -24,7 +24,7 @@ public enum ApiResponse {
     AUTH_INCORRECT_USERNAME_FORMAT(-3004,"Username cannot be empty."),
     AUTH_INCORRECT_USERNAME_SIZE(-3005,"Username length must be more than 2."),
     AUTH_INCORRECT_TEAM_ID_NULL(-3006,"Team id cannot be empty."),
-    AUTH_INCORRECT_TEAM_ID_FORMAT(-3007,"Team id cannot be less than 0."),
+    AUTH_INCORRECT_TEAM_ID_FORMAT(-3007,"Team id cannot be less than 1."),
     AUTH_INCORRECT_CITY_FORMAT(-3008,"City cannot be empty."),
     AUTH_INCORRECT_TYPE_OF_FIELD(-3009,"Incorrect type of field."),
     INVALID_TOKEN(-4001, "Token is invalid."),

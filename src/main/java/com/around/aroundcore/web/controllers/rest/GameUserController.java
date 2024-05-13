@@ -3,6 +3,7 @@ package com.around.aroundcore.web.controllers.rest;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.SessionService;
+import com.around.aroundcore.database.services.TeamService;
 import com.around.aroundcore.web.dtos.GameUserDTO;
 import com.around.aroundcore.web.dtos.SkillDTO;
 import com.around.aroundcore.web.dtos.UpdateGameUserDTO;
@@ -39,6 +40,7 @@ public class GameUserController {
     private final SessionService sessionService;
     private final GameUserService userService;
     private final GameUserDTOMapper gameUserDTOMapper;
+    private final TeamService teamService;
     private final SkillDTOWithCurrentLevelMapper skillDTOMapper;
     private final EntityPatcher patcher;
 
@@ -183,6 +185,10 @@ public class GameUserController {
             if(updateGameUserDTO.getUsername()!=null){
                 userService.checkUsername(updateGameUserDTO.getUsername());
             }
+            if(updateGameUserDTO.getTeam_id()!=null){
+                var team = teamService.findById(updateGameUserDTO.getTeam_id());
+                user.setTeam(team);
+            }
 //            if(updateGameUserDTO.getEmail()!=null){
 //                userService.checkEmail(updateGameUserDTO.getUsername());
 //            }
@@ -190,8 +196,11 @@ public class GameUserController {
             userService.update(user);
             gameUserDTO = gameUserDTOMapper.apply(user);
             response = ApiResponse.OK;
-        }  catch (GameUserNullException e) {
+        } catch (GameUserNullException e) {
             response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        } catch (TeamNullException e) {
+            response = ApiResponse.TEAM_DOES_NOT_EXIST;
             log.error(e.getMessage());
         }catch (GameUserUsernameNotUnique e) {
             response = ApiResponse.USER_NOT_UNIQUE_USERNAME;

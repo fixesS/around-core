@@ -23,7 +23,7 @@ public class GameUserEventsListener {
     private VerificationTokenService verificationTokenServiceService;
     private RecoveryTokenService recoveryTokenService;
 
-    private final String HOME = "localhost:8080";
+    private final String HOME = "http://localhost:8080/";
 
 
     @EventListener
@@ -33,9 +33,9 @@ public class GameUserEventsListener {
 
         String recipientAddress = user.getEmail();
         String subject = "Confirm your email address.";
-        String link  = HOME+AroundConfig.API_V1_REGISTRATION + "/confirm?token=" + token.getToken()
-                ;
+        String link  = HOME+AroundConfig.API_V1_REGISTRATION + "/confirm?token=" + token.getToken();
 
+        log.info(link);
         Context context = new Context();
         context.setVariable("link",link);
 
@@ -53,7 +53,7 @@ public class GameUserEventsListener {
 
         String recipientAddress = user.getEmail();
         String subject = "Password recovery.";
-        String link  = "http://" +HOME+AroundConfig.API_V1_RECOVERY + "/resetPassword?token=" + token.getToken();
+        String link  = HOME+AroundConfig.API_V1_RECOVERY + "/resetPassword?token=" + token.getToken();
 
         Context context = new Context();
         context.setVariable("link",link);
