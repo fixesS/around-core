@@ -30,7 +30,7 @@ public enum ApiResponse {
     INVALID_TOKEN(-4001, "Token is invalid."),
     REFRESH_TOKEN_ALREADY_USED(-4002,"Refresh token already has been used."),
     VERIFIED_TOKEN_EXPIRED(-4003,"VerifiedToken is invalid"),
-    RECOVERY_TOKEN_EXPIRED(-4004,"VerifiedToken is invalid"),
+    RECOVERY_TOKEN_EXPIRED(-4004,"RecoveryToken is invalid"),
     SESSION_DOES_NOT_EXIST(-5001,"Session does not exist."),
     SESSION_EXPIRED(-5002,"Session is expired."),
     CHUNK_DOES_NOT_EXIST(-6001,"Chunk you trying get does not exist or has not been captured by any user."),

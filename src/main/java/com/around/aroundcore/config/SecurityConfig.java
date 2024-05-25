@@ -1,6 +1,7 @@
 package com.around.aroundcore.config;
 
 import com.around.aroundcore.database.models.Role;
+import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
 import com.around.aroundcore.security.filters.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +48,7 @@ public class SecurityConfig {
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(jwtConfig.authenticationManager())
                 .addFilterBefore(new JwtFilter(jwtConfig.jwtService(), jwtConfig.sessionService), BasicAuthenticationFilter.class)
-                .addFilterBefore(jwtConfig.exceptionHandlerFilter(), JwtFilter.class)
+                .addFilterBefore(new ExceptionHandlerFilter(jwtConfig.resolver), JwtFilter.class)
         ;
         return http.build();
     }
