@@ -35,7 +35,7 @@ public class GameUserEventsListener {
         String subject = "Confirm your email address.";
         String link  = HOME+AroundConfig.API_V1_REGISTRATION + "/confirm?token=" + token.getToken();
 
-        log.info(link);
+        //log.info(link);
         Context context = new Context();
         context.setVariable("link",link);
 

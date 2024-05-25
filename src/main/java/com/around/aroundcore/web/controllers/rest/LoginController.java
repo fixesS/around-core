@@ -35,11 +35,9 @@ import java.net.UnknownHostException;
 @RequestMapping(AroundConfig.API_V1_LOGIN)
 @Tag(name="Login controller", description="Handles login requests")
 public class LoginController {
-    private AuthService authService;
-
-    private GameUserService userService;
-
-    private AuthenticationManager authenticationManager;
+    private final AuthService authService;
+    private final GameUserService userService;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping
     @Operation(

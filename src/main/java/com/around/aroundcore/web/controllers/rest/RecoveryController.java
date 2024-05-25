@@ -49,7 +49,7 @@ public class RecoveryController {
 
     @PostConstruct
     public void executeSendingEmails(){
-        Duration duration = Duration.of(30, TimeUnit.SECONDS.toChronoUnit());
+        Duration duration = Duration.of(10, TimeUnit.MINUTES.toChronoUnit());
         taskScheduler.scheduleWithFixedDelay(checkTokensTask, duration);
     }
     @PostMapping("/forgotPassword")
@@ -64,12 +64,22 @@ public class RecoveryController {
 
         try {
             user = userService.findByEmail(forgotPasswordDTO.getEmail());
-            eventPublisher.publishEvent(new OnPasswordRecoveryEvent(user));
+            if(Boolean.FALSE.equals(user.getVerified())){
+                response = ApiResponse.USER_IS_NOT_VERIFIED;
+            }else{
+                eventPublisher.publishEvent(new OnPasswordRecoveryEvent(user));
+            }
         }catch (GameUserNullException e){
+            response = ApiResponse.USER_DOES_NOT_EXIST;
             log.debug(e.getMessage());
         }
-        //The response is always OK so as not to transfer information about an existing email to intruders
-        return new ResponseEntity<>(response.getMessage(), response.getStatus());
+
+        switch (response){
+            case OK -> {
+                return new ResponseEntity<>(response.getMessage(), response.getStatus());
+            }
+            default -> throw new ApiException(response);
+        }
     }
     @PostMapping("/resetPassword")
     @Operation(
