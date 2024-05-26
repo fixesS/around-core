@@ -298,6 +298,34 @@ public class GameUserController {
             default -> throw new ApiException(response);
         }
     }
+    @GetMapping("/{id}/skills")
+    @Operation(
+            summary = "Gives skills of user",
+            description = "Allows get info about all friends of user."
+    )
+    public ResponseEntity<List<SkillDTO>> getUserSkillsById(@PathVariable Integer id) {
+        ApiResponse response;
+        List<SkillDTO> skillDTOS = null;
+
+        try {
+            var user = userService.findById(id);
+            skillDTOS = user.getUserSkills().stream().map(skillDTOMapper).toList();
+            response = ApiResponse.OK;
+        } catch (GameUserNullException e) {
+            response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        } catch (SkillNullException e){
+            response = ApiResponse.SKILL_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        }
+
+        switch (response) {
+            case OK -> {
+                return new ResponseEntity<>(skillDTOS,response.getStatus());
+            }
+            default -> throw new ApiException(response);
+        }
+    }
     @PatchMapping("me/followee")
     @Operation(
             summary = "Follow user",

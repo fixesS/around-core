@@ -23,7 +23,7 @@ public class RabbitConfig {
     private String SPRING_RABBITMQ_PASSWORD;
     @Bean
     public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(SPRING_RABBITMQ_HOST,SPRING_RABBITMQ_PORT);
+        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(SPRING_RABBITMQ_HOST,5672);
         cachingConnectionFactory.setUsername(SPRING_RABBITMQ_USERNAME);
         cachingConnectionFactory.setPassword(SPRING_RABBITMQ_PASSWORD);
         return cachingConnectionFactory;

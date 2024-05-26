@@ -33,7 +33,7 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/v2/api-docs/**",
             "/swagger-resources/**",
-            AroundConfig.API_V1_AUTH+"/**"
+            AroundConfig.API_V1_AUTH+"/**",
     };
 
     @Bean
@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/**").hasAuthority(Role.USER.name())
                         .requestMatchers("/ws/**").hasAuthority(Role.USER.name())
+                        .requestMatchers("/actuator/health").hasAuthority(Role.USER.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

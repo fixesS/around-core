@@ -3,7 +3,6 @@ package com.around.aroundcore.web.controllers.rest;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.database.services.GameChunkService;
-import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
@@ -30,7 +29,6 @@ import java.util.List;
 @Tag(name="Game Chunk  Controller", description="Controller to get info about controllers")
 @SecurityRequirement(name = "JWT")
 public class GameChunkController {
-    private final SessionService sessionService;
     private final GameChunkService gameChunkService;
     private final GameChunkDTOMapper gameChunkDTOMapper;
 
