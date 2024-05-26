@@ -23,3 +23,14 @@ services:
       - ./src/main/resources/sql_versions/:/flyway/sql
     depends_on:
       - around_db
+
+  around-core:
+    image: around-core-image:1.0.0
+    ports:
+      - "8080:8080"
+      - "587:587"
+    env_file:
+      - .env
+    depends_on:
+      - around_db
+      - rabbitmq-stomp

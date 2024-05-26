@@ -46,14 +46,13 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(AroundConfig.API_V1_REGISTRATION)
 @Tag(name="Registration controller", description="Handles registration requests")
 public class RegistrationController {
-    private PasswordEncoder passwordEncoder;
-    private AuthService authService;
-    private GameUserService userService;
-    private TeamService teamService;
-    private VerificationTokenService verificationTokenService;
-    private ApplicationEventPublisher eventPublisher;
-    private ThreadPoolTaskScheduler taskScheduler;
-    private EmailSendingTask emailSendingTask;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
+    private final GameUserService userService;
+    private final TeamService teamService;
+    private final VerificationTokenService verificationTokenService;
+    private final ThreadPoolTaskScheduler taskScheduler;
+    private final EmailSendingTask emailSendingTask;
 
     @PostConstruct
     public void executeSendingEmails(){
@@ -67,9 +66,12 @@ public class RegistrationController {
             description = "Registration user by email and password"
     )
     @Transactional
-    public ResponseEntity<String> registration(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
-        GameUser user;
+    public ResponseEntity<TokenData> registration(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
+        String userAgent = request.getHeader("User-Agent");//mobile-front
+        String ip_address = request.getRemoteAddr();
+        GameUser user = null;
         ApiResponse response;
+
         try {
             userService.checkEmail(registrationDTO.getEmail());
             userService.checkUsername(registrationDTO.getUsername());
@@ -88,7 +90,6 @@ public class RegistrationController {
                     .build();
 
             userService.create(user);
-            eventPublisher.publishEvent(new OnEmailVerificationEvent(user));
             response = ApiResponse.OK;
 
         } catch (GameUserEmailNotUnique e) {
@@ -104,20 +105,19 @@ public class RegistrationController {
 
         switch (response){
             case OK -> {
-                return new ResponseEntity<>(response.getMessage(), response.getStatus());
+                TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip_address));
+                return new ResponseEntity<>(tokenData, response.getStatus());
             }
             default -> throw new ApiException(response);
         }
     }
-    @GetMapping("/confirm")
+    @PostMapping("/confirm")
     @Operation(
             summary = "Confirming registration",
             description = "Confirming registration with token from email message"
     )
     @Transactional
-    public ResponseEntity<TokenData> registrationConfrim(HttpServletRequest request, @RequestParam("token") String token) throws UnknownHostException {
-        String userAgent = request.getHeader("User-Agent");//mobile-front
-        String ip_address = request.getRemoteAddr();
+    public ResponseEntity<String> registrationConfrim(@RequestParam("token") String token) {
         ApiResponse response;
         VerificationToken verificationToken;
         GameUser user = null;
@@ -142,8 +142,7 @@ public class RegistrationController {
 
         switch (response){
             case OK -> {
-                TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip_address));
-                return new ResponseEntity<>(tokenData, response.getStatus());
+                return new ResponseEntity<>("", response.getStatus());
             }
             default -> throw new ApiException(response);
         }

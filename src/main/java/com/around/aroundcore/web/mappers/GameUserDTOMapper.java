@@ -14,6 +14,7 @@ public class GameUserDTOMapper implements Function<GameUser, GameUserDTO> {
     public GameUserDTO apply(GameUser user) {
         return GameUserDTO.builder()
                 .id(Optional.ofNullable(user.getId()).orElse(-1000))
+                .verified(user.getVerified())
                 .email(Optional.ofNullable(user.getEmail()).orElse(""))
                 .username(Optional.ofNullable(user.getUsername()).orElse(""))
                 .city(Optional.ofNullable(user.getCity()).orElse(""))

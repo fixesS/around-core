@@ -42,10 +42,10 @@ public class JwtConfig {
 //    public JwtFilter jwtAuthenticationFilter(){
 //        return new JwtFilter(jwtService(),sessionService);
 //    }
-    @Bean
-    public ExceptionHandlerFilter exceptionHandlerFilter(){
-        return new ExceptionHandlerFilter(resolver);
-    }
+//    @Bean
+//    public ExceptionHandlerFilter exceptionHandlerFilter(){
+//        return new ExceptionHandlerFilter(resolver);
+//    }
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

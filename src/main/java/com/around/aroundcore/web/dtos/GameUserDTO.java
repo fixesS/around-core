@@ -21,5 +21,7 @@ public class GameUserDTO {
     private Integer team_id;
     private Integer level;
     private Integer coins;
+    @Schema(description = "Is user email verified")
+    private Boolean verified;
 }
 

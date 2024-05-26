@@ -89,12 +89,7 @@ public class JwtFilter extends OncePerRequestFilter {
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(session,session.getUser());
         Date iat = claims.getIssuedAt();
         if(!iat.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().isAfter(session.getLastRefresh())){
-            if(session.getUser().getVerified()){
-                authentication.setAuthenticated(true);
-            }else{
-                log.debug("User is not verified");
-                throw new ApiException(ApiResponse.USER_IS_NOT_VERIFIED);
-            }
+            authentication.setAuthenticated(true);
         }else{
             log.debug("Session expired");
             throw new ApiException(ApiResponse.SESSION_EXPIRED);

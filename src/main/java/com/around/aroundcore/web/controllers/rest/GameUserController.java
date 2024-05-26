@@ -8,6 +8,7 @@ import com.around.aroundcore.web.dtos.GameUserDTO;
 import com.around.aroundcore.web.dtos.SkillDTO;
 import com.around.aroundcore.web.dtos.UpdateGameUserDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
+import com.around.aroundcore.web.events.OnEmailVerificationEvent;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.entity.*;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
@@ -20,6 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -43,6 +45,7 @@ public class GameUserController {
     private final TeamService teamService;
     private final SkillDTOWithCurrentLevelMapper skillDTOMapper;
     private final EntityPatcher patcher;
+    private final ApplicationEventPublisher eventPublisher;
 
     @GetMapping("/me")
     @Operation(
@@ -77,7 +80,7 @@ public class GameUserController {
   
     @GetMapping("/me/friends")
     @Operation(
-            summary = "Gives friends",
+            summary = "Gives friends of user",
             description = "Allows get info about all friends of user."
     )
     public ResponseEntity<List<GameUserDTO>> getMyFriends() {
@@ -107,7 +110,7 @@ public class GameUserController {
     }
     @GetMapping("/me/followers")
     @Operation(
-            summary = "Gives friends",
+            summary = "Gives followers of user",
             description = "Allows get info about all friends of user."
     )
     public ResponseEntity<List<GameUserDTO>> getMyFollowers() {
@@ -137,7 +140,7 @@ public class GameUserController {
     }
     @GetMapping("/me/skills")
     @Operation(
-            summary = "Gives friends",
+            summary = "Gives skills of user",
             description = "Allows get info about all friends of user."
     )
     public ResponseEntity<List<SkillDTO>> getMySkills() {
@@ -272,7 +275,7 @@ public class GameUserController {
     }
     @GetMapping("/{id}/followers")
     @Operation(
-            summary = "Gives friends of user by id",
+            summary = "Gives followers of user by id",
             description = "Allows get info about all friends of user by id."
     )
     public ResponseEntity<List<GameUserDTO>> getUserFollowersById(@PathVariable Integer id) {
@@ -295,13 +298,41 @@ public class GameUserController {
             default -> throw new ApiException(response);
         }
     }
-    @PostMapping("me/followUser")
+    @GetMapping("/{id}/skills")
     @Operation(
-            summary = "follow user",
+            summary = "Gives skills of user",
+            description = "Allows get info about all friends of user."
+    )
+    public ResponseEntity<List<SkillDTO>> getUserSkillsById(@PathVariable Integer id) {
+        ApiResponse response;
+        List<SkillDTO> skillDTOS = null;
+
+        try {
+            var user = userService.findById(id);
+            skillDTOS = user.getUserSkills().stream().map(skillDTOMapper).toList();
+            response = ApiResponse.OK;
+        } catch (GameUserNullException e) {
+            response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        } catch (SkillNullException e){
+            response = ApiResponse.SKILL_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        }
+
+        switch (response) {
+            case OK -> {
+                return new ResponseEntity<>(skillDTOS,response.getStatus());
+            }
+            default -> throw new ApiException(response);
+        }
+    }
+    @PatchMapping("me/followee")
+    @Operation(
+            summary = "Follow user",
             description = "Allows to follow user by it's username. If user have already followed you, you will be friends."
     )
     @Transactional
-    public ResponseEntity<String> postMeFollowUser(@RequestParam("id") Integer id){
+    public ResponseEntity<String> patchMyFollowee(@RequestParam("id") Integer id){
         ApiResponse response;
 
         try {
@@ -330,13 +361,13 @@ public class GameUserController {
             default -> throw new ApiException(response);
         }
     }
-    @PostMapping("me/unfollowUser")
+    @DeleteMapping("me/followee")
     @Operation(
             summary = "unfollow user",
             description = "Allows to unfollow user by it's username. Does nothing if user and you are friends. Unfollow you from user, if you was it's follower."
     )
     @Transactional
-    public ResponseEntity<String> postMeUnfollowUser(@RequestParam("follower_id") @Schema(description = "follower id") Integer followerId){
+    public ResponseEntity<String> deleteMyFollower(@RequestParam("follower_id") @Schema(description = "follower id") Integer followerId){
         ApiResponse response;
 
         try {
@@ -360,13 +391,13 @@ public class GameUserController {
             default -> throw new ApiException(response);
         }
     }
-    @PostMapping("me/removeFriend")
+    @DeleteMapping("me/friend")
     @Operation(
-            summary = "unfollow user",
+            summary = "'unfriend' user",
             description = "Allows to remove user from your friends by it's username. User becomes your follower."
     )
     @Transactional
-    public ResponseEntity<String> postMeRemoveFriend(@RequestParam("friend_id") @Schema(description = "friend id") Integer friendId){
+    public ResponseEntity<String> deleteMyFriend(@RequestParam("friend_id") @Schema(description = "friend id") Integer friendId){
         ApiResponse response;
 
         try {
@@ -380,6 +411,32 @@ public class GameUserController {
             userService.update(friendToRemove);
             response = ApiResponse.OK;
         }  catch (GameUserNullException e) {
+            response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        }
+        switch (response) {
+            case OK -> {
+                return new ResponseEntity<>("",response.getStatus());
+            }
+            default -> throw new ApiException(response);
+        }
+    }
+    @PostMapping("me/verify")
+    @Operation(
+            summary = "Verifying email",
+            description = "Allows to verifiy user email."
+    )
+    public ResponseEntity<String> verifyMe(){
+        ApiResponse response;
+
+        try{
+            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            var session = sessionService.findByUuid(sessionUuid);
+            var user = session.getUser();
+
+            eventPublisher.publishEvent(new OnEmailVerificationEvent(user));
+            response = ApiResponse.OK;
+        }catch (GameUserNullException e) {
             response = ApiResponse.USER_DOES_NOT_EXIST;
             log.error(e.getMessage());
         }
