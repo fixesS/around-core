@@ -1,7 +1,6 @@
 package com.around.aroundcore.web.enums;
 
 import com.around.aroundcore.web.dtos.ApiError;
-import com.around.aroundcore.web.dtos.ApiOk;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -74,15 +73,6 @@ public enum ApiResponse {
             }
         }
         return ApiResponse.UNKNOWN_ERROR;
-    }
-    @Deprecated(forRemoval = true)
-    public static <T> ApiOk<T> getApiOk(Integer statusCode, String message, T data){
-        ApiOk<T> apiOk = new ApiOk<>();
-        apiOk.setStatus(statusCode);
-        apiOk.setMessage(message);
-        apiOk.setData(data);
-
-        return apiOk;
     }
     public static ApiError getApiError(Integer statusCode, String message){
         ApiError apiError = new ApiError();
