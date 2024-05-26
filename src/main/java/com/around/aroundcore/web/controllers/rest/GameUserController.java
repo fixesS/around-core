@@ -228,7 +228,7 @@ public class GameUserController {
             summary = "Gives all info about user by uid",
             description = "Allows to get all info about user by id."
     )
-    public ResponseEntity<GameUserDTO> getUserByIUsername(@PathVariable Integer id){
+    public ResponseEntity<GameUserDTO> getUserById(@PathVariable Integer id){
         ApiResponse response;
         GameUserDTO gameUserDTO = null;
 
@@ -322,6 +322,31 @@ public class GameUserController {
         switch (response) {
             case OK -> {
                 return new ResponseEntity<>(skillDTOS,response.getStatus());
+            }
+            default -> throw new ApiException(response);
+        }
+    }
+    @PostMapping("/find")
+    @Operation(
+            summary = "Gives all info about user by uid",
+            description = "Allows to get all info about user by id."
+    )
+    public ResponseEntity<GameUserDTO> getUserByUsername(@RequestParam("username") String username){
+        ApiResponse response;
+        GameUserDTO gameUserDTO = null;
+
+        try {
+            var user = userService.findByUsername(username);
+            gameUserDTO = gameUserDTOMapper.apply(user);
+            response = ApiResponse.OK;
+        }  catch (GameUserNullException e) {
+            response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        }
+
+        switch (response) {
+            case OK -> {
+                return new ResponseEntity<>(gameUserDTO,response.getStatus());
             }
             default -> throw new ApiException(response);
         }
