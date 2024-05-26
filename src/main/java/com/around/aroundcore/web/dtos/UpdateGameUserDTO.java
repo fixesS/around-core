@@ -2,9 +2,11 @@ package com.around.aroundcore.web.dtos;
 
 import com.around.aroundcore.annotations.NotRead;
 import com.around.aroundcore.annotations.SubObject;
+import com.around.aroundcore.config.AroundConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Schema(description = "DTO for update user info")
 public class UpdateGameUserDTO {
     @Nullable
-    @Size(min = 3, message = "-3005")
+    @Pattern(regexp = AroundConfig.USERNAME_REGEX, message = "-3005")
     private String username;
 
 //    @Nullable

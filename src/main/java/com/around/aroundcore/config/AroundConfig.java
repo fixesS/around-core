@@ -39,6 +39,9 @@ public class AroundConfig {
     public static final String API_V1_CHUNKS = API_V1+"/chunks";
     public static final String API_V1_STATISTIC = API_V1+"/stat";
     public static final String API_V1_SKILLS = API_V1+"/skills";
+    public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.])[a-zA-Z\\d!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.]{8,100}$";
+    public static final String EMAIL_REGEX = "^[\\w-]+@([\\w-]+\\.)+[\\w-]+";
+    public static final String USERNAME_REGEX = "[a-zA-Z0-9]+";
     @Value("${around.coordsapi}")
     private String coordsAPIType;
     @Value("${geotree.api.key}")
