@@ -72,4 +72,10 @@ public class GameUserService {
             throw new GameUserUsernameNotUnique();
         }
     }
+    public List<GameUser> getTop5(){
+        return userRepository.getStatTop5();
+    }
+    public List<GameUser> getTopAll(){
+        return userRepository.getStatTopAll();
+    }
 }
