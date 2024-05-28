@@ -81,6 +81,12 @@ public class GameUser implements UserDetails {
     public void addSkillToUserSkillList(GameUserSkill gameUserSkill){
         userSkills.add(gameUserSkill);
     }
+    public void setCity(String s){
+        this.city = Objects.requireNonNullElse(s, "Екатеринбург");
+    }
+    public void setAvatar(String s){
+        this.avatar = Objects.requireNonNullElse(s, "1");
+    }
     public Team  getTeam(){
         if(this.team == null){
             throw new TeamNullException();

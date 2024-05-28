@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Schema(description = "DTO for update user info")
 public class UpdateGameUserDTO {
     @Nullable
+    @Size(min=1,message = "-3005")
     @Pattern(regexp = AroundConfig.USERNAME_REGEX, message = "-3005")
     private String username;
 
@@ -31,7 +32,7 @@ public class UpdateGameUserDTO {
 //    private String email;
 
     @Nullable
-    @NotBlank(message = "-3010")
+    @Size(min=1,message = "-3010")
     @Schema(example = "1")
     private String avatar;
     @Nullable
