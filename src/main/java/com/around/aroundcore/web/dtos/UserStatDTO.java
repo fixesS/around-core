@@ -10,9 +10,11 @@ import lombok.Data;
 @Builder
 @Schema(description = "DTO for user stat info")
 public class UserStatDTO {
-    @Schema(description = "user id")
     @Nullable
+    @Schema(description = "user id")
     private Integer id;
+    private String username;
+    private String avatar;
     @Schema(description = "number of captured chunks")
     private Integer number;
 }

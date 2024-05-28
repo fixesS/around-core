@@ -10,8 +10,8 @@ VALUES('PURPLE');
 INSERT INTO public.team (color)
 VALUES('DARK_PURPLE');
 
-INSERT INTO public.game_user ("level", coins, username, team_id, city, "password", "role", email, verified)
-VALUES(1, 0, 'username', 1, 'Yekaterinburg', '$2a$10$yatZBPQE4uvwPoRSwN/8ZuyJXpBY8HTOGlknkfB4dTbfNlREA4UsS',
+INSERT INTO public.game_user ("level", coins, username, avatar, team_id, city, "password", "role", email, verified)
+VALUES(1, 0, 'username','1', 1, 'Yekaterinburg', '$2a$10$yatZBPQE4uvwPoRSwN/8ZuyJXpBY8HTOGlknkfB4dTbfNlREA4UsS',
        'USER', 'mikefixeloqq@gmail.com', true);
 
 INSERT INTO public."cost"

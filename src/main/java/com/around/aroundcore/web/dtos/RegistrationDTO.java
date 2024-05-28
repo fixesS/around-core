@@ -11,6 +11,9 @@ public class RegistrationDTO {
     @NotBlank(message = "-3004")
     @Pattern(regexp = AroundConfig.USERNAME_REGEX, message = "-3005")
     private String username;
+    @NotBlank(message = "-3010")
+    @Schema(example = "1")
+    private String avatar;
     @Pattern(regexp = AroundConfig.EMAIL_REGEX ,message = "-3002")
     @NotBlank(message = "-3002")
     @Schema(description = "Email aka login", example = "email@example.com")

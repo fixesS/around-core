@@ -10,6 +10,7 @@ import lombok.Data;
 public class TeamStatDTO {
     @Schema(description = "team id")
     private Integer id;
+    private String color;
     @Schema(description = "number of captured chunks")
     private Integer number;
 }

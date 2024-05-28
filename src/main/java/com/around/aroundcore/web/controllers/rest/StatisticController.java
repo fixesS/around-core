@@ -17,6 +17,7 @@ import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import com.around.aroundcore.web.exceptions.entity.TeamNullException;
 import com.around.aroundcore.web.mappers.GameChunkDTOMapper;
+import com.around.aroundcore.web.mappers.UserStatDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -45,6 +46,7 @@ public class    StatisticController {
     private final SessionService sessionService;
     private final GameUserService userService;
     private final TeamService teamService;
+    private final UserStatDTOMapper userStatDTOMapper;
 
     @GetMapping("/me/friends")
     @Operation(
@@ -59,12 +61,8 @@ public class    StatisticController {
             UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             var session = sessionService.findByUuid(sessionUuid);
             var user = session.getUser();
-            for(GameUser friend : user.getFriends()){
-                userStatDTOS.add(UserStatDTO.builder()
-                                .id(friend.getId())
-                                .number(friend.getCapturedChunks().size())
-                                .build());
-            }
+            userStatDTOS = user.getFriends().stream().map(userStatDTOMapper).toList();
+
             response = ApiResponse.OK;
         }catch (SessionNullException e) {
             response = ApiResponse.SESSION_DOES_NOT_EXIST;
@@ -100,6 +98,7 @@ public class    StatisticController {
                 team.getMembers().forEach(member -> numOfChunks.set(numOfChunks.get() + member.getCapturedChunks().size()));
                 teamStatDTOS.add(TeamStatDTO.builder()
                         .id(team.getId())
+                        .color(team.getColor())
                         .number(numOfChunks.get())
                         .build());
             }
@@ -120,6 +119,41 @@ public class    StatisticController {
             default -> throw new ApiException(response);
         }
     }
+    @GetMapping("/team/{id}")
+    @Operation(
+            summary = "Gives stat of team by id.",
+            description = "Allows to get stat of team by id."
+    )
+    public ResponseEntity<TeamStatDTO> getTeamChunksById(@PathVariable @Parameter(description = "team id", example = "1") Integer id) {
+        ApiResponse response;
+        TeamStatDTO teamStatDTO = null;
+
+        try {
+            Team team = teamService.findById(id);
+            AtomicReference<Integer> numOfChunks = new AtomicReference<>(0);
+            team.getMembers().forEach(member -> numOfChunks.set(numOfChunks.get() + member.getCapturedChunks().size()));
+            teamStatDTO = TeamStatDTO.builder()
+                    .id(team.getId())
+                    .color(team.getColor())
+                    .number(numOfChunks.get())
+                    .build();
+
+            response = ApiResponse.OK;
+        } catch (SessionNullException e) {
+            response = ApiResponse.SESSION_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        } catch (TeamNullException e) {
+            response = ApiResponse.TEAM_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        }
+
+        switch (response) {
+            case OK -> {
+                return new ResponseEntity<>(teamStatDTO, response.getStatus());
+            }
+            default -> throw new ApiException(response);
+        }
+    }
     @GetMapping("/me")
     @Operation(
             summary = "Gives all my stat.",
@@ -133,9 +167,7 @@ public class    StatisticController {
             UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             var session = sessionService.findByUuid(sessionUuid);
             var user = session.getUser();
-            userStatDTO = UserStatDTO.builder()
-                    .number(user.getCapturedChunks().size())
-                    .build();
+            userStatDTO = userStatDTOMapper.apply(user);
 
             response = ApiResponse.OK;
         } catch (SessionNullException e) {
@@ -164,11 +196,7 @@ public class    StatisticController {
 
         try {
             List<GameUser> topUsers = userService.getTopAll();
-            topUsers.forEach(user -> userStatDTOS.add(UserStatDTO.builder()
-                            .id(user.getId())
-                            .number(user.getCapturedChunks().size())
-                    .build())
-            );
+            userStatDTOS = topUsers.stream().map(userStatDTOMapper).toList();
 
             response = ApiResponse.OK;
         } catch (SessionNullException e) {
