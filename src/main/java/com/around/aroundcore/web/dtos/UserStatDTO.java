@@ -13,6 +13,8 @@ public class UserStatDTO {
     @Nullable
     @Schema(description = "user id")
     private Integer id;
+    private Integer team_id;
+    private Integer level;
     private String username;
     private String avatar;
     @Schema(description = "number of captured chunks")

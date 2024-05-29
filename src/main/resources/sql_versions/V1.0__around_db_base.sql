@@ -49,6 +49,7 @@ CREATE TABLE public.skill (
     max_level int4 NULL DEFAULT 1,
     description varchar NULL DEFAULT ''::character varying,
     image_name varchar NULL DEFAULT ''::character varying,
+    icon varchar NULL DEFAULT ''::character varying,
     rule_id int8 NOT NULL,
     cost_id int8 NOT NULL,
     CONSTRAINT skill_pkey PRIMARY KEY (id)

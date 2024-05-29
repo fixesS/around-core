@@ -49,8 +49,8 @@ VALUES(0, '[
 ]');
 
 INSERT INTO public.skill
-("name", max_level, description, image_name, rule_id, cost_id)
-VALUES('width', 11, ''::character varying, ''::character varying, 0, 0);
+("name", max_level, description, image_name, icon, rule_id, cost_id)
+VALUES('width', 11, ''::character varying, ''::character varying, '1'::character varying, 0, 0);
 
 INSERT INTO public.user_skills
 (user_id, skill_id, current_level)

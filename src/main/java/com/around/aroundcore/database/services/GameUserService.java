@@ -52,6 +52,9 @@ public class GameUserService {
     public GameUser findByUsername(String username) throws GameUserNullException {
         return userRepository.findByUsername(username).orElseThrow(GameUserNullException::new);
     }
+    public List<GameUser> findByUsernameContaining(String username) {
+        return userRepository.findByUsernameContaining(username);
+    }
     public List<GameUser> findAll() {
         return userRepository.findAll();
     }

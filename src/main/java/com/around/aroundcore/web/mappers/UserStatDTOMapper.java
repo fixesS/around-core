@@ -12,6 +12,8 @@ public class UserStatDTOMapper implements Function<GameUser, UserStatDTO> {
     public UserStatDTO apply(GameUser user) {
         return UserStatDTO.builder()
                 .id(user.getId())
+                .level(user.getLevel())
+                .team_id(user.getTeam().getId())
                 .username(user.getUsername())
                 .avatar(user.getAvatar())
                 .number(user.getCapturedChunks().size())

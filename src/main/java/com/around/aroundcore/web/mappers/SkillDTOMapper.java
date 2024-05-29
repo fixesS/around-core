@@ -16,6 +16,7 @@ public class SkillDTOMapper implements Function<Skill, SkillDTO> {
                 .name(Optional.ofNullable(skill.getName()).orElse(""))
                 .description(Optional.ofNullable(skill.getDescription()).orElse(""))
                 .image(Optional.ofNullable(skill.getImageName()).orElse(""))
+                .icon(Optional.ofNullable(skill.getIcon()).orElse(""))
                 .max_level(Optional.ofNullable(skill.getMaxLevel()).orElse(-1000))
                 .cost(skill.getCost().getValue())
                 .rule(skill.getRule().getValue())

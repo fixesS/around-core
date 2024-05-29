@@ -1,6 +1,7 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
+import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.database.services.TeamService;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -331,13 +333,15 @@ public class GameUserController {
             summary = "Gives all info about user by uid",
             description = "Allows to get all info about user by id."
     )
-    public ResponseEntity<GameUserDTO> getUserByUsername(@RequestParam("username") String username){
+    public ResponseEntity<List<GameUserDTO>> getUserByUsername(@RequestParam("username") String username){
         ApiResponse response;
-        GameUserDTO gameUserDTO = null;
+        List<GameUserDTO> gameUserDTOS = new ArrayList<>();
 
         try {
-            var user = userService.findByUsername(username);
-            gameUserDTO = gameUserDTOMapper.apply(user);
+            if(username != null && !username.equals("")){
+                List<GameUser> suggestionUsers = userService.findByUsernameContaining(username);
+                gameUserDTOS = suggestionUsers.stream().map(gameUserDTOMapper).toList();
+            }
             response = ApiResponse.OK;
         }  catch (GameUserNullException e) {
             response = ApiResponse.USER_DOES_NOT_EXIST;
@@ -346,7 +350,7 @@ public class GameUserController {
 
         switch (response) {
             case OK -> {
-                return new ResponseEntity<>(gameUserDTO,response.getStatus());
+                return new ResponseEntity<>(gameUserDTOS,response.getStatus());
             }
             default -> throw new ApiException(response);
         }
