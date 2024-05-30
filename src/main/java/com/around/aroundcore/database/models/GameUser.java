@@ -26,37 +26,30 @@ public class GameUser implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-
     @Column(name = "level")
     private Integer level;
-
     @Column(name = "coins")
     private Integer coins;
-
     @Column(name = "username", unique = true)
     private String username;
-
+    @Column(name = "avatar")
+    private String avatar;
     @Column(unique=true)
     private String email;
     @Column
     private String password;
-
     @Column(columnDefinition = "boolean default false")
     private Boolean verified;
-
     @Column
     @Enumerated(EnumType.STRING)
     private Role role;
     @Column(name = "city")
     private String city;
-
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "team_id", referencedColumnName = "id")
     private Team team;
-
     @OneToMany(mappedBy = "owner")
     private List<GameChunk> capturedChunks;
-
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "user_friends",
@@ -71,7 +64,6 @@ public class GameUser implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id")
     )
     private List<GameUser> followers;
-
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name="map_events_game_user",
@@ -79,10 +71,8 @@ public class GameUser implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
     )
     private List<MapEvent> visitedEvents;
-
     @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
     private List<GameUserSkill> userSkills;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -90,6 +80,12 @@ public class GameUser implements UserDetails {
     }
     public void addSkillToUserSkillList(GameUserSkill gameUserSkill){
         userSkills.add(gameUserSkill);
+    }
+    public void setCity(String s){
+        this.city = Objects.requireNonNullElse(s, "Екатеринбург");
+    }
+    public void setAvatar(String s){
+        this.avatar = Objects.requireNonNullElse(s, "1");
     }
     public Team  getTeam(){
         if(this.team == null){

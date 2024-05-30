@@ -52,6 +52,9 @@ public class GameUserService {
     public GameUser findByUsername(String username) throws GameUserNullException {
         return userRepository.findByUsername(username).orElseThrow(GameUserNullException::new);
     }
+    public List<GameUser> findByUsernameContaining(String username) {
+        return userRepository.findByUsernameContaining(username);
+    }
     public List<GameUser> findAll() {
         return userRepository.findAll();
     }
@@ -71,5 +74,11 @@ public class GameUserService {
         if (existByUsername(username)){
             throw new GameUserUsernameNotUnique();
         }
+    }
+    public List<GameUser> getTop5(){
+        return userRepository.getStatTop5();
+    }
+    public List<GameUser> getTopAll(){
+        return userRepository.getStatTopAll();
     }
 }

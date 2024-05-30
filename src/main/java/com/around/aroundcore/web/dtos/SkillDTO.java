@@ -29,4 +29,6 @@ public class SkillDTO {
     private String description;
     @Schema(description = "Image url / image name")
     private String image;
+    @Schema(description = "Icon url / icon name")
+    private String icon;
 }

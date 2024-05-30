@@ -80,7 +80,6 @@ public class RegistrationController {
             user = GameUser.builder()
                     .username(registrationDTO.getUsername())
                     .team(team)
-                    .city(registrationDTO.getCity())
                     .verified(false)
                     .level(0)
                     .coins(0)
@@ -88,6 +87,8 @@ public class RegistrationController {
                     .password(passwordEncoder.encode(registrationDTO.getPassword()))
                     .role(Role.USER)
                     .build();
+            user.setCity(registrationDTO.getCity());
+            user.setAvatar(registrationDTO.getAvatar());
 
             userService.create(user);
             response = ApiResponse.OK;

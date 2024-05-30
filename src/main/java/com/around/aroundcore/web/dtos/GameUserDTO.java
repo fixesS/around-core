@@ -15,6 +15,7 @@ public class GameUserDTO {
 
     private Integer id;
     private String username;
+    private String avatar;
     private String email;
     private String city;
     @Schema(description = "User team id")
@@ -23,5 +24,6 @@ public class GameUserDTO {
     private Integer coins;
     @Schema(description = "Is user email verified")
     private Boolean verified;
+    private Integer captured_chunks;
 }
 

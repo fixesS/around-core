@@ -10,6 +10,7 @@ CREATE TABLE public.game_user (
     "level" int8 NULL DEFAULT 1,
     coins int8 NULL DEFAULT 0,
     username varchar NOT NULL DEFAULT 'Гость'::character varying,
+    avatar varchar NOT NULL DEFAULT '1'::character varying,
     team_id int8 NULL,
     city varchar(23) NULL DEFAULT 'Екатеринбург'::character varying,
     "password" varchar NOT NULL,
@@ -48,6 +49,7 @@ CREATE TABLE public.skill (
     max_level int4 NULL DEFAULT 1,
     description varchar NULL DEFAULT ''::character varying,
     image_name varchar NULL DEFAULT ''::character varying,
+    icon varchar NULL DEFAULT ''::character varying,
     rule_id int8 NOT NULL,
     cost_id int8 NOT NULL,
     CONSTRAINT skill_pkey PRIMARY KEY (id)

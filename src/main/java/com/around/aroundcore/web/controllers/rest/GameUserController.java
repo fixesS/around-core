@@ -1,6 +1,7 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
+import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.database.services.TeamService;
@@ -29,6 +30,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -91,7 +94,7 @@ public class GameUserController {
             var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             var session = sessionService.findByUuid(sessionUuid);
             var user = session.getUser();
-            friends = user.getFriends().stream().map(gameUserDTOMapper).toList();
+            friends = user.getFriends().stream().sorted(Comparator.comparingInt(friend -> friend.getCapturedChunks().size())).map(gameUserDTOMapper).toList();;
             response = ApiResponse.OK;
         } catch (SessionNullException e) {
             response = ApiResponse.SESSION_DOES_NOT_EXIST;
@@ -228,7 +231,7 @@ public class GameUserController {
             summary = "Gives all info about user by uid",
             description = "Allows to get all info about user by id."
     )
-    public ResponseEntity<GameUserDTO> getUserByIUsername(@PathVariable Integer id){
+    public ResponseEntity<GameUserDTO> getUserById(@PathVariable Integer id){
         ApiResponse response;
         GameUserDTO gameUserDTO = null;
 
@@ -322,6 +325,33 @@ public class GameUserController {
         switch (response) {
             case OK -> {
                 return new ResponseEntity<>(skillDTOS,response.getStatus());
+            }
+            default -> throw new ApiException(response);
+        }
+    }
+    @PostMapping("/find")
+    @Operation(
+            summary = "Gives all info about user by uid",
+            description = "Allows to get all info about user by id."
+    )
+    public ResponseEntity<List<GameUserDTO>> getUserByUsername(@RequestParam("username") String username){
+        ApiResponse response;
+        List<GameUserDTO> gameUserDTOS = new ArrayList<>();
+
+        try {
+            if(username != null && !username.equals("")){
+                List<GameUser> suggestionUsers = userService.findByUsernameContaining(username);
+                gameUserDTOS = suggestionUsers.stream().sorted(Comparator.comparingInt(user -> user.getCapturedChunks().size())).map(gameUserDTOMapper).toList();
+            }
+            response = ApiResponse.OK;
+        }  catch (GameUserNullException e) {
+            response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        }
+
+        switch (response) {
+            case OK -> {
+                return new ResponseEntity<>(gameUserDTOS,response.getStatus());
             }
             default -> throw new ApiException(response);
         }

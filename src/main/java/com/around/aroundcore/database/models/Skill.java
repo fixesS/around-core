@@ -38,4 +38,6 @@ public class Skill implements Serializable {
     private SkillCost cost;
     @Column(name = "image_name")
     private String imageName;
+    @Column(name = "icon")
+    private String icon;
 }
