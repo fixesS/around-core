@@ -22,6 +22,7 @@ public class GameUserDTOMapper implements Function<GameUser, GameUserDTO> {
                 .level(Optional.ofNullable(user.getLevel()).orElse(-1000))
                 .coins(Optional.ofNullable(user.getCoins()).orElse(-1000))
                 .team_id(Optional.ofNullable(user.getTeam()).map(Team::getId).orElse(-1000))
+                .captured_chunks(user.getCapturedChunks().size())
                 .build();
     }
 }

@@ -48,7 +48,7 @@ public class    StatisticController {
     private final TeamService teamService;
     private final UserStatDTOMapper userStatDTOMapper;
 
-    @GetMapping("/me/friends")
+    @GetMapping("/user/me/friends")
     @Operation(
             summary = "Gives all stat of my friends.",
             description = "Allows to get stat of my friends."
@@ -87,7 +87,7 @@ public class    StatisticController {
             summary = "Gives all stat of all teams.",
             description = "Allows to get stat of all teams."
     )
-    public ResponseEntity<List<TeamStatDTO>> getTeamChunks() {
+    public ResponseEntity<List<TeamStatDTO>> getTeamsStat() {
         ApiResponse response;
         List<TeamStatDTO> teamStatDTOS = new ArrayList<>();
 
@@ -124,7 +124,7 @@ public class    StatisticController {
             summary = "Gives stat of team by id.",
             description = "Allows to get stat of team by id."
     )
-    public ResponseEntity<TeamStatDTO> getTeamChunksById(@PathVariable @Parameter(description = "team id", example = "1") Integer id) {
+    public ResponseEntity<TeamStatDTO> getTeamStatById(@PathVariable @Parameter(description = "team id", example = "1") Integer id) {
         ApiResponse response;
         TeamStatDTO teamStatDTO = null;
 
@@ -154,7 +154,35 @@ public class    StatisticController {
             default -> throw new ApiException(response);
         }
     }
-    @GetMapping("/me")
+    @GetMapping("/user/{id}")
+    @Operation(
+            summary = "Gives stat of user by id.",
+            description = "Allows to get stat of user by id.."
+    )
+    public ResponseEntity<UserStatDTO> getUserStatById(@PathVariable @Parameter(description = "user id", example = "1") Integer id) {
+        ApiResponse response;
+        UserStatDTO userStatDTO = null;
+
+        try {
+            userStatDTO = userStatDTOMapper.apply(userService.findById(id));
+
+            response = ApiResponse.OK;
+        } catch (SessionNullException e) {
+            response = ApiResponse.SESSION_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        } catch (TeamNullException e) {
+            response = ApiResponse.USER_DOES_NOT_EXIST;
+            log.error(e.getMessage());
+        }
+
+        switch (response) {
+            case OK -> {
+                return new ResponseEntity<>(userStatDTO, response.getStatus());
+            }
+            default -> throw new ApiException(response);
+        }
+    }
+    @GetMapping("/user/me")
     @Operation(
             summary = "Gives all my stat.",
             description = "Allows to get my stat."
@@ -185,12 +213,12 @@ public class    StatisticController {
             default -> throw new ApiException(response);
         }
     }
-    @GetMapping("/top")
+    @GetMapping("/user/top")
     @Operation(
             summary = "Gives top 50 users.",
             description = "Allows to get top 50 users."
     )
-    public ResponseEntity<List<UserStatDTO>> getAllStat() {
+    public ResponseEntity<List<UserStatDTO>> getTopUsersStat() {
         ApiResponse response;
         List<UserStatDTO> userStatDTOS = new ArrayList<>();
 

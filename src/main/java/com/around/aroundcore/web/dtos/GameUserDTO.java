@@ -24,5 +24,6 @@ public class GameUserDTO {
     private Integer coins;
     @Schema(description = "Is user email verified")
     private Boolean verified;
+    private Integer captured_chunks;
 }
 
