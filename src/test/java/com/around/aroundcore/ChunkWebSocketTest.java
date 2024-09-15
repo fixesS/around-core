@@ -45,8 +45,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 class ChunkWebSocketTest {
 
 	private final String Http = "http://";
-	private final String ws = "ws://";
-	private final String host = "localhost:";
+	private final String ws = "wss://";
+	private final String host = "aroundgame.ru";
 	@Value("${local.server.port}")
 	private int port;
 	@Value("${testing.team1.email}")
@@ -70,20 +70,21 @@ class ChunkWebSocketTest {
 	@BeforeAll
 	public void setup() throws Exception {
 
-		token = getTokenData(email1,pass1);
+		//token = getTokenData(email1,pass1);
+		var token_srt = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiIzMjg2NmRiYi04MTAxLTQ4YTUtODc0Yy02ODAzYzA4NzI5OWUiLCJpYXQiOjE3MjY0MTYyNzIsImV4cCI6MTcyNjQxODA3Mn0.9NQ9KBM7PrabGXR-tl8IKZWExmIfWn0uU2uCZTHPqOiiBithBxE7BclpPKNf-ieh";
 
 		blockingQueue = new LinkedBlockingQueue<>();
 
 		RunStopFrameHandler runStopFrameHandler = new RunStopFrameHandler(new CompletableFuture<>());
 
-		String wsUrl = ws+ host + port + WebSocketConfig.REGISTRY;
+		String wsUrl = ws+ host + WebSocketConfig.REGISTRY;
 
 		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
 
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-		headers.set("Authorization", "Bearer "+token.getAccess_token());
+		headers.set("Authorization", "Bearer "+token_srt);
 
 		StompSession stompSession = stompClient
 				.connectAsync(wsUrl, headers, new StompSessionHandlerAdapter() {})
@@ -199,7 +200,7 @@ class ChunkWebSocketTest {
 	private TokenData getTokenData(String email, String password){
 		AuthDTO authDTO = new AuthDTO(email,password);
 		log.info(authDTO.toString());
-		TokenData tokenData = restTemplate.postForEntity(Http+host+port+"/"+AroundConfig.API_V1_LOGIN,authDTO,TokenData.class).getBody();
+		TokenData tokenData = restTemplate.postForEntity(Http+host+"/"+AroundConfig.API_V1_LOGIN,authDTO,TokenData.class).getBody();
 		log.info(tokenData.toString());
 		return tokenData;
 	}

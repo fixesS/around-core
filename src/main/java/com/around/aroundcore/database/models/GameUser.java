@@ -2,10 +2,10 @@ package com.around.aroundcore.database.models;
 
 import com.around.aroundcore.web.exceptions.entity.*;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,43 +14,65 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Entity
 @Table(name = "game_user")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class GameUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @Getter
     private Integer id;
     @Column(name = "level")
+    @Getter
     private Integer level;
     @Column(name = "coins")
+    @Getter
     private Integer coins;
     @Column(name = "username", unique = true)
+    @Setter
     private String username;
     @Column(name = "avatar")
+    @Getter
     private String avatar;
     @Column(unique=true)
+    @Getter
     private String email;
     @Column
     private String password;
     @Column(columnDefinition = "boolean default false")
+    @Setter
+    @Getter
     private Boolean verified;
+
     @Column
+    @Getter
     @Enumerated(EnumType.STRING)
     private Role role;
+
     @Column(name = "city")
+    @Getter
     private String city;
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "team_id", referencedColumnName = "id")
-    private Team team;
+
+    @ManyToMany
+    @Getter
+    @JoinTable(
+            name = "user_round_team",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id",insertable=false, updatable=false),
+                    @JoinColumn(name = "team_id", referencedColumnName = "team_id",insertable=false, updatable=false),
+                    @JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false)}
+    )
+    private List<UserRoundTeam> userRoundTeams;
+
     @OneToMany(mappedBy = "owner")
     private List<GameChunk> capturedChunks;
     @ManyToMany(cascade = CascadeType.PERSIST)
+    @Getter
     @JoinTable(
             name = "user_friends",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -58,6 +80,7 @@ public class GameUser implements UserDetails {
     )
     private List<GameUser> friends;
     @ManyToMany(cascade = CascadeType.PERSIST)
+    @Getter
     @JoinTable(
             name = "user_followers",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -65,6 +88,7 @@ public class GameUser implements UserDetails {
     )
     private List<GameUser> followers;
     @ManyToMany(cascade = CascadeType.PERSIST)
+    @Getter
     @JoinTable(
             name="map_events_game_user",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -72,6 +96,8 @@ public class GameUser implements UserDetails {
     )
     private List<MapEvent> visitedEvents;
     @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
+    @Setter
+    @Getter
     private List<GameUserSkill> userSkills;
 
     @Override
@@ -80,18 +106,21 @@ public class GameUser implements UserDetails {
     }
     public void addSkillToUserSkillList(GameUserSkill gameUserSkill){
         userSkills.add(gameUserSkill);
-    }
+    }//todo проверить вместо set
+
     public void setCity(String s){
         this.city = Objects.requireNonNullElse(s, "Екатеринбург");
     }
     public void setAvatar(String s){
         this.avatar = Objects.requireNonNullElse(s, "1");
     }
-    public Team  getTeam(){
-        if(this.team == null){
-            throw new TeamNullException();
-        }
-        return team;
+    public Team getTeam(Round round){
+        UserRoundTeam urt = userRoundTeams.stream().filter(urt1 -> urt1.getRound() == round)
+                .findFirst().orElseThrow(TeamNullException::new);
+        return urt.getTeam();
+    }
+    public List<GameChunk> getCapturedChunks(Integer roundId){
+        return capturedChunks.stream().filter(chunk -> chunk.getRound().getId().equals(roundId)).toList();
     }
     public void setPassword(String newPassword){
         if(this.password.equals(newPassword)){
@@ -168,5 +197,14 @@ public class GameUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void getStringURT(){
+        for (UserRoundTeam urt : userRoundTeams){
+            log.info("AND");
+            log.info(urt.getRound().getId().toString());
+            log.info(urt.getUser().getId().toString());
+            log.info(urt.getTeam().getId().toString());
+        }
     }
 }

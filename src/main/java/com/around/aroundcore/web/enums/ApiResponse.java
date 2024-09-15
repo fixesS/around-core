@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 public enum ApiResponse {
     OK(200, HttpStatus.OK),
     UNKNOWN_ERROR(-1000, "Unknown error."),
+    MISSING_PARAMETER_REQUEST(-1001, "Missing required parameters."),
     USER_DOES_NOT_EXIST(-2001,"User does not exist."),
     USER_ALREADY_EXIST(-2002,"User already exist."),
     USER_NOT_UNIQUE_EMAIL(-2003,"User email is not unique."),
@@ -38,7 +39,9 @@ public enum ApiResponse {
     SKILL_DOES_NOT_EXIST(-8001,"Skill does not exist."),
     SKILL_LEVEL_UNREACHABLE(-8002,"Skill level you trying to get more than max level for skill."),
     SKILL_LEVEL_ALREADY_MAX(-8003,"Your level of skill is already max."),
-    LEVELS_MUST_BE_MORE_THAN_ZERO(-8004,"Levels you tying to add(buy) must be more than 0.");
+    LEVELS_MUST_BE_MORE_THAN_ZERO(-8004,"Levels you tying to add(buy) must be more than 0."),
+    NO_ACTIVE_ROUND(-9001,"There is no active round(probably game is stopped)."),
+    ROUND_DOES_NOT_EXIST(-9002,"Round doest not exist.");
 
     @Getter
     private Integer statusCode;

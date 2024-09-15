@@ -1,11 +1,9 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.Role;
-import com.around.aroundcore.database.models.Team;
-import com.around.aroundcore.database.models.VerificationToken;
+import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.services.GameUserService;
+import com.around.aroundcore.database.services.RoundService;
 import com.around.aroundcore.database.services.TeamService;
 import com.around.aroundcore.database.services.VerificationTokenService;
 import com.around.aroundcore.security.services.AuthService;
@@ -14,10 +12,7 @@ import com.around.aroundcore.web.dtos.TokenData;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.events.OnEmailVerificationEvent;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;
-import com.around.aroundcore.web.exceptions.entity.GameUserUsernameNotUnique;
-import com.around.aroundcore.web.exceptions.entity.TeamNullException;
-import com.around.aroundcore.web.exceptions.entity.VerificationTokenNullException;
+import com.around.aroundcore.web.exceptions.entity.*;
 import com.around.aroundcore.web.tasks.EmailSendingTask;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -53,6 +48,7 @@ public class RegistrationController {
     private final VerificationTokenService verificationTokenService;
     private final ThreadPoolTaskScheduler taskScheduler;
     private final EmailSendingTask emailSendingTask;
+    private final RoundService roundService;
 
     @PostConstruct
     public void executeSendingEmails(){
@@ -79,7 +75,6 @@ public class RegistrationController {
 
             user = GameUser.builder()
                     .username(registrationDTO.getUsername())
-                    .team(team)
                     .verified(false)
                     .level(0)
                     .coins(0)
@@ -91,8 +86,10 @@ public class RegistrationController {
             user.setAvatar(registrationDTO.getAvatar());
 
             userService.create(user);
+            try{
+                userService.setTeamForRound(user,team,roundService.getCurrentRound());
+            }catch (RoundNullException ignored){} // todo придумать что-то
             response = ApiResponse.OK;
-
         } catch (GameUserEmailNotUnique e) {
             response = ApiResponse.USER_ALREADY_EXIST;
             log.error(e.getMessage());

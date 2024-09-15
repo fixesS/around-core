@@ -2,10 +2,7 @@ package com.around.aroundcore.database.models;
 
 import com.around.aroundcore.annotations.NotRead;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,7 +13,8 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class MapEvent implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -3,12 +3,7 @@ package com.around.aroundcore.web.controllers.rest;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Team;
-import com.around.aroundcore.database.services.GameChunkService;
-import com.around.aroundcore.database.services.GameUserService;
-import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.database.services.TeamService;
-import com.around.aroundcore.web.dtos.ChunkDTO;
-import com.around.aroundcore.web.dtos.GameUserDTO;
+import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.web.dtos.TeamStatDTO;
 import com.around.aroundcore.web.dtos.UserStatDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
@@ -16,20 +11,18 @@ import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import com.around.aroundcore.web.exceptions.entity.TeamNullException;
-import com.around.aroundcore.web.mappers.GameChunkDTOMapper;
+import com.around.aroundcore.web.mappers.TeamStatDTOMapper;
 import com.around.aroundcore.web.mappers.UserStatDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +35,12 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequestMapping(AroundConfig.API_V1_STATISTIC)
 @Tag(name="Statistic Controller", description="Controller to get all statistic about users,teams,chunks(cells)")
 @SecurityRequirement(name = "JWT")
-public class    StatisticController {
+public class StatisticController {
     private final SessionService sessionService;
     private final GameUserService userService;
     private final TeamService teamService;
     private final UserStatDTOMapper userStatDTOMapper;
+    private final TeamStatDTOMapper teamStatDTOMapper;
 
     @GetMapping("/user/me/friends")
     @Operation(
@@ -84,7 +78,7 @@ public class    StatisticController {
     }
     @GetMapping("/team/all")
     @Operation(
-            summary = "Gives all stat of all teams.",
+            summary = "Gives all stat of all teams for every round.",
             description = "Allows to get stat of all teams."
     )
     public ResponseEntity<List<TeamStatDTO>> getTeamsStat() {
@@ -93,16 +87,7 @@ public class    StatisticController {
 
         try {
             List<Team> teams = teamService.findAll();
-            for(Team team : teams){
-                AtomicReference<Integer> numOfChunks = new AtomicReference<>(0);
-                team.getMembers().forEach(member -> numOfChunks.set(numOfChunks.get() + member.getCapturedChunks().size()));
-                teamStatDTOS.add(TeamStatDTO.builder()
-                        .id(team.getId())
-                        .color(team.getColor())
-                        .number(numOfChunks.get())
-                        .build());
-            }
-
+            teamStatDTOS = teams.stream().map(teamStatDTOMapper).toList();
             response = ApiResponse.OK;
         } catch (SessionNullException e) {
             response = ApiResponse.SESSION_DOES_NOT_EXIST;
@@ -130,14 +115,7 @@ public class    StatisticController {
 
         try {
             Team team = teamService.findById(id);
-            AtomicReference<Integer> numOfChunks = new AtomicReference<>(0);
-            team.getMembers().forEach(member -> numOfChunks.set(numOfChunks.get() + member.getCapturedChunks().size()));
-            teamStatDTO = TeamStatDTO.builder()
-                    .id(team.getId())
-                    .color(team.getColor())
-                    .number(numOfChunks.get())
-                    .build();
-
+            teamStatDTO = teamStatDTOMapper.apply(team);
             response = ApiResponse.OK;
         } catch (SessionNullException e) {
             response = ApiResponse.SESSION_DOES_NOT_EXIST;
@@ -156,7 +134,7 @@ public class    StatisticController {
     }
     @GetMapping("/user/{id}")
     @Operation(
-            summary = "Gives stat of user by id.",
+            summary = "Gives stat of user by id in active round.",
             description = "Allows to get stat of user by id.."
     )
     public ResponseEntity<UserStatDTO> getUserStatById(@PathVariable @Parameter(description = "user id", example = "1") Integer id) {
@@ -184,7 +162,7 @@ public class    StatisticController {
     }
     @GetMapping("/user/me")
     @Operation(
-            summary = "Gives all my stat.",
+            summary = "Gives all my stat in active round.",
             description = "Allows to get my stat."
     )
     public ResponseEntity<UserStatDTO> getMyStat() {

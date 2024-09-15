@@ -1,11 +1,9 @@
 package com.around.aroundcore.database.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 @Entity
@@ -13,12 +11,18 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
 public class GameChunk implements Serializable {
 
     @Id
+    @Setter
     @Column
     private String id;
+
+    @Setter//todo разобраться
+    @ManyToOne
+    @JoinColumn(name = "round_id", referencedColumnName = "id")
+    private Round round;
 
     @ManyToOne
     @JoinColumn(name = "owner", referencedColumnName = "id")
@@ -27,5 +31,9 @@ public class GameChunk implements Serializable {
     @Override
     public String toString(){
         return String.format("chunk_id: %s ",this.id);
+    }
+
+    public Team getTeam(){
+        return this.owner.getTeam(this.round);
     }
 }

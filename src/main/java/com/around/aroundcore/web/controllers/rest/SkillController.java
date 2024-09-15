@@ -32,7 +32,6 @@ import java.util.UUID;
 @Tag(name="Skill Controller", description="Controller to get info about skills")
 @SecurityRequirement(name = "JWT")
 public class SkillController {
-
     private final SkillService skillService;
     private final GameUserSkillsService gameUserSkillsService;
     private final SessionService sessionService;

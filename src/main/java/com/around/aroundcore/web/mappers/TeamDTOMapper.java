@@ -2,6 +2,7 @@ package com.around.aroundcore.web.mappers;
 
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Team;
+import com.around.aroundcore.database.models.UserRoundTeam;
 import com.around.aroundcore.web.dtos.TeamDTO;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class TeamDTOMapper implements Function<Team, TeamDTO> {
         return TeamDTO.builder()
                 .id(Optional.ofNullable(team.getId()).orElse(-1000))
                 .color(Optional.ofNullable(team.getColor()).orElse(""))
-                .members(team.getMembers().stream().map(GameUser::getId).toList())
+                .members(team.getUserRoundTeam().stream().filter(urt->urt.getRound().getActive()).map(UserRoundTeam::getUser).map(GameUser::getId).toList())
                 .build();
     }
 }

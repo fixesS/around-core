@@ -4,6 +4,7 @@ import com.around.aroundcore.web.dtos.ApiError;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
+import com.around.aroundcore.web.exceptions.entity.RoundNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -16,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
@@ -48,6 +50,12 @@ public class RestExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiError> handleAuthHeaderException(HttpMessageNotReadableException exception) {
         ApiResponse response = ApiResponse.AUTH_INCORRECT_TYPE_OF_FIELD;
+        ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
+        return new ResponseEntity<>(apiError, response.getStatus());
+    }
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiError> handleMissingParams(MissingServletRequestParameterException exception) {
+        ApiResponse response = ApiResponse.MISSING_PARAMETER_REQUEST;
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         return new ResponseEntity<>(apiError, response.getStatus());
     }

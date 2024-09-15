@@ -3,6 +3,7 @@ package com.around.aroundcore.web.controllers.rest;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.services.GameUserService;
+import com.around.aroundcore.database.services.RoundService;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.database.services.TeamService;
 import com.around.aroundcore.web.dtos.GameUserDTO;
@@ -49,10 +50,11 @@ public class GameUserController {
     private final SkillDTOWithCurrentLevelMapper skillDTOMapper;
     private final EntityPatcher patcher;
     private final ApplicationEventPublisher eventPublisher;
+    private final RoundService roundService;
 
     @GetMapping("/me")
     @Operation(
-            summary = "Gives all info about user",
+            summary = "Gives all info about user for active round",
             description = "Allows to get all info about user."
     )
     public ResponseEntity<GameUserDTO> getMe(){
@@ -94,7 +96,7 @@ public class GameUserController {
             var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             var session = sessionService.findByUuid(sessionUuid);
             var user = session.getUser();
-            friends = user.getFriends().stream().sorted(Comparator.comparingInt(friend -> friend.getCapturedChunks().size())).map(gameUserDTOMapper).toList();;
+            friends = getUserFriendsSortedByCurrentRound(user).stream().map(gameUserDTOMapper).toList();
             response = ApiResponse.OK;
         } catch (SessionNullException e) {
             response = ApiResponse.SESSION_DOES_NOT_EXIST;
@@ -191,15 +193,15 @@ public class GameUserController {
             if(updateGameUserDTO.getUsername()!=null){
                 userService.checkUsername(updateGameUserDTO.getUsername());
             }
-            if(updateGameUserDTO.getTeam_id()!=null){
-                var team = teamService.findById(updateGameUserDTO.getTeam_id());
-                user.setTeam(team);
-            }
 //            if(updateGameUserDTO.getEmail()!=null){
 //                userService.checkEmail(updateGameUserDTO.getUsername());
 //            }
             patcher.patch(user,updateGameUserDTO);
             userService.update(user);
+            if(updateGameUserDTO.getTeam_id()!=null){
+                var team = teamService.findById(updateGameUserDTO.getTeam_id());
+                userService.setTeamForRound(user,team,roundService.getCurrentRound());
+            }
             gameUserDTO = gameUserDTOMapper.apply(user);
             response = ApiResponse.OK;
         } catch (GameUserNullException e) {
@@ -228,7 +230,7 @@ public class GameUserController {
     }
     @GetMapping("/{id}")
     @Operation(
-            summary = "Gives all info about user by uid",
+            summary = "Gives all info about user by id in active round",
             description = "Allows to get all info about user by id."
     )
     public ResponseEntity<GameUserDTO> getUserById(@PathVariable Integer id){
@@ -341,7 +343,7 @@ public class GameUserController {
         try {
             if(username != null && !username.equals("")){
                 List<GameUser> suggestionUsers = userService.findByUsernameContaining(username);
-                gameUserDTOS = suggestionUsers.stream().sorted(Comparator.comparingInt(user -> user.getCapturedChunks().size())).map(gameUserDTOMapper).toList();
+                gameUserDTOS = sortSuggestionUsersByCurrentRound(suggestionUsers).stream().map(gameUserDTOMapper).toList();
             }
             response = ApiResponse.OK;
         }  catch (GameUserNullException e) {
@@ -475,6 +477,20 @@ public class GameUserController {
                 return new ResponseEntity<>("",response.getStatus());
             }
             default -> throw new ApiException(response);
+        }
+    }
+    private List<GameUser> getUserFriendsSortedByCurrentRound(GameUser user){
+        try{
+            return user.getFriends().stream().sorted(Comparator.comparingInt(friend -> friend.getCapturedChunks(roundService.getCurrentRound().getId()).size())).toList();
+        }catch (RoundNullException | NoActiveRoundException  e){
+            return user.getFriends();
+        }
+    }
+    private List<GameUser> sortSuggestionUsersByCurrentRound(List<GameUser> suggestions){
+        try{
+            return suggestions.stream().sorted(Comparator.comparingInt(user -> user.getCapturedChunks(roundService.getCurrentRound().getId()).size())).toList();
+        }catch (RoundNullException e ){
+            return suggestions;
         }
     }
 }

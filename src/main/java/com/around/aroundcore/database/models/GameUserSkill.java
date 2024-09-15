@@ -7,6 +7,8 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,6 +16,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user_skills")
+@Getter
+@Setter
 @Data
 public class GameUserSkill implements Serializable {
 

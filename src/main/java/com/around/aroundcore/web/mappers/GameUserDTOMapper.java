@@ -1,8 +1,13 @@
 package com.around.aroundcore.web.mappers;
 
 import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.Round;
 import com.around.aroundcore.database.models.Team;
+import com.around.aroundcore.database.models.UserRoundTeam;
 import com.around.aroundcore.web.dtos.GameUserDTO;
+import com.around.aroundcore.web.exceptions.entity.GameUserTeamNullForRound;
+import com.around.aroundcore.web.exceptions.entity.NoActiveRoundException;
+import com.around.aroundcore.web.exceptions.entity.RoundNullException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,8 +26,25 @@ public class GameUserDTOMapper implements Function<GameUser, GameUserDTO> {
                 .city(Optional.ofNullable(user.getCity()).orElse(""))
                 .level(Optional.ofNullable(user.getLevel()).orElse(-1000))
                 .coins(Optional.ofNullable(user.getCoins()).orElse(-1000))
-                .team_id(Optional.ofNullable(user.getTeam()).map(Team::getId).orElse(-1000))
-                .captured_chunks(user.getCapturedChunks().size())
+                .team_id(getTeamIdByUserForCurrentRound(user))
+                .captured_chunks(getCapturedChunksByUserForCurrentRound(user))
                 .build();
     }
+    private Integer getTeamIdByUserForCurrentRound(GameUser user){
+        try{
+            var team = UserRoundTeam.findTeamForCurrentRoundAndUser(user);
+            return team.getId();
+        }catch (NoActiveRoundException | RoundNullException | GameUserTeamNullForRound e){
+            return -1000;
+        }
+    }
+    private Integer getCapturedChunksByUserForCurrentRound(GameUser user){
+        try{
+            var round = UserRoundTeam.findCurrentRoundFromURTs(user.getUserRoundTeams());
+            return user.getCapturedChunks(round.getId()).size();
+        }catch (RoundNullException e){
+            return -1000;
+        }
+    }
+
 }

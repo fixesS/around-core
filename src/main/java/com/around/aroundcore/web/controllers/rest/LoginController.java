@@ -48,7 +48,6 @@ public class LoginController {
     public ResponseEntity<TokenData> login(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");
         String ip = request.getRemoteAddr();
-        String body = "";
         ApiResponse response;
         GameUser user = null;
 
