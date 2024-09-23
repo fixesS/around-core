@@ -4,8 +4,8 @@ import com.around.aroundcore.web.dtos.ApiError;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
-import com.around.aroundcore.web.exceptions.entity.RoundNullException;
-import com.around.aroundcore.web.exceptions.entity.SessionNullException;
+import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
+import com.around.aroundcore.web.exceptions.auth.AuthSessionNullException;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
@@ -67,13 +67,14 @@ public class RestExceptionHandler {
     public ResponseEntity<String> handleJwtException(JwtException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
-    @ExceptionHandler(SessionNullException.class)
-    public ResponseEntity<String> handleSessionNullException(SessionNullException exception) {
+    @ExceptionHandler(AuthSessionNullException.class)
+    public ResponseEntity<String> handleSessionNullException(AuthHeaderNullException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiError> handleApiException(ApiException exception) {
         ApiResponse response = exception.getResponse();
+        log.error(exception.getMessage());
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         return new ResponseEntity<>(apiError, response.getStatus());
     }

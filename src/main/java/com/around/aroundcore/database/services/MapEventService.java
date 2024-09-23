@@ -1,7 +1,5 @@
 package com.around.aroundcore.database.services;
 
-import com.around.aroundcore.database.models.GameChunk;
-import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.MapEvent;
 import com.around.aroundcore.database.repositories.MapEventRepository;
 import com.around.aroundcore.web.exceptions.entity.MapEventNullException;
@@ -14,7 +12,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

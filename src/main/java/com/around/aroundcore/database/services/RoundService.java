@@ -29,10 +29,13 @@ public class RoundService {
     }
     public UserRoundTeam getUserRoundTeamByTeamInCurrentRound(Integer teamId) throws NoActiveRoundException, TeamNullException, URTNullException {
         teamService.checkById(teamId);
-        return userRoundTeamRepository.findByRoundIdAndTeamId(getCurrentRound().getId(), teamId).stream().findFirst().orElseThrow(URTNullException::new);
+        Round round = roundRepository.findFirstByActiveIsTrue().orElseThrow(NoActiveRoundException::new);
+        return userRoundTeamRepository.findByRoundIdAndTeamId(round.getId(), teamId).stream().findFirst().orElseThrow(URTNullException::new);
     }
     public UserRoundTeam getUserRoundTeamByTeamInRound(Integer teamId, Integer roundId) throws RoundNullException, TeamNullException, URTNullException{
-        checkById(roundId);
+        if(!roundRepository.existsById(roundId)){
+            throw new RoundNullException();
+        }
         teamService.checkById(teamId);
         return userRoundTeamRepository.findByRoundIdAndTeamId(roundId, teamId).stream().findFirst().orElseThrow(URTNullException::new);
     }

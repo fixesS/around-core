@@ -58,29 +58,12 @@ public class GameUserController {
             description = "Allows to get all info about user."
     )
     public ResponseEntity<GameUserDTO> getMe(){
-        ApiResponse response;
-        GameUserDTO gameUserDTO = null;
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        GameUserDTO gameUserDTO = gameUserDTOMapper.apply(user);
 
-        try {
-            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            var user = session.getUser();
-            gameUserDTO = gameUserDTOMapper.apply(user);
-            response = ApiResponse.OK;
-        } catch (SessionNullException e) {
-            response = ApiResponse.SESSION_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(gameUserDTO,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(gameUserDTO);
     }
   
     @GetMapping("/me/friends")
@@ -89,29 +72,12 @@ public class GameUserController {
             description = "Allows get info about all friends of user."
     )
     public ResponseEntity<List<GameUserDTO>> getMyFriends() {
-        ApiResponse response;
-        List<GameUserDTO> friends = null;
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        List<GameUserDTO> friends = getUserFriendsSortedByCurrentRound(user).stream().map(gameUserDTOMapper).toList();
 
-        try {
-            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            var user = session.getUser();
-            friends = getUserFriendsSortedByCurrentRound(user).stream().map(gameUserDTOMapper).toList();
-            response = ApiResponse.OK;
-        } catch (SessionNullException e) {
-            response = ApiResponse.SESSION_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(friends,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(friends);
     }
     @GetMapping("/me/followers")
     @Operation(
@@ -119,29 +85,12 @@ public class GameUserController {
             description = "Allows get info about all friends of user."
     )
     public ResponseEntity<List<GameUserDTO>> getMyFollowers() {
-        ApiResponse response;
-        List<GameUserDTO> followers = null;
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        List<GameUserDTO> followers = user.getFollowers().stream().map(gameUserDTOMapper).toList();
 
-        try {
-            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            var user = session.getUser();
-            followers = user.getFollowers().stream().map(gameUserDTOMapper).toList();
-            response = ApiResponse.OK;
-        } catch (SessionNullException e) {
-            response = ApiResponse.SESSION_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(followers,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(followers);
     }
     @GetMapping("/me/skills")
     @Operation(
@@ -149,32 +98,12 @@ public class GameUserController {
             description = "Allows get info about all friends of user."
     )
     public ResponseEntity<List<SkillDTO>> getMySkills() {
-        ApiResponse response;
-        List<SkillDTO> skillDTOS = null;
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        List<SkillDTO> skillDTOS = user.getUserSkills().stream().map(skillDTOMapper).toList();
 
-        try {
-            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            var user = session.getUser();
-            skillDTOS = user.getUserSkills().stream().map(skillDTOMapper).toList();
-            response = ApiResponse.OK;
-        } catch (SessionNullException e) {
-            response = ApiResponse.SESSION_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        } catch (SkillNullException e){
-            response = ApiResponse.SKILL_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(skillDTOS,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(skillDTOS);
     }
     @PatchMapping("/me")
     @Operation(
@@ -183,50 +112,28 @@ public class GameUserController {
     )
     @Transactional
     public ResponseEntity<GameUserDTO> patchMe(@RequestBody @Validated UpdateGameUserDTO updateGameUserDTO){
-        ApiResponse response;
-        GameUserDTO gameUserDTO = null;
-
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        if(updateGameUserDTO.getUsername()!=null){
+            userService.checkUsername(updateGameUserDTO.getUsername());
+        }
+//      if(updateGameUserDTO.getEmail()!=null){
+//          userService.checkEmail(updateGameUserDTO.getUsername());
+//      }
         try {
-            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            var user = session.getUser();
-            if(updateGameUserDTO.getUsername()!=null){
-                userService.checkUsername(updateGameUserDTO.getUsername());
-            }
-//            if(updateGameUserDTO.getEmail()!=null){
-//                userService.checkEmail(updateGameUserDTO.getUsername());
-//            }
             patcher.patch(user,updateGameUserDTO);
-            userService.update(user);
-            if(updateGameUserDTO.getTeam_id()!=null){
-                var team = teamService.findById(updateGameUserDTO.getTeam_id());
-                userService.setTeamForRound(user,team,roundService.getCurrentRound());
-            }
-            gameUserDTO = gameUserDTOMapper.apply(user);
-            response = ApiResponse.OK;
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        } catch (TeamNullException e) {
-            response = ApiResponse.TEAM_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }catch (GameUserUsernameNotUnique e) {
-            response = ApiResponse.USER_NOT_UNIQUE_USERNAME;
-            log.error(e.getMessage());
-        }catch (GameUserEmailNotUnique e) {
-            response = ApiResponse.USER_NOT_UNIQUE_EMAIL;
-            log.error(e.getMessage());
-        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-            response = ApiResponse.UNKNOWN_ERROR;
-            log.error(e.getMessage());
+        }  catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
+            throw new ApiException(ApiResponse.UNKNOWN_ERROR);
         }
+        userService.update(user);
+        if(updateGameUserDTO.getTeam_id()!=null){
+            var team = teamService.findById(updateGameUserDTO.getTeam_id());
+            userService.setTeamForRound(user,team,roundService.getCurrentRound());
+        }
+        GameUserDTO gameUserDTO = gameUserDTOMapper.apply(user);
 
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(gameUserDTO,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(gameUserDTO);
     }
     @GetMapping("/{id}")
     @Operation(
@@ -234,24 +141,10 @@ public class GameUserController {
             description = "Allows to get all info about user by id."
     )
     public ResponseEntity<GameUserDTO> getUserById(@PathVariable Integer id){
-        ApiResponse response;
-        GameUserDTO gameUserDTO = null;
+        var user = userService.findById(id);
+        GameUserDTO gameUserDTO = gameUserDTOMapper.apply(user);
 
-        try {
-            var user = userService.findById(id);
-            gameUserDTO = gameUserDTOMapper.apply(user);
-            response = ApiResponse.OK;
-        }  catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(gameUserDTO,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(gameUserDTO);
     }
     @GetMapping("{id}/friends")
     @Operation(
@@ -259,24 +152,10 @@ public class GameUserController {
             description = "Allows get info about all friends of user by id."
     )
     public ResponseEntity<List<GameUserDTO>> getUserFriendsById(@PathVariable Integer id) {
-        ApiResponse response;
-        List<GameUserDTO> friends = null;
+        var user = userService.findById(id);
+        List<GameUserDTO> friends = user.getFriends().stream().map(gameUserDTOMapper).toList();
 
-        try {
-            var user = userService.findById(id);
-            friends = user.getFriends().stream().map(gameUserDTOMapper).toList();
-            response = ApiResponse.OK;
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(friends,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(friends);
     }
     @GetMapping("/{id}/followers")
     @Operation(
@@ -284,24 +163,10 @@ public class GameUserController {
             description = "Allows get info about all friends of user by id."
     )
     public ResponseEntity<List<GameUserDTO>> getUserFollowersById(@PathVariable Integer id) {
-        ApiResponse response;
-        List<GameUserDTO> followers = null;
+        var user = userService.findById(id);
+        List<GameUserDTO> followers = user.getFollowers().stream().map(gameUserDTOMapper).toList();
 
-        try {
-            var user = userService.findById(id);
-            followers = user.getFollowers().stream().map(gameUserDTOMapper).toList();
-            response = ApiResponse.OK;
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(followers,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(followers);
     }
     @GetMapping("/{id}/skills")
     @Operation(
@@ -309,27 +174,10 @@ public class GameUserController {
             description = "Allows get info about all friends of user."
     )
     public ResponseEntity<List<SkillDTO>> getUserSkillsById(@PathVariable Integer id) {
-        ApiResponse response;
-        List<SkillDTO> skillDTOS = null;
+        var user = userService.findById(id);
+        List<SkillDTO> skillDTOS = user.getUserSkills().stream().map(skillDTOMapper).toList();
 
-        try {
-            var user = userService.findById(id);
-            skillDTOS = user.getUserSkills().stream().map(skillDTOMapper).toList();
-            response = ApiResponse.OK;
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        } catch (SkillNullException e){
-            response = ApiResponse.SKILL_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(skillDTOS,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(skillDTOS);
     }
     @PostMapping("/find")
     @Operation(
@@ -337,26 +185,14 @@ public class GameUserController {
             description = "Allows to get all info about user by id."
     )
     public ResponseEntity<List<GameUserDTO>> getUserByUsername(@RequestParam("username") String username){
-        ApiResponse response;
         List<GameUserDTO> gameUserDTOS = new ArrayList<>();
 
-        try {
-            if(username != null && !username.equals("")){
-                List<GameUser> suggestionUsers = userService.findByUsernameContaining(username);
-                gameUserDTOS = sortSuggestionUsersByCurrentRound(suggestionUsers).stream().map(gameUserDTOMapper).toList();
-            }
-            response = ApiResponse.OK;
-        }  catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
+        if(username != null && !username.isEmpty()){
+            List<GameUser> suggestionUsers = userService.findByUsernameContaining(username);
+            gameUserDTOS = sortSuggestionUsersByCurrentRound(suggestionUsers).stream().map(gameUserDTOMapper).toList();
         }
 
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>(gameUserDTOS,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(gameUserDTOS);
     }
     @PatchMapping("me/followee")
     @Operation(
@@ -365,33 +201,21 @@ public class GameUserController {
     )
     @Transactional
     public ResponseEntity<String> patchMyFollowee(@RequestParam("id") Integer id){
-        ApiResponse response;
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        var userToFollow = userService.findById(id);
 
         try {
-            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            var user = session.getUser();
-            var userToFollow = userService.findById(id);
             user.followUser(userToFollow);
-            userService.update(user);
-            userService.update(userToFollow);
-            response = ApiResponse.OK;
-        }catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }catch (GameUserAlreadyFollowed e){
-            response = ApiResponse.USER_FOLLOW_ALREADY_EXIST;
-            log.error(e.getMessage());
         }catch (GameUserUsernameNotUnique e) {
-            response = ApiResponse.USER_CANNOT_BE_FRIEND_TO_HIMSELF;
-            log.error(e.getMessage());
+            throw new ApiException(ApiResponse.USER_CANNOT_BE_FRIEND_TO_HIMSELF);
         }
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>("",response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+
+        userService.update(user);
+        userService.update(userToFollow);
+
+        return ResponseEntity.ok("");
     }
     @DeleteMapping("me/followee")
     @Operation(
@@ -400,28 +224,15 @@ public class GameUserController {
     )
     @Transactional
     public ResponseEntity<String> deleteMyFollower(@RequestParam("follower_id") @Schema(description = "follower id") Integer followerId){
-        ApiResponse response;
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        var userToUnfollow = userService.findById(followerId);
+        user.unfollowUser(userToUnfollow);
+        userService.update(user);
+        userService.update(userToUnfollow);
 
-        try {
-            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            var user = session.getUser();
-
-            var userToUnfollow = userService.findById(followerId);
-            user.unfollowUser(userToUnfollow);
-            userService.update(user);
-            userService.update(userToUnfollow);
-            response = ApiResponse.OK;
-        } catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>("",response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok("");
     }
     @DeleteMapping("me/friend")
     @Operation(
@@ -430,28 +241,16 @@ public class GameUserController {
     )
     @Transactional
     public ResponseEntity<String> deleteMyFriend(@RequestParam("friend_id") @Schema(description = "friend id") Integer friendId){
-        ApiResponse response;
 
-        try {
-            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            var user = session.getUser();
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        var friendToRemove = userService.findById(friendId);
+        user.removeUserFromFriends(friendToRemove);
+        userService.update(user);
+        userService.update(friendToRemove);
 
-            var friendToRemove = userService.findById(friendId);
-            user.removeUserFromFriends(friendToRemove);
-            userService.update(user);
-            userService.update(friendToRemove);
-            response = ApiResponse.OK;
-        }  catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>("",response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok("");
     }
     @PostMapping("me/verify")
     @Operation(
@@ -459,25 +258,12 @@ public class GameUserController {
             description = "Allows to verifiy user email."
     )
     public ResponseEntity<String> verifyMe(){
-        ApiResponse response;
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        eventPublisher.publishEvent(new OnEmailVerificationEvent(user));
 
-        try{
-            var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            var user = session.getUser();
-
-            eventPublisher.publishEvent(new OnEmailVerificationEvent(user));
-            response = ApiResponse.OK;
-        }catch (GameUserNullException e) {
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
-        }
-        switch (response) {
-            case OK -> {
-                return new ResponseEntity<>("",response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok("");
     }
     private List<GameUser> getUserFriendsSortedByCurrentRound(GameUser user){
         try{

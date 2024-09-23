@@ -30,7 +30,7 @@ public class GameChunkService {
         gameChunkRepository.saveAll(gameChunks);
     }
     /**
-     * @deprecated (udoli potom) ok
+     * @deprecated (udoli potom)
      */
     @Deprecated(forRemoval = true)
     public GameChunk findById(String id) throws GameChunkNullException{

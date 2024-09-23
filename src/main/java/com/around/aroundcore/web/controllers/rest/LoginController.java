@@ -8,7 +8,6 @@ import com.around.aroundcore.web.dtos.AuthDTO;
 import com.around.aroundcore.web.dtos.TokenData;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,35 +47,23 @@ public class LoginController {
     public ResponseEntity<TokenData> login(HttpServletRequest request, @Validated @RequestBody AuthDTO authDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");
         String ip = request.getRemoteAddr();
-        ApiResponse response;
-        GameUser user = null;
+        GameUser user = userService.findByEmail(authDTO.getEmail());
 
         try {
-            user = userService.findByEmail(authDTO.getEmail());
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(authDTO.getEmail(), authDTO.getPassword());
             Authentication auth = authenticationManager.authenticate(authenticationToken);
 
             user = (GameUser) auth.getPrincipal();
-            response = ApiResponse.OK;
             if (user == null) {
-                response = ApiResponse.USER_DOES_NOT_EXIST;
+                throw new ApiException(ApiResponse.USER_DOES_NOT_EXIST);
             }
-        }catch (GameUserNullException e){
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
         }catch (BadCredentialsException e){
             //response = ApiResponse.LOG_INCORRECT_PASSWORD_OR_LOGIN; do not show that password is incorrect
-            response = ApiResponse.USER_DOES_NOT_EXIST;
-            log.error(e.getMessage());
+            throw new ApiException(ApiResponse.USER_DOES_NOT_EXIST);
         }
+        TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));
 
-        switch (response){
-            case OK -> {
-                TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));
-                return new ResponseEntity<>(tokenData,response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        return ResponseEntity.ok(tokenData);
     }
 }

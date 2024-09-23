@@ -8,6 +8,7 @@ import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
+import com.around.aroundcore.web.exceptions.auth.AuthSessionNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -50,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
             throw e;
         }
 
-        String accessToken = null;
+        String accessToken;
         try {
             accessToken = jwtService.resolveToken(authHeader);
         } catch (AuthHeaderNotStartsWithPrefixException e) {
@@ -75,14 +76,12 @@ public class JwtFilter extends OncePerRequestFilter {
             log.debug("invalid token", e);
             throw e;
         }
-        Session session = null;
+        Session session;
         try{
             session = sessionService.findByUuid(jwtService.getSessionIdAccess(accessToken));
         }catch (SessionNullException e){
-            String errmsg = "Session is null";
-            log.debug(errmsg, e);
-            e.setMessage(errmsg);
-            throw e;
+            log.debug(e.getMessage());
+            throw new AuthSessionNullException(e.getMessage());
         }
 
         Claims claims = jwtService.getAccessClaims(accessToken);

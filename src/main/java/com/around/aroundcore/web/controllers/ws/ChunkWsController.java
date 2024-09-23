@@ -17,11 +17,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Controller;
 
@@ -70,7 +67,7 @@ public class ChunkWsController {
 
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
     @Transactional
-    public void handleChunkChanges(@Payload ChunkDTO chunkDTO, Principal principal, StompHeaderAccessor accessor){
+    public void handleChunkChanges(@Payload ChunkDTO chunkDTO, Principal principal){
         GameUser user;
         Session session;
         GameUserSkill userWidthSkill;

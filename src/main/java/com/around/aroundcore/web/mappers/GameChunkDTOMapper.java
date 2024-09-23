@@ -1,9 +1,6 @@
 package com.around.aroundcore.web.mappers;
 
 import com.around.aroundcore.database.models.GameChunk;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.Team;
-import com.around.aroundcore.database.models.UserRoundTeam;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import org.springframework.stereotype.Service;
 
@@ -20,4 +17,5 @@ public class GameChunkDTOMapper implements Function<GameChunk, ChunkDTO> {
                 .team_id(gameChunk.getTeam().getId())
                 .build();
     }
+
 }

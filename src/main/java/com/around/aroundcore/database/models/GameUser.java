@@ -1,6 +1,5 @@
 package com.around.aroundcore.database.models;
 
-import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.web.exceptions.entity.*;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
@@ -139,7 +138,7 @@ public class GameUser implements UserDetails {
         }
         this.password = newPassword;
     }
-    public void followUser(GameUser user){
+    public void followUser(GameUser user) throws GameUserAlreadyFollowed, GameUserUsernameNotUnique{
         if(Objects.equals(user.getUsername(), getUsername())){
             throw new GameUserUsernameNotUnique();
         }
