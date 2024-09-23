@@ -1,11 +1,10 @@
 package com.around.aroundcore.web.exceptions.entity;
 
-public class GameUserTeamNullForRound extends RuntimeException {
-  public GameUserTeamNullForRound(){
-    super("GameUser team is null for this round");
-  }
+import com.around.aroundcore.web.enums.ApiResponse;
+import com.around.aroundcore.web.exceptions.api.ApiException;
 
-  public GameUserTeamNullForRound(String message){
-    super(message);
+public class GameUserTeamNullForRound extends ApiException {
+  public GameUserTeamNullForRound(){
+    super(ApiResponse.USER_HAS_NO_TEAM_IN_ROUND);
   }
 }

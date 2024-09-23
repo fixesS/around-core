@@ -1,8 +1,10 @@
 package com.around.aroundcore.web.exceptions.entity;
 
-public class NoActiveRoundException extends RuntimeException {
+import com.around.aroundcore.web.enums.ApiResponse;
+
+public class NoActiveRoundException extends EntityException {
     public NoActiveRoundException() {
-        super("There is no active round");
+        super("There is no active round", ApiResponse.NO_ACTIVE_ROUND);
     }
 
     public NoActiveRoundException(String message) {
