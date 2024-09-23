@@ -6,7 +6,7 @@ import com.around.aroundcore.database.models.GameUserSkillEmbedded;
 import com.around.aroundcore.database.models.Skill;
 import com.around.aroundcore.database.repositories.GameUserSkillsRepository;
 import com.around.aroundcore.web.exceptions.api.LevelsLessOrEqualZero;
-import com.around.aroundcore.web.exceptions.entity.GameUserSkillsNullException;
+import com.around.aroundcore.web.exceptions.entity.GameUserSkillNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class GameUserSkillsService {
         GameUserSkillEmbedded gameUserSkillEmbedded = new GameUserSkillEmbedded();
         gameUserSkillEmbedded.setGameUser(user);
         gameUserSkillEmbedded.setSkill(skill);
-        return gameUserSkillsRepository.findById(gameUserSkillEmbedded).orElseThrow(GameUserSkillsNullException::new);
+        return gameUserSkillsRepository.findById(gameUserSkillEmbedded).orElseThrow(GameUserSkillNullException::new);
     }
 
     @Transactional
@@ -32,7 +32,7 @@ public class GameUserSkillsService {
         GameUserSkill gameUserSkill;
         try{
             gameUserSkill = findByUserAndSkill(user, skill);
-        }catch ( GameUserSkillsNullException e) {
+        }catch ( GameUserSkillNullException e) {
             gameUserSkill = new GameUserSkill();
             gameUserSkill.setCurrentLevel(0);
             GameUserSkillEmbedded gameUserSkillEmbedded = new GameUserSkillEmbedded();

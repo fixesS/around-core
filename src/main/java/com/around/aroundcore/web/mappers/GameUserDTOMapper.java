@@ -1,8 +1,6 @@
 package com.around.aroundcore.web.mappers;
 
 import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.Round;
-import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.models.UserRoundTeam;
 import com.around.aroundcore.web.dtos.GameUserDTO;
 import com.around.aroundcore.web.exceptions.entity.GameUserTeamNullForRound;
@@ -42,7 +40,7 @@ public class GameUserDTOMapper implements Function<GameUser, GameUserDTO> {
         try{
             var round = UserRoundTeam.findCurrentRoundFromURTs(user.getUserRoundTeams());
             return user.getCapturedChunks(round.getId()).size();
-        }catch (RoundNullException e){
+        }catch (NoActiveRoundException | RoundNullException | GameUserTeamNullForRound e){
             return -1000;
         }
     }

@@ -86,7 +86,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         Claims claims = jwtService.getAccessClaims(accessToken);
-        JwtAuthenticationToken authentication = new JwtAuthenticationToken(session,session.getUser());
+        JwtAuthenticationToken authentication = new JwtAuthenticationToken(session);
         Date iat = claims.getIssuedAt();
         if(!iat.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().isAfter(session.getLastRefresh())){
             authentication.setAuthenticated(true);

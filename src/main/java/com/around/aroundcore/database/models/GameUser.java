@@ -1,5 +1,6 @@
 package com.around.aroundcore.database.models;
 
+import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.web.exceptions.entity.*;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
@@ -11,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,7 +60,7 @@ public class GameUser implements UserDetails {
     @Getter
     private String city;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @Getter
     @JoinTable(
             name = "user_round_team",
@@ -96,8 +98,6 @@ public class GameUser implements UserDetails {
     )
     private List<MapEvent> visitedEvents;
     @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
-    @Setter
-    @Getter
     private List<GameUserSkill> userSkills;
 
     @Override
@@ -106,7 +106,18 @@ public class GameUser implements UserDetails {
     }
     public void addSkillToUserSkillList(GameUserSkill gameUserSkill){
         userSkills.add(gameUserSkill);
-    }//todo проверить вместо set
+    }
+    public void addSkillToUserSkillList(List<GameUserSkill> gameUserSkill){
+        userSkills.addAll(gameUserSkill);
+    }
+    public GameUserSkill getUserSkillBySkillId(Integer skillId) throws GameUserSkillNullException {
+        return userSkills.stream()
+                .filter(gameUserSkill -> Objects.equals(gameUserSkill.getGameUserSkillEmbedded().getSkill().getId(), skillId))
+                .findFirst().orElseThrow(GameUserSkillNullException::new);
+    }
+    public List<GameUserSkill> getUserSkills() {
+        return Collections.unmodifiableList(userSkills);
+    }
 
     public void setCity(String s){
         this.city = Objects.requireNonNullElse(s, "Екатеринбург");
@@ -199,12 +210,4 @@ public class GameUser implements UserDetails {
         return true;
     }
 
-    public void getStringURT(){
-        for (UserRoundTeam urt : userRoundTeams){
-            log.info("AND");
-            log.info(urt.getRound().getId().toString());
-            log.info(urt.getUser().getId().toString());
-            log.info(urt.getTeam().getId().toString());
-        }
-    }
 }

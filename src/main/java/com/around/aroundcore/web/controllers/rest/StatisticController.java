@@ -15,7 +15,6 @@ import com.around.aroundcore.web.mappers.TeamStatDTOMapper;
 import com.around.aroundcore.web.mappers.UserStatDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @RestController
@@ -65,7 +63,7 @@ public class StatisticController {
             response = ApiResponse.USER_DOES_NOT_EXIST;
             log.error(e.getMessage());
         } catch (TeamNullException e) {
-            response = ApiResponse.USER_HAS_NO_TEAM;
+            response = ApiResponse.USER_HAS_NO_TEAM_IN_ROUND;
             log.error(e.getMessage());
         }
 
@@ -162,7 +160,7 @@ public class StatisticController {
     }
     @GetMapping("/user/me")
     @Operation(
-            summary = "Gives all my stat in active round.",
+            summary = "Gives all my stat in all rounds.",
             description = "Allows to get my stat."
     )
     public ResponseEntity<UserStatDTO> getMyStat() {
@@ -193,7 +191,7 @@ public class StatisticController {
     }
     @GetMapping("/user/top")
     @Operation(
-            summary = "Gives top 50 users.",
+            summary = "Gives top 50 users in all rounds",
             description = "Allows to get top 50 users."
     )
     public ResponseEntity<List<UserStatDTO>> getTopUsersStat() {

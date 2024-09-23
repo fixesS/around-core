@@ -96,13 +96,13 @@ public class SkillController {
         }catch (GameUserNullException e) {
             response = ApiResponse.USER_DOES_NOT_EXIST;
             log.error(e.getMessage());
-        }catch (SkillNullException | GameUserSkillsNullException e) {
+        }catch (SkillNullException | GameUserSkillNullException e) {
             response = ApiResponse.SKILL_DOES_NOT_EXIST;
             log.error(e.getMessage());
         }catch (GameUserNotEnoughCoins e){
             response = ApiResponse.USER_NOT_ENOUGH_COINS;
             log.error(e.getMessage());
-        }catch (GameUserSkillUnreachebleLevel e){
+        }catch (GameUserSkillUnreachableLevel e){
             response = ApiResponse.SKILL_LEVEL_UNREACHABLE;
             log.error(e.getMessage());
         }catch (GameUserSkillAlreadyMaxLevel e){

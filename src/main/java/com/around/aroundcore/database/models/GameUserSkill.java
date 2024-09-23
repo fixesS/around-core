@@ -1,7 +1,7 @@
 package com.around.aroundcore.database.models;
 
 import com.around.aroundcore.web.exceptions.entity.GameUserSkillAlreadyMaxLevel;
-import com.around.aroundcore.web.exceptions.entity.GameUserSkillUnreachebleLevel;
+import com.around.aroundcore.web.exceptions.entity.GameUserSkillUnreachableLevel;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -32,7 +32,7 @@ public class GameUserSkill implements Serializable {
             throw new GameUserSkillAlreadyMaxLevel();
         }
         if(currentLevel+value > getGameUserSkillEmbedded().getSkill().getMaxLevel()){
-            throw new GameUserSkillUnreachebleLevel();
+            throw new GameUserSkillUnreachableLevel();
         }
 
     }

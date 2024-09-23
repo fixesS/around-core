@@ -34,7 +34,7 @@ public class GameUserService {
             gameUserSkill.setGameUserSkillEmbedded(gameUserSkillEmbedded);
             gameUserSkillList.add(gameUserSkill);
         }
-        user.setUserSkills(gameUserSkillList);
+        user.addSkillToUserSkillList(gameUserSkillList);
         userRepository.save(user);
     }
 

@@ -3,7 +3,6 @@ package com.around.aroundcore.web.controllers.rest;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.Round;
 import com.around.aroundcore.database.models.UserRoundTeam;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.web.dtos.ChunkDTO;
@@ -18,7 +17,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -96,7 +94,7 @@ public class GameChunkController {
             response = ApiResponse.USER_DOES_NOT_EXIST;
             log.error(e.getMessage());
         } catch (TeamNullException e) {
-            response = ApiResponse.USER_HAS_NO_TEAM;
+            response = ApiResponse.USER_HAS_NO_TEAM_IN_ROUND;
             log.error(e.getMessage());
         }catch (NoActiveRoundException e){
             response = ApiResponse.NO_ACTIVE_ROUND;
@@ -129,7 +127,7 @@ public class GameChunkController {
             response = ApiResponse.USER_DOES_NOT_EXIST;
             log.error(e.getMessage());
         } catch (TeamNullException e) {
-            response = ApiResponse.USER_HAS_NO_TEAM;
+            response = ApiResponse.USER_HAS_NO_TEAM_IN_ROUND;
             log.error(e.getMessage());
         } catch (NoActiveRoundException e){
             response = ApiResponse.NO_ACTIVE_ROUND;
@@ -164,7 +162,7 @@ public class GameChunkController {
             response = ApiResponse.USER_DOES_NOT_EXIST;
             log.error(e.getMessage());
         } catch (TeamNullException e) {
-            response = ApiResponse.USER_HAS_NO_TEAM;
+            response = ApiResponse.USER_HAS_NO_TEAM_IN_ROUND;
             log.error(e.getMessage());
         } catch (RoundNullException  e) {
             response = ApiResponse.ROUND_DOES_NOT_EXIST;
@@ -199,33 +197,32 @@ public class GameChunkController {
         if(roundId == 0 ){
             return gameChunkService.findByIdAndRoundId(chunkId,roundService.getCurrentRound().getId());
         }else{
-            roundService.checkIfExistById(roundId);
+            roundService.checkById(roundId);
             return gameChunkService.findByIdAndRoundId(chunkId,roundId);
         }
     }
-    private List<GameChunk> getChunksByTeamAndRound(Integer teamId, Integer roundId) throws RoundNullException, NoActiveRoundException{
+    private List<GameChunk> getChunksByTeamAndRound(Integer teamId, Integer roundId) throws RoundNullException, NoActiveRoundException,TeamNullException, URTNullException{
         UserRoundTeam urt;
         if(roundId == 0){
             urt = roundService.getUserRoundTeamByTeamInCurrentRound(teamId);
         }else{
-            roundService.checkIfExistById(roundId);
             urt = roundService.getUserRoundTeamByTeamInRound(teamId, roundId);
         }
         return gameChunkService.findAllByUserRoundTeam(urt);
     }
-    private List<GameChunk> getChunksByRound(Integer roundId) throws GameChunkNullException, NoActiveRoundException{
+    private List<GameChunk> getChunksByRound(Integer roundId) throws GameChunkNullException, RoundNullException{
         if(roundId == 0 ){
             return gameChunkService.findAllByRound(roundService.getCurrentRound().getId());
         }else{
-            roundService.checkIfExistById(roundId);
+            roundService.checkById(roundId);
             return gameChunkService.findAllByRound(roundId);
         }
     }
-    private List<ChunkDTO> getFilteredChunkDTOs(GameUser user, Integer roundId) throws NoActiveRoundException{
+    private List<ChunkDTO> getFilteredChunkDTOs(GameUser user, Integer roundId) throws RoundNullException{
         if(roundId == 0 ){
             return user.getCapturedChunks(roundService.getCurrentRound().getId()).stream().map(gameChunkDTOMapper).toList();
         }else{
-            roundService.checkIfExistById(roundId);
+            roundService.checkById(roundId);
             return user.getCapturedChunks(roundId).stream().map(gameChunkDTOMapper).toList();
         }
     }
