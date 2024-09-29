@@ -1,11 +1,10 @@
 package com.around.aroundcore.database.services;
 
-import com.around.aroundcore.database.models.GameChunk;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.Team;
+import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.entity.GameChunkNullException;
+import com.around.aroundcore.web.exceptions.entity.RoundNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,7 @@ import java.util.List;
 @Transactional
 public class GameChunkService {
     private GameChunkRepository gameChunkRepository;
+    private RoundService roundService;
 
     public void create(GameChunk gameChunk){
         gameChunkRepository.save(gameChunk);
@@ -29,21 +29,30 @@ public class GameChunkService {
     public void saveListOfChunks(List<GameChunk> gameChunks){
         gameChunkRepository.saveAll(gameChunks);
     }
+    /**
+     * @deprecated (udoli potom)
+     */
+    @Deprecated(forRemoval = true)
     public GameChunk findById(String id) throws GameChunkNullException{
         return gameChunkRepository.findById(id).orElseThrow(GameChunkNullException::new);
     }
-    public List<GameChunk> findAll(){
-        return gameChunkRepository.findAll();
+    public GameChunk findByIdAndRoundId(String id, Integer roundId) throws GameChunkNullException, RoundNullException {
+        roundService.checkById(roundId);
+        return gameChunkRepository.findByIdAndRoundId(id, roundId).orElseThrow(GameChunkNullException::new);
+    }
+    public List<GameChunk> findAllByRound(Integer roundId) throws RoundNullException{
+        roundService.checkById(roundId);
+        return gameChunkRepository.findAllByRound(roundId);
     }
     public List<GameChunk> findAllByOwner(GameUser gameUser){
         return gameChunkRepository.findAllByOwner(gameUser);
     }
-    public List<GameChunk> findAllByOwnerTeam(Team team){
-        return gameChunkRepository.findAllByOwnerTeam(team);
+    public List<GameChunk> findAllByUserRoundTeam(UserRoundTeam urt){
+        return gameChunkRepository.findAllByTeamAndRound(urt.getRound().getId(), urt.getTeam().getId());
     }
-    public void saveListOfChunkDTOs(List<ChunkDTO> chunkDTOList, GameUser user){
+    public void saveListOfChunkDTOs(List<ChunkDTO> chunkDTOList, GameUser user, Round round){
         List<GameChunk> gameChunkList = chunkDTOList.stream().map(chunk ->
-                GameChunk.builder().owner(user).id(chunk.getId()).build()
+                GameChunk.builder().round(round).owner(user).id(chunk.getId()).build()
         ).toList();
         gameChunkRepository.saveAll(gameChunkList);
     }

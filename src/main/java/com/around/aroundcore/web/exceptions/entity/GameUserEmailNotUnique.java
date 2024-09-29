@@ -1,11 +1,10 @@
 package com.around.aroundcore.web.exceptions.entity;
 
+import com.around.aroundcore.web.enums.ApiResponse;
+
 public class GameUserEmailNotUnique extends EntityFieldIsNotUniqueException{
     public GameUserEmailNotUnique(){
-        super("GameUser email is now unique");
+        super("GameUser email is now unique", ApiResponse.USER_ALREADY_EXIST);
     }
 
-    public GameUserEmailNotUnique(String message){
-        super(message);
-    }
 }

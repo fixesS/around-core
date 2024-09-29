@@ -7,7 +7,6 @@ import com.around.aroundcore.security.services.JwtService;
 import com.around.aroundcore.web.dtos.TokenData;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -36,27 +37,18 @@ public class RefreshController {
             description = "Refresh session by refresh_token"
     )
     public ResponseEntity<TokenData> refresh( @RequestParam("refresh_token") String refresh_token) {
-        var sessionUuid = jwtService.getSessionIdRefresh(refresh_token);
-        ApiResponse response;
-        TokenData tokenData = null;
+        UUID sessionUuid;
+        TokenData tokenData;
 
         try{
+            sessionUuid = jwtService.getSessionIdRefresh(refresh_token);
             jwtService.validateRefreshToken(refresh_token);
-            var session = sessionService.findByUuid(sessionUuid);
-            tokenData = authService.refreshSession(session.getSessionUuid());
-            response = ApiResponse.OK;
         }catch (JwtException e) {
-            response = ApiResponse.INVALID_TOKEN;
-            log.debug(e.getMessage());
-        }catch (SessionNullException e){
-            response = ApiResponse.SESSION_DOES_NOT_EXIST;
+            throw new ApiException(ApiResponse.INVALID_TOKEN);
         }
 
-        switch (response){
-            case OK -> {
-                return new ResponseEntity<>(tokenData, response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        var session = sessionService.findByUuid(sessionUuid);
+        tokenData = authService.refreshSession(session.getSessionUuid());
+        return ResponseEntity.ok(tokenData);
     }
 }

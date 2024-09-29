@@ -6,6 +6,8 @@ import jakarta.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 @Schema(description = "DTO for user stat info")
@@ -13,10 +15,8 @@ public class UserStatDTO {
     @Nullable
     @Schema(description = "user id")
     private Integer id;
-    private Integer team_id;
+    private List<RoundStatDTO> roundStat;
     private Integer level;
     private String username;
     private String avatar;
-    @Schema(description = "number of captured chunks")
-    private Integer number;
 }

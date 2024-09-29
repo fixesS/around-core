@@ -4,7 +4,6 @@ import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.MapEvent;
 import com.around.aroundcore.database.services.MapEventService;
 import com.around.aroundcore.web.dtos.MapEventDTO;
-import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.mappers.MapEventDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -34,11 +33,9 @@ public class MapEventsController {
             description = "Allows to get all map-events."
     )
     public ResponseEntity<List<MapEventDTO>> getAllEvents() {
-        ApiResponse response = ApiResponse.OK;
-
         List<MapEvent> events = mapEventService.findAllVerified();
         List<MapEventDTO> eventDTOS = events.stream().map(mapEventDTOMapper).toList();
 
-        return new ResponseEntity(eventDTOS,response.getStatus());
+        return ResponseEntity.ok(eventDTOS);
     }
 }

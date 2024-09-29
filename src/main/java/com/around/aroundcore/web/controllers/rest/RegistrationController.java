@@ -1,23 +1,16 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.Role;
-import com.around.aroundcore.database.models.Team;
-import com.around.aroundcore.database.models.VerificationToken;
+import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.services.GameUserService;
+import com.around.aroundcore.database.services.RoundService;
 import com.around.aroundcore.database.services.TeamService;
 import com.around.aroundcore.database.services.VerificationTokenService;
 import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.web.dtos.RegistrationDTO;
 import com.around.aroundcore.web.dtos.TokenData;
 import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.events.OnEmailVerificationEvent;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;
-import com.around.aroundcore.web.exceptions.entity.GameUserUsernameNotUnique;
-import com.around.aroundcore.web.exceptions.entity.TeamNullException;
-import com.around.aroundcore.web.exceptions.entity.VerificationTokenNullException;
 import com.around.aroundcore.web.tasks.EmailSendingTask;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -28,7 +21,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,6 +45,7 @@ public class RegistrationController {
     private final VerificationTokenService verificationTokenService;
     private final ThreadPoolTaskScheduler taskScheduler;
     private final EmailSendingTask emailSendingTask;
+    private final RoundService roundService;
 
     @PostConstruct
     public void executeSendingEmails(){
@@ -69,48 +62,30 @@ public class RegistrationController {
     public ResponseEntity<TokenData> registration(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");//mobile-front
         String ip_address = request.getRemoteAddr();
-        GameUser user = null;
-        ApiResponse response;
 
-        try {
-            userService.checkEmail(registrationDTO.getEmail());
-            userService.checkUsername(registrationDTO.getUsername());
+        userService.checkEmail(registrationDTO.getEmail());
+        userService.checkUsername(registrationDTO.getUsername());
+
+        GameUser user = GameUser.builder()
+                .username(registrationDTO.getUsername())
+                .verified(false)
+                .level(0)
+                .coins(0)
+                .email(registrationDTO.getEmail())
+                .password(passwordEncoder.encode(registrationDTO.getPassword()))
+                .role(Role.USER)
+                .build();
+        user.setCity(registrationDTO.getCity());
+        user.setAvatar(registrationDTO.getAvatar());
+
+        userService.create(user);
+        if(registrationDTO.getTeam_id() != null){
             Team team = teamService.findById(registrationDTO.getTeam_id());
-
-            user = GameUser.builder()
-                    .username(registrationDTO.getUsername())
-                    .team(team)
-                    .verified(false)
-                    .level(0)
-                    .coins(0)
-                    .email(registrationDTO.getEmail())
-                    .password(passwordEncoder.encode(registrationDTO.getPassword()))
-                    .role(Role.USER)
-                    .build();
-            user.setCity(registrationDTO.getCity());
-            user.setAvatar(registrationDTO.getAvatar());
-
-            userService.create(user);
-            response = ApiResponse.OK;
-
-        } catch (GameUserEmailNotUnique e) {
-            response = ApiResponse.USER_ALREADY_EXIST;
-            log.error(e.getMessage());
-        } catch (GameUserUsernameNotUnique e) {
-            response = ApiResponse.USER_NOT_UNIQUE_USERNAME;
-            log.error(e.getMessage());
-        } catch (TeamNullException e) {
-            response = ApiResponse.TEAM_DOES_NOT_EXIST;
-            log.error(e.getMessage());
+            userService.setTeamForRound(user,team,roundService.getCurrentRound());
         }
 
-        switch (response){
-            case OK -> {
-                TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip_address));
-                return new ResponseEntity<>(tokenData, response.getStatus());
-            }
-            default -> throw new ApiException(response);
-        }
+        TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip_address));
+        return ResponseEntity.ok(tokenData);
     }
     @PostMapping("/confirm")
     @Operation(
@@ -119,9 +94,8 @@ public class RegistrationController {
     )
     @Transactional
     public ResponseEntity<String> registrationConfrim(@RequestParam("token") String token) {
-        ApiResponse response;
         VerificationToken verificationToken;
-        GameUser user = null;
+        GameUser user;
 
         try{
             verificationToken = verificationTokenService.findByToken(token);
@@ -129,23 +103,17 @@ public class RegistrationController {
             user.setVerified(true);
             verificationTokenService.delete(verificationToken);
             userService.update(user);
-            response = ApiResponse.OK;
-        } catch (VerificationTokenNullException e) {
-            response = ApiResponse.INVALID_TOKEN;
-            log.error(e.getMessage());
-        } catch (ExpiredJwtException expEx) {
-            response = ApiResponse.VERIFIED_TOKEN_EXPIRED;
-            log.debug(expEx.getMessage());
-        } catch (JwtException e) {
-            response = ApiResponse.INVALID_TOKEN;
-            log.debug(e.getMessage());
-        }
 
-        switch (response){
-            case OK -> {
-                return new ResponseEntity<>("", response.getStatus());
-            }
-            default -> throw new ApiException(response);
+        } catch (ExpiredJwtException expEx) {
+            throw new ApiException(ApiResponse.VERIFIED_TOKEN_EXPIRED);
+        } catch (JwtException e) {
+            throw new ApiException(ApiResponse.INVALID_TOKEN);
         }
+        user = verificationToken.getUser();
+        user.setVerified(true);
+        verificationTokenService.delete(verificationToken);
+        userService.update(user);
+
+        return ResponseEntity.ok("");
     }
 }

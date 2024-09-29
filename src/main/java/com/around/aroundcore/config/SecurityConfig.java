@@ -3,6 +3,7 @@ package com.around.aroundcore.config;
 import com.around.aroundcore.database.models.Role;
 import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
 import com.around.aroundcore.security.filters.JwtFilter;
+import com.around.aroundcore.security.filters.WebSocketFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 public class SecurityConfig {
 
     @Autowired
-    private JwtConfig jwtConfig;
+    private AuthConfig authConfig;
     @Autowired
     @Qualifier("handlerExceptionResolver")
     HandlerExceptionResolver resolver;
@@ -47,9 +48,11 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationManager(jwtConfig.authenticationManager())
-                .addFilterBefore(new JwtFilter(jwtConfig.jwtService(), jwtConfig.sessionService), BasicAuthenticationFilter.class)
-                .addFilterBefore(new ExceptionHandlerFilter(jwtConfig.resolver), JwtFilter.class)
+                .authenticationManager(authConfig.authenticationManager())
+                .addFilterBefore(new WebSocketFilter(authConfig.webSocketAuthService(), authConfig.webSocketHeaderService(),
+                        authConfig.authenticationManager()), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(authConfig.jwtService(), authConfig.sessionService), WebSocketFilter.class)
+                .addFilterBefore(new ExceptionHandlerFilter(authConfig.resolver), JwtFilter.class)
         ;
         return http.build();
     }

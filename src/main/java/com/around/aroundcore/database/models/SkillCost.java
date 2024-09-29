@@ -3,12 +3,13 @@ package com.around.aroundcore.database.models;
 import com.around.aroundcore.database.converters.ListOfIntegerConverter;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
 @Table(name = "cost")
 public class SkillCost implements Serializable {
 

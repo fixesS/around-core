@@ -15,9 +15,10 @@ import java.util.Objects;
 public class ChunkDTO {
     @Schema(description = "Chunk id")
     private String id;
-    @Nullable
     @Schema(description = "Chunk owner team id")
     private Integer team_id;
+    @Schema(description = "Round where team owned chunk")
+    private Integer round_id;
 
     @Override
     public boolean equals(Object object)

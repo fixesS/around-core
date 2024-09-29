@@ -16,7 +16,7 @@ public class WebSocketSecurityConfig{
         messages
                 .simpDestMatchers("/topic/**").authenticated()
                 .simpDestMatchers("/app/**").authenticated()
-                .simpDestMatchers("/queue/**").authenticated()
+                .simpDestMatchers("/exchange/**").authenticated()
                 .simpTypeMatchers(
                         SimpMessageType.CONNECT,
                         SimpMessageType.MESSAGE,

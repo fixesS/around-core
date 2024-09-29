@@ -7,6 +7,8 @@ import com.around.aroundcore.web.services.MapEventParsingService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
@@ -38,6 +40,7 @@ public class MapEventService {
     public MapEvent findById(Integer id){
         return mapEventRepository.findById(id).orElseThrow(MapEventNullException::new);
     }
+    @Scheduled(fixedRate = 900000)
     public void makeEndedEventsNotVerified(){
         List<MapEvent> events = findAll();
         events.forEach(event -> {
@@ -51,8 +54,8 @@ public class MapEventService {
     public List<MapEvent> findAll(){
         return mapEventRepository.findAll();
     }
+    @Cacheable(value = "verifiedEvents")
     public List<MapEvent> findAllVerified() {
-        makeEndedEventsNotVerified();
         return mapEventRepository.findAllByVerified(true);
     }
     public boolean existByUrl(String url){
