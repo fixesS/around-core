@@ -65,7 +65,6 @@ public class RegistrationController {
 
         userService.checkEmail(registrationDTO.getEmail());
         userService.checkUsername(registrationDTO.getUsername());
-        Team team = teamService.findById(registrationDTO.getTeam_id());
 
         GameUser user = GameUser.builder()
                 .username(registrationDTO.getUsername())
@@ -80,7 +79,10 @@ public class RegistrationController {
         user.setAvatar(registrationDTO.getAvatar());
 
         userService.create(user);
-        userService.setTeamForRound(user,team,roundService.getCurrentRound());
+        if(registrationDTO.getTeam_id() != null){
+            Team team = teamService.findById(registrationDTO.getTeam_id());
+            userService.setTeamForRound(user,team,roundService.getCurrentRound());
+        }
 
         TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip_address));
         return ResponseEntity.ok(tokenData);
