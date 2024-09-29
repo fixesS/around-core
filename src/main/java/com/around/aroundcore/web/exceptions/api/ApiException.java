@@ -3,6 +3,7 @@ package com.around.aroundcore.web.exceptions.api;
 import com.around.aroundcore.web.enums.ApiResponse;
 import lombok.Getter;
 
+@Getter
 public class ApiException extends RuntimeException{
     public ApiException() {
         super();
@@ -14,6 +15,5 @@ public class ApiException extends RuntimeException{
         super();
         this.response = response;
     }
-    @Getter
     private final ApiResponse response;
 }

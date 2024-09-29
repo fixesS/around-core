@@ -2,10 +2,7 @@ package com.around.aroundcore.config;
 
 import com.around.aroundcore.database.repositories.GameUserRepository;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
-import com.around.aroundcore.security.services.AuthService;
-import com.around.aroundcore.security.services.GameUserDetailsServiceImpl;
-import com.around.aroundcore.security.services.JwtService;
+import com.around.aroundcore.security.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
-public class JwtConfig {
+public class AuthConfig {
     @Autowired
     private GameUserRepository userRepository;
     @Autowired
@@ -38,14 +35,14 @@ public class JwtConfig {
     public JwtService jwtService(){
         return new JwtService();
     }
-//    @Bean
-//    public JwtFilter jwtAuthenticationFilter(){
-//        return new JwtFilter(jwtService(),sessionService);
-//    }
-//    @Bean
-//    public ExceptionHandlerFilter exceptionHandlerFilter(){
-//        return new ExceptionHandlerFilter(resolver);
-//    }
+    @Bean
+    public WebSocketAuthService webSocketAuthService(){
+        return new WebSocketAuthService(sessionService);
+    }
+    @Bean
+    public WebSocketHeaderService webSocketHeaderService(){
+        return  new WebSocketHeaderService();
+    }
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

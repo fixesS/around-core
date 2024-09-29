@@ -21,3 +21,23 @@ Run with docker-compose.yml
 Fill your .env
 ### PostgreSQL
 Fill your .env
+## WebSockets
+We are using stomp over WebSockets.
+### Authorizing
+#### JWT
+1. Get access token from `auth/login`
+2. Set header Authorization with "Bearer <token>"
+3. Connect `/ws`
+
+### login and passcode
+1. Set header login with email
+2. Set header passcode with password
+3. Connect `/ws`
+
+### Usage
+- Subscribe to `/topic/chunk.event` (type: List<ChunkDTO>)
+- Subscribe to `/user/exchange/private.message/error` (type: ApiError)
+- Send messages to `topic/chunk.changes` (type: ChunkDTO)
+
+
+

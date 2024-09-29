@@ -21,7 +21,7 @@ public class TeamService {
     public List<Team> findAll(){
         return teamRepository.findAll();
     }
-    public boolean existById(Integer id){
+    private boolean existById(Integer id){
         return teamRepository.existsById(id);
     }
     public void checkById(Integer id){

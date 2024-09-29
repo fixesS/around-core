@@ -24,7 +24,7 @@ public class RegistrationDTO {
     @Pattern(regexp = AroundConfig.PASSWORD_REGEX, message = "-3003")
     @Schema(example = "Password1!")
     private String password;
-    @NotNull(message = "-3006")
+    @Nullable
     @Min(value = 1, message = "-3007")
     @Schema(example = "1")
     private Integer team_id;

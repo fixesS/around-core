@@ -7,11 +7,12 @@ import org.springframework.http.HttpStatus;
 public enum ApiResponse {
     OK(200, HttpStatus.OK),
     UNKNOWN_ERROR(-1000, "Unknown error."),
+    MISSING_PARAMETER_REQUEST(-1001, "Missing required parameters."),
     USER_DOES_NOT_EXIST(-2001,"User does not exist."),
     USER_ALREADY_EXIST(-2002,"User already exist."),
     USER_NOT_UNIQUE_EMAIL(-2003,"User email is not unique."),
     USER_NOT_UNIQUE_USERNAME(-2004,"User username is not unique."),
-    USER_HAS_NO_TEAM(-2005,"User has no team."),
+    USER_HAS_NO_TEAM_IN_ROUND(-2005,"User has no team in round."),
     USER_IS_NOT_VERIFIED(-2006,"User email is not verified."),
     USER_NEW_PASSWORD_THE_SAME(-2007,"User password is the same as previous."),
     USER_CANNOT_BE_FRIEND_TO_HIMSELF(-2008,"User cannot be friend to himself."),
@@ -38,7 +39,10 @@ public enum ApiResponse {
     SKILL_DOES_NOT_EXIST(-8001,"Skill does not exist."),
     SKILL_LEVEL_UNREACHABLE(-8002,"Skill level you trying to get more than max level for skill."),
     SKILL_LEVEL_ALREADY_MAX(-8003,"Your level of skill is already max."),
-    LEVELS_MUST_BE_MORE_THAN_ZERO(-8004,"Levels you tying to add(buy) must be more than 0.");
+    LEVELS_MUST_BE_MORE_THAN_ZERO(-8004,"Levels you tying to add(buy) must be more than 0."),
+    NO_ACTIVE_ROUND(-9001,"There is no active round(probably game is stopped)."),
+    ROUND_DOES_NOT_EXIST(-9002,"Round doest not exist."),
+    EVENT_DOES_NOT_EXIST(-10002,"Event doest not exist.");
 
     @Getter
     private Integer statusCode;
@@ -63,10 +67,6 @@ public enum ApiResponse {
         this.message = message;
         this.status = status;
     }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
     public static ApiResponse findByStatusCode(int statusCode){
         for (ApiResponse response: ApiResponse.values()){
             if(response.statusCode == statusCode){
@@ -75,14 +75,20 @@ public enum ApiResponse {
         }
         return ApiResponse.UNKNOWN_ERROR;
     }
+    public static ApiError getApiError(ApiResponse response){
+        ApiError apiError = new ApiError();
+        apiError.setStatus(response.getStatusCode());
+        apiError.setMessage(response.getMessage());
+
+        return apiError;
+    }
     public static ApiError getApiError(Integer statusCode, String message){
         ApiError apiError = new ApiError();
         apiError.setStatus(statusCode);
         apiError.setMessage(message);
 
         return apiError;
-    }
-    @Override
+    }    @Override
     public String toString(){
         return this.statusCode.toString();
     }

@@ -1,8 +1,6 @@
 package com.around.aroundcore.database.services;
 
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.GameUserSkill;
-import com.around.aroundcore.database.models.GameUserSkillEmbedded;
+import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.database.repositories.GameUserRepository;
 import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;
@@ -36,7 +34,7 @@ public class GameUserService {
             gameUserSkill.setGameUserSkillEmbedded(gameUserSkillEmbedded);
             gameUserSkillList.add(gameUserSkill);
         }
-        user.setUserSkills(gameUserSkillList);
+        user.addSkillToUserSkillList(gameUserSkillList);
         userRepository.save(user);
     }
 
@@ -80,5 +78,8 @@ public class GameUserService {
     }
     public List<GameUser> getTopAll(){
         return userRepository.getStatTopAll();
+    }
+    public void setTeamForRound(GameUser user, Team team, Round round){
+        userRepository.setTeamForRound(round.getId(), team.getId(), user.getId());
     }
 }

@@ -1,12 +1,14 @@
 package com.around.aroundcore.database.models;
 
 import com.around.aroundcore.web.exceptions.entity.GameUserSkillAlreadyMaxLevel;
-import com.around.aroundcore.web.exceptions.entity.GameUserSkillUnreachebleLevel;
+import com.around.aroundcore.web.exceptions.entity.GameUserSkillUnreachableLevel;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -14,6 +16,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "user_skills")
+@Getter
+@Setter
 @Data
 public class GameUserSkill implements Serializable {
 
@@ -28,7 +32,7 @@ public class GameUserSkill implements Serializable {
             throw new GameUserSkillAlreadyMaxLevel();
         }
         if(currentLevel+value > getGameUserSkillEmbedded().getSkill().getMaxLevel()){
-            throw new GameUserSkillUnreachebleLevel();
+            throw new GameUserSkillUnreachableLevel();
         }
 
     }

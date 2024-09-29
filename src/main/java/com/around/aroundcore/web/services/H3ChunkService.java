@@ -2,8 +2,10 @@ package com.around.aroundcore.web.services;
 
 import com.around.aroundcore.database.models.GameUserSkill;
 import com.around.aroundcore.database.models.Skill;
+import com.around.aroundcore.database.models.UserRoundTeam;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.chunk.WrongChunkResolution;
+import com.around.aroundcore.web.exceptions.entity.RoundNullException;
 import com.around.aroundcore.web.mappers.StringGameChunkDTOMapper;
 import com.uber.h3core.H3Core;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +49,8 @@ public class H3ChunkService {
         Integer skillRuleValue = skill.getRule().getValue().get(userSkill.getCurrentLevel());
         List<String> neighbours = getNeighboursForSkillRuleValue(chunkId, skillRuleValue);
         List<ChunkDTO> chunkDTOList = neighbours.stream().map(stringGameChunkDTOMapper).toList();
-        chunkDTOList.forEach(chunkDTO -> chunkDTO.setTeam_id(userSkill.getGameUserSkillEmbedded().getGameUser().getTeam().getId()));
+        UserRoundTeam urt = userSkill.getGameUserSkillEmbedded().getGameUser().getUserRoundTeams().stream().filter(urt1->urt1.getRound().getActive()).findFirst().orElseThrow(RoundNullException::new);
+        chunkDTOList.forEach(chunkDTO -> chunkDTO.setTeam_id(urt.getTeam().getId()));
         return chunkDTOList;
     }
     public List<ChunkDTO> getChunkByLatLon(Double lat, Double lon, int radius){
