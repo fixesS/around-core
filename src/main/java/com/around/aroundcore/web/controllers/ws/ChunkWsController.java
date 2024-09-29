@@ -91,6 +91,7 @@ public class ChunkWsController {
         // getting neighbours for width userskill level
         List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill);
         gameChunkService.saveListOfChunkDTOs(chunksDTOList, user, round);// adding
+        chunksDTOList.forEach(chunkDTO1 -> chunkDTO1.setRound_id(round.getId()));
 
         //getting user visited events from verified events on map
         List<MapEvent> visitedEvents = getVisitedByUserAndChunk(user, gameChunkService.findByIdAndRoundId(chunkDTO.getId(), round.getId()));
