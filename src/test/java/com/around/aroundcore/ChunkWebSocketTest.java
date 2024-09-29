@@ -76,7 +76,7 @@ class ChunkWebSocketTest {
 
 		//token = getTokenData(email1,pass1);
 
-		String token_s = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiJlZTAzYTk2MC1mY2E2LTRhMDQtYjIzYy02NGMwM2Q0MTRjNGIiLCJpYXQiOjE3MjcwMTQ0NzYsImV4cCI6MTcyNzExNDQ3Nn0.ISKvIT_ln1cG2YY7yTjqOyAJYP_33fcHTA-IB4wh-oEfXW8v1IeQuIMMarEm-H3F";
+		String token_s = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiIyYmFkYTNmZS0yNGIxLTQ0NWYtYWExNy02NTI2NDRhNzljOWYiLCJpYXQiOjE3Mjc2MDUzMDQsImV4cCI6MTcyNzcwNTMwNH0.w2SohNB81ucF0-_dE3gvNK6aLN2tciDFETsvwu_-4EKip9-Ueazrfw9JV0qHy2xc";
 		blockingQueue = new LinkedBlockingQueue<>();
 		blockingQueueError = new LinkedBlockingQueue<>();
 

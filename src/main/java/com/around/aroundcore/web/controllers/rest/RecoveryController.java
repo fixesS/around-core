@@ -52,7 +52,7 @@ public class RecoveryController {
     @PostMapping("/forgotPassword")
     @Operation(
             summary = "Sends email message",
-            description = "Sends email message to recover password"
+            description = "Sends email message to recover password IF USER(user email) IS VERIFIED"
     )
     @Transactional
     public ResponseEntity<String> forgotPassword(@Validated @RequestBody ForgotPasswordDTO forgotPasswordDTO) {

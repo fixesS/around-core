@@ -34,8 +34,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public static final String TOPIC_DESTINATION_PREFIX = "/topic";
     public static final String QUEUE_DESTINATION_PREFIX = "/queue";
     public static final String EXCHANGE_DESTINATION_PREFIX = "/exchange";
-    public static final String AMQ_QUEUE_DESTINATION_PREFIX = "/amq/queue";
+    public static final String AMQ_QUEUE_DESTINATION_PREFIX = "/private.message";
     public static final String REGISTRY = "/ws";
+
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {

@@ -45,7 +45,7 @@ public class ChunkWsController {
     private final SimpMessagingTemplate messagingTemplate;
     public static final String CHUNK_CHANGES_FROM_USER = "/topic/chunk.changes";
     public static final String CHUNK_CHANGES_EVENT = "/topic/chunk.event";
-    public static final String QUEUE_ERROR_FOR_SESSION = "/exchange/amq.direct/error";
+    public static final String QUEUE_ERROR_FOR_SESSION = "/exchange/private.message/error";
 
     @PostConstruct
     public void executeSendingUpdates(){
@@ -87,6 +87,7 @@ public class ChunkWsController {
             messagingTemplate.convertAndSendToUser(sessionUuid.toString(), QUEUE_ERROR_FOR_SESSION, apiError);
             return;
         }
+
 
         // getting neighbours for width userskill level
         List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill);
