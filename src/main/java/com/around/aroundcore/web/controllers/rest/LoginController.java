@@ -55,9 +55,6 @@ public class LoginController {
             Authentication auth = authenticationManager.authenticate(authenticationToken);
 
             user = (GameUser) auth.getPrincipal();
-            if (user == null) {
-                throw new ApiException(ApiResponse.USER_DOES_NOT_EXIST);
-            }
         }catch (BadCredentialsException e){
             //response = ApiResponse.LOG_INCORRECT_PASSWORD_OR_LOGIN; do not show that password is incorrect
             throw new ApiException(ApiResponse.USER_DOES_NOT_EXIST);

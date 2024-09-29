@@ -59,16 +59,16 @@ public class RestExceptionHandler {
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         return new ResponseEntity<>(apiError, response.getStatus());
     }
-    @ExceptionHandler(AuthHeaderException.class)
-    public ResponseEntity<String> handleAuthHeaderException(AuthHeaderException exception) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-    }
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<String> handleJwtException(JwtException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @ExceptionHandler(AuthSessionNullException.class)
     public ResponseEntity<String> handleSessionNullException(AuthHeaderNullException exception) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+    @ExceptionHandler(AuthHeaderException.class)
+    public ResponseEntity<String> handleAuthHeaderException(AuthHeaderException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
     @ExceptionHandler(ApiException.class)

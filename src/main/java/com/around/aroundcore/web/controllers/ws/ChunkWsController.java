@@ -88,7 +88,6 @@ public class ChunkWsController {
             return;
         }
 
-
         // getting neighbours for width userskill level
         List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill);
         gameChunkService.saveListOfChunkDTOs(chunksDTOList, user, round);// adding

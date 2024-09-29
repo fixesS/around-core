@@ -33,6 +33,7 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -91,7 +92,11 @@ class ChunkWebSocketTest {
 
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 		headers.set("Authorization", "Bearer "+token_s);
-		log.info(headers.get("Authorization").toString());
+		//headers.set("login", email1);
+		//headers.set("passcode", pass1);
+		log.info(Objects.requireNonNull(headers.get("Authorization")).toString());
+		//log.info(Objects.requireNonNull(headers.get("login")).toString());
+		//log.info(Objects.requireNonNull(headers.get("passcode")).toString());
 
 		StompSession stompSession = stompClient
 				.connectAsync(wsUrl, headers, new StompSessionHandlerAdapter() {})
