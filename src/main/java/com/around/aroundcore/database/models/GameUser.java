@@ -4,6 +4,7 @@ import com.around.aroundcore.web.exceptions.entity.*;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
+import jakarta.transaction.Transactional;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,7 +37,6 @@ public class GameUser implements UserDetails {
     private String username;
     @Column(name = "avatar")
     @Getter
-    @Setter
     private String avatar;
     @Column(unique=true)
     @Getter
@@ -68,9 +68,9 @@ public class GameUser implements UserDetails {
     )
     private List<UserRoundTeam> userRoundTeams;
 
-    @OneToMany(fetch = FetchType.EAGER,mappedBy = "owner") // todo fix eager
+    @OneToMany(mappedBy = "owner")
     private List<GameChunk> capturedChunks;
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)// todo fix eager
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
             name = "user_friends",
@@ -94,7 +94,7 @@ public class GameUser implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
     )
     private List<MapEvent> visitedEvents;
-    @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})// todo fix eager
+    @OneToMany(mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
     private List<GameUserSkill> userSkills;
 
     @Override
@@ -110,34 +110,6 @@ public class GameUser implements UserDetails {
         }else{
             this.userSkills = new ArrayList<>(gameUserSkill);
         }
-    }
-    public GameUserSkill getUserSkillBySkillId(Integer skillId) throws GameUserSkillNullException {
-        return userSkills.stream()
-                .filter(gameUserSkill -> Objects.equals(gameUserSkill.getGameUserSkillEmbedded().getSkill().getId(), skillId))
-                .findFirst().orElseThrow(GameUserSkillNullException::new);
-    }
-    public List<GameUserSkill> getUserSkills() {
-        return Collections.unmodifiableList(userSkills);
-    }
-    public void setCity(String s){
-        this.city = Objects.requireNonNullElse(s, "Екатеринбург");
-    }
-    public void setAvatar(String s){
-        this.avatar = Objects.requireNonNullElse(s, "1");
-    }
-    public Team getTeam(Round round){
-        UserRoundTeam urt = userRoundTeams.stream().filter(urt1 -> urt1.getRound() == round)
-                .findFirst().orElseThrow(TeamNullException::new);
-        return urt.getTeam();
-    }
-    public List<GameChunk> getCapturedChunks(Integer roundId){
-        return capturedChunks.stream().filter(chunk -> chunk.getRound().getId().equals(roundId)).toList();
-    }
-    public void setPassword(String newPassword){
-        if(this.password.equals(newPassword)){
-            throw new GameUserPasswordSame();
-        }
-        this.password = newPassword;
     }
     public void followUser(GameUser user) throws GameUserAlreadyFollowed, GameUserUsernameNotUnique{
         if(Objects.equals(user.getUsername(), getUsername())){
@@ -180,9 +152,38 @@ public class GameUser implements UserDetails {
             throw new GameUserNotEnoughCoins();
         }
     }
+    public Team getTeam(Round round){
+        UserRoundTeam urt = userRoundTeams.stream().filter(urt1 -> urt1.getRound() == round)
+                .findFirst().orElseThrow(TeamNullException::new);
+        return urt.getTeam();
+    }
+    public GameUserSkill getUserSkillBySkillId(Integer skillId) throws GameUserSkillNullException {
+        return this.userSkills.stream()
+                .filter(gameUserSkill -> Objects.equals(gameUserSkill.getGameUserSkillEmbedded().getSkill().getId(), skillId))
+                .findFirst().orElseThrow(GameUserSkillNullException::new);
+    }
+    public List<GameUserSkill> getUserSkills() {
+        return Collections.unmodifiableList(userSkills);
+    }
+
+    public List<GameChunk> getCapturedChunks(Integer roundId){
+        return this.capturedChunks.stream().filter(chunk -> chunk.getRound().getId().equals(roundId)).toList();
+    }
+    public void setCity(String s){
+        this.city = Objects.requireNonNullElse(s, "Екатеринбург");
+    }
+    public void setAvatar(String s){
+        this.avatar = Objects.requireNonNullElse(s, "1");
+    }
     @Override
     public String getPassword() {
         return password;
+    }
+    public void setPassword(String newPassword){
+        if(this.password.equals(newPassword)){
+            throw new GameUserPasswordSame();
+        }
+        this.password = newPassword;
     }
     @Override
     public String getUsername() {

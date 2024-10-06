@@ -12,6 +12,7 @@ import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
 import com.around.aroundcore.web.services.GameUserLocationQueueService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -35,6 +36,7 @@ public class UserLocationController {
     public static final String LOCATION_FROM_USER = "/location";
 
     @MessageMapping(LOCATION_FROM_USER)
+    @Transactional
     public void handleLocation(@Payload GameUserLocationDTO gameUserLocationDTO, Principal principal){
         GameUser user = null;
         Session session;

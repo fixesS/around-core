@@ -23,6 +23,7 @@ public class GameUserService {
     private final GameUserRepository userRepository;
     private final SkillService skillService;
 
+    @Transactional
     public void create(GameUser user) {
         List<GameUserSkill> gameUserSkillList = new ArrayList<>();
         for (Skills skill : Skills.values()){
