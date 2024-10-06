@@ -36,6 +36,7 @@ public class GameUser implements UserDetails {
     private String username;
     @Column(name = "avatar")
     @Getter
+    @Setter
     private String avatar;
     @Column(unique=true)
     @Getter
