@@ -21,6 +21,7 @@ public class MapEventDTO {
     private LocalDateTime starts;
     private LocalDateTime ends;
     private String url;
+    private Boolean is_ad;
     @Schema(description = "chunks where map-event is located")
     private List<ChunkDTO> chunks;
 }

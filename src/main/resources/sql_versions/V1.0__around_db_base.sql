@@ -162,6 +162,7 @@ CREATE TABLE public.map_events (
     ends_at timestamp NULL,
     url varchar NULL,
     verified bool NOT NULL DEFAULT false,
+    ad bool NOT NULL DEFAULT false,
     CONSTRAINT map_events_pk PRIMARY KEY (id)
 );
 ALTER TABLE public.map_events ADD CONSTRAINT map_events_provider_fk FOREIGN KEY (provider_id) REFERENCES public.event_providers(id);
