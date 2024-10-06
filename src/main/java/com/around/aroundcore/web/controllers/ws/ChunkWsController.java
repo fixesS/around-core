@@ -10,8 +10,6 @@ import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.services.ChunkQueueService;
 import com.around.aroundcore.web.services.H3ChunkService;
-import com.around.aroundcore.web.tasks.ChunkEventTask;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,39 +17,28 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @AllArgsConstructor
 @Controller
 public class ChunkWsController {
-    private final ThreadPoolTaskScheduler taskScheduler;
     private final ChunkQueueService chunkQueueService;
     private final GameChunkService gameChunkService;
     private final SessionService sessionService;
     private final MapEventService mapEventService;
     private final GameUserService userService;
-    private final ChunkEventTask chunkEventTask;
     private final RoundService roundService;
     private final H3ChunkService h3ChunkService;
     private final SimpMessagingTemplate messagingTemplate;
     public static final String CHUNK_CHANGES_FROM_USER = "/topic/chunk.changes";
     public static final String CHUNK_CHANGES_EVENT = "/topic/chunk.event";
     public static final String QUEUE_ERROR_FOR_SESSION = "/exchange/private.message/error";
-
-    @PostConstruct
-    public void executeSendingUpdates(){
-        Duration duration = Duration.of(100, TimeUnit.MILLISECONDS.toChronoUnit());
-        taskScheduler.scheduleWithFixedDelay(chunkEventTask, duration);
-    }
 
     @SubscribeMapping(CHUNK_CHANGES_EVENT)
     public void fetchChunkChangesEvent(Principal principal){

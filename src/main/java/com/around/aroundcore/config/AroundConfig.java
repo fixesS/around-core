@@ -9,6 +9,7 @@ import com.around.aroundcore.web.services.apis.coords.GeotreeAPIService;
 import com.kuliginstepan.dadata.client.DadataClient;
 import com.uber.h3core.H3Core;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+@Slf4j
 @EnableCaching
 @Configuration
 @RequiredArgsConstructor
@@ -57,7 +59,7 @@ public class AroundConfig {
     public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
         ThreadPoolTaskScheduler threadPoolTaskScheduler
                 = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(3);
+        threadPoolTaskScheduler.setPoolSize(5);
         threadPoolTaskScheduler.setThreadNamePrefix(
                 "ThreadPoolTaskScheduler");
         return threadPoolTaskScheduler;
