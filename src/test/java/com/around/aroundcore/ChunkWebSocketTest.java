@@ -77,13 +77,14 @@ class ChunkWebSocketTest {
 
 		//token = getTokenData(email1,pass1);
 
-		String token_s = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiIyYmFkYTNmZS0yNGIxLTQ0NWYtYWExNy02NTI2NDRhNzljOWYiLCJpYXQiOjE3Mjc2MDUzMDQsImV4cCI6MTcyNzcwNTMwNH0.w2SohNB81ucF0-_dE3gvNK6aLN2tciDFETsvwu_-4EKip9-Ueazrfw9JV0qHy2xc";
+		String token_s = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiJhY2E0MzgzZC05YWY2LTRlMWMtYmRlNS03OWZlY2IxZTVkNTAiLCJpYXQiOjE3Mjc2MjE5OTIsImV4cCI6MTcyNzYyMzc5Mn0.BWOt3BdsFw_I5ibmos1Q2r4hXDRiPhZftY2lgd4V1VLQPa420SyWpWBFFBIJ82Pd";
 		blockingQueue = new LinkedBlockingQueue<>();
 		blockingQueueError = new LinkedBlockingQueue<>();
 
 		RunStopFrameHandler runStopFrameHandler = new RunStopFrameHandler(new CompletableFuture<>());
 
-		String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
+		//String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
+		String wsUrl = "wss://aroundgame.ru/ws";
 		log.info(wsUrl);
 
 		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
@@ -91,17 +92,16 @@ class ChunkWebSocketTest {
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-		headers.set("Authorization", "Bearer "+token_s);
-		//headers.set("login", email1);
-		//headers.set("passcode", pass1);
-		log.info(Objects.requireNonNull(headers.get("Authorization")).toString());
+		//headers.set("Authorization", "Bearer "+token_s);
+		headers.set("login", email1);
+		headers.set("passcode", pass1);
+		//log.info(headers.get("Authorization").toString());
 		//log.info(Objects.requireNonNull(headers.get("login")).toString());
 		//log.info(Objects.requireNonNull(headers.get("passcode")).toString());
 
 		StompSession stompSession = stompClient
 				.connectAsync(wsUrl, headers, new StompSessionHandlerAdapter() {})
 				.get(1, SECONDS);
-		log.info(stompSession.toString());
 		client = WebClient.builder()
 				.stompClient(stompClient)
 				.stompSession(stompSession)
@@ -123,7 +123,6 @@ class ChunkWebSocketTest {
 	void testAddingChunk() {
 
 		StompSession stompSession = client.getStompSession();
-		log.info(client.sessionToken);
 
 		RunStopFrameHandler handler = client.getHandler();
 
@@ -168,6 +167,7 @@ class ChunkWebSocketTest {
 		//exceptedList.add(ChunkDTO.builder().id("8b10dc934223fff").team_id(1).build())
 		List<ChunkDTO> receivedList = objectMapper.convertValue(blockingQueue.poll(5, SECONDS),new TypeReference<ArrayList<ChunkDTO>>(){});
 		log.info("{}",receivedList.size());
+		log.info("{}",receivedList);
 		ApiError apiError = blockingQueueError.poll(5, SECONDS);
 		log.info("{}",apiError.getMessage());
 
