@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @EnableCaching
+@EnableScheduling
 @Configuration
 @RequiredArgsConstructor
 public class AroundConfig {

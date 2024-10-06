@@ -1,5 +1,6 @@
 package com.around.aroundcore.web.controllers.ws;
 
+import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
@@ -36,9 +37,8 @@ public class ChunkWsController {
     private final RoundService roundService;
     private final H3ChunkService h3ChunkService;
     private final SimpMessagingTemplate messagingTemplate;
-    public static final String CHUNK_CHANGES_FROM_USER = "/topic/chunk.changes";
+    public static final String CHUNK_CHANGES_FROM_USER = "/chunk.changes";
     public static final String CHUNK_CHANGES_EVENT = "/topic/chunk.event";
-    public static final String QUEUE_ERROR_FOR_SESSION = "/exchange/private.message/error";
 
     @SubscribeMapping(CHUNK_CHANGES_EVENT)
     public void fetchChunkChangesEvent(Principal principal){
@@ -46,7 +46,7 @@ public class ChunkWsController {
             JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
             var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
             var session = sessionService.findByUuid(sessionUuid);
-            log.info("Got new subscription from: {}",session.getUser().getEmail());
+            log.debug("Got subscription from: {}",session.getUser().getEmail());
         }catch (Exception e){
             log.error(e.getMessage());
         }
@@ -55,14 +55,14 @@ public class ChunkWsController {
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
     @Transactional
     public void handleChunkChanges(@Payload ChunkDTO chunkDTO, Principal principal){
-        GameUser user;
+        GameUser user = null;
         Session session;
         GameUserSkill userWidthSkill;
         Round round;
 
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
         var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
-        try {// getting user
+        try {
             session = sessionService.findByUuid(sessionUuid);
             user = session.getUser();
             userWidthSkill = user.getUserSkillBySkillId(Skills.WIDTH.getId());
@@ -71,7 +71,9 @@ public class ChunkWsController {
         }catch (ApiException e){
             log.error(e.getMessage());
             ApiError apiError = ApiResponse.getApiError(e.getResponse());
-            messagingTemplate.convertAndSendToUser(sessionUuid.toString(), QUEUE_ERROR_FOR_SESSION, apiError);
+            if(user != null){
+                messagingTemplate.convertAndSendToUser(user.getUsername(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
+            }
             return;
         }
 

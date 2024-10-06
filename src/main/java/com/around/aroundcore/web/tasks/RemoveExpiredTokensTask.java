@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class CheckTokensTask {
+public class RemoveExpiredTokensTask {
     private final RecoveryTokenService recoveryTokenService;
     private final VerificationTokenService verificationTokenService;
 
@@ -18,6 +18,6 @@ public class CheckTokensTask {
     public void removeExpiredTokens() {
         recoveryTokenService.removeExpired();
         verificationTokenService.removeExpired();
-        log.debug("Expired token have been removed");
+        log.debug("Expired tokens have been removed");
     }
 }

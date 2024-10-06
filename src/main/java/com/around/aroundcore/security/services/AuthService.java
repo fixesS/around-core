@@ -65,7 +65,6 @@ public class AuthService {
                 .toLocalDateTime());
 
         sessionService.update(session);
-        sessionService.removeExpired();
 
         return TokenData.builder()
                 .access_token(accessToken.getToken())

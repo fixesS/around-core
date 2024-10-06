@@ -68,9 +68,9 @@ public class GameUser implements UserDetails {
     )
     private List<UserRoundTeam> userRoundTeams;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "owner") // todo fix eager
     private List<GameChunk> capturedChunks;
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)// todo fix eager
     @Getter
     @JoinTable(
             name = "user_friends",
@@ -94,7 +94,7 @@ public class GameUser implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
     )
     private List<MapEvent> visitedEvents;
-    @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
+    @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})// todo fix eager
     private List<GameUserSkill> userSkills;
 
     @Override

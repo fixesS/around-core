@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class CacheReloadTask{
+public class ReloadCacheTask {
     private final CacheManager cacheManager;
 
     public void evictAllCaches() {
