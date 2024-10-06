@@ -4,7 +4,6 @@ import com.around.aroundcore.web.exceptions.entity.*;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
-import jakarta.transaction.Transactional;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -170,10 +169,10 @@ public class GameUser implements UserDetails {
         return this.capturedChunks.stream().filter(chunk -> chunk.getRound().getId().equals(roundId)).toList();
     }
     public void setCity(String s){
-        this.city = Objects.requireNonNullElse(s, "Екатеринбург");
+        this.city = Objects.requireNonNullElse(s, "Yekaterinburg");
     }
     public void setAvatar(String s){
-        this.avatar = Objects.requireNonNullElse(s, "1");
+        this.avatar = Objects.requireNonNullElse(s, "guest.jpg");
     }
     @Override
     public String getPassword() {
