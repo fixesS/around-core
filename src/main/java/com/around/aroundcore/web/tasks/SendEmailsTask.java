@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class EmailSendingTask {
+public class SendEmailsTask {
     private EmailService emailService;
     private EmailQueueService emailQueueService;
 

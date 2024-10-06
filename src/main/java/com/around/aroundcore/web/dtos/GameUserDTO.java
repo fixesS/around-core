@@ -1,10 +1,9 @@
 package com.around.aroundcore.web.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -13,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Schema(description = "DTO for user info")
 public class GameUserDTO {
 
+    @Getter
     private Integer id;
     private String username;
     private String avatar;

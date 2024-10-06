@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class ChunkEventTask {
+public class SendChunksTask {
     private final ChunkQueueService queueService;
     private final SimpMessagingTemplate messagingTemplate;
 
