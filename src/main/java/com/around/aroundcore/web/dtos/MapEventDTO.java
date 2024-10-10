@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -18,8 +17,8 @@ public class MapEventDTO {
     private Integer id;
     private String name;
     private String provider;
-    private LocalDateTime starts;
-    private LocalDateTime ends;
+    private Long starts;
+    private Long ends;
     private String url;
     private Boolean is_ad;
     @Schema(description = "chunks where map-event is located")
