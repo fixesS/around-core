@@ -32,7 +32,7 @@ public class SkillController {
     private final GameUserSkillsService gameUserSkillsService;
     private final SessionService sessionService;
     private final SkillDTOMapper skillDTOMapper;
-    @GetMapping("all")
+    @GetMapping("/all")
     @Operation(
             summary = "Gives info about skill by id",
             description = "Allows to get info about skill by id."
@@ -44,7 +44,7 @@ public class SkillController {
 
         return ResponseEntity.ok(skillDTOS);
     }
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @Operation(
             summary = "Gives info about skill by id",
             description = "Allows to get info about skill by id."
@@ -55,7 +55,7 @@ public class SkillController {
 
         return ResponseEntity.ok(skillDTO);
     }
-    @PostMapping("{id}/buyLevels")
+    @PostMapping("/{id}/buyLevels")
     @Operation(
             summary = "Gives info about skill by id",
             description = "Allows to get info about skill by id."
