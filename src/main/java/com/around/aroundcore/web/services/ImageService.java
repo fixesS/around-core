@@ -54,6 +54,7 @@ public class ImageService {
             imageFile.transferTo(filePath);
         } catch (IOException e) {
             log.error(e.getMessage());
+            e.printStackTrace();
             throw new ImageSaveException();
         }
 
