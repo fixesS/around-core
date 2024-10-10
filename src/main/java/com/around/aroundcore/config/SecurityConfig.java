@@ -21,6 +21,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 @EnableWebSecurity
 public class SecurityConfig {
 
+
     @Autowired
     private AuthConfig authConfig;
     @Autowired
@@ -51,7 +52,7 @@ public class SecurityConfig {
                 .authenticationManager(authConfig.authenticationManager())
                 .addFilterBefore(new WebSocketFilter(authConfig.webSocketAuthService(), authConfig.webSocketHeaderService(),
                         authConfig.authenticationManager()), BasicAuthenticationFilter.class)
-                .addFilterBefore(new JwtFilter(authConfig.jwtService(), authConfig.sessionService), WebSocketFilter.class)
+                .addFilterBefore(new JwtFilter(authConfig.timeLocale,authConfig.jwtService(), authConfig.sessionService), WebSocketFilter.class)
                 .addFilterBefore(new ExceptionHandlerFilter(authConfig.resolver), JwtFilter.class)
         ;
         return http.build();

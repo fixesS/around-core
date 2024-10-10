@@ -5,6 +5,7 @@ import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 public class AuthConfig {
+    @Value("${around.time.locale}")
+    public String timeLocale;
     @Autowired
     private GameUserRepository userRepository;
     @Autowired
@@ -58,7 +61,7 @@ public class AuthConfig {
 
     @Bean
     public AuthService authService(){
-        return new AuthService(jwtService(),sessionService);
+        return new AuthService(timeLocale,jwtService(),sessionService);
     }
 }
 
