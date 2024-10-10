@@ -27,7 +27,7 @@ public class RoundService {
     public Round getCurrentRound() throws NoActiveRoundException{
         return roundRepository.findFirstByActiveIsTrue().orElseThrow(NoActiveRoundException::new);
     }
-    @Cacheable(value = "getRoundById", key = "#roundId")
+    @Cacheable(value = "getRoundById", key = "#id")
     public Round getRoundById(Integer id) throws RoundNullException{
         return roundRepository.findById(id).orElseThrow(RoundNullException::new);
     }

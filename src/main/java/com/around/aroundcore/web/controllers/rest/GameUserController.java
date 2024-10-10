@@ -57,6 +57,7 @@ public class GameUserController {
             summary = "Gives all info about user for active round",
             description = "Allows to get all info about user."
     )
+    @Transactional
     public ResponseEntity<GameUserDTO> getMe(){
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
@@ -71,6 +72,7 @@ public class GameUserController {
             summary = "Gives friends of user",
             description = "Allows get info about all friends of user."
     )
+    @Transactional
     public ResponseEntity<List<GameUserDTO>> getMyFriends() {
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
@@ -84,6 +86,7 @@ public class GameUserController {
             summary = "Gives followers of user",
             description = "Allows get info about all friends of user."
     )
+    @Transactional
     public ResponseEntity<List<GameUserDTO>> getMyFollowers() {
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
@@ -97,6 +100,7 @@ public class GameUserController {
             summary = "Gives skills of user",
             description = "Allows get info about all friends of user."
     )
+    @Transactional
     public ResponseEntity<List<SkillDTO>> getMySkills() {
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
@@ -140,6 +144,7 @@ public class GameUserController {
             summary = "Gives all info about user by id in active round",
             description = "Allows to get all info about user by id."
     )
+    @Transactional
     public ResponseEntity<GameUserDTO> getUserById(@PathVariable Integer id){
         var user = userService.findById(id);
         GameUserDTO gameUserDTO = gameUserDTOMapper.apply(user);
@@ -151,6 +156,7 @@ public class GameUserController {
             summary = "Gives friends of user by id",
             description = "Allows get info about all friends of user by id."
     )
+    @Transactional
     public ResponseEntity<List<GameUserDTO>> getUserFriendsById(@PathVariable Integer id) {
         var user = userService.findById(id);
         List<GameUserDTO> friends = user.getFriends().stream().map(gameUserDTOMapper).toList();
@@ -162,6 +168,7 @@ public class GameUserController {
             summary = "Gives followers of user by id",
             description = "Allows get info about all friends of user by id."
     )
+    @Transactional
     public ResponseEntity<List<GameUserDTO>> getUserFollowersById(@PathVariable Integer id) {
         var user = userService.findById(id);
         List<GameUserDTO> followers = user.getFollowers().stream().map(gameUserDTOMapper).toList();
@@ -173,6 +180,7 @@ public class GameUserController {
             summary = "Gives skills of user",
             description = "Allows get info about all friends of user."
     )
+    @Transactional
     public ResponseEntity<List<SkillDTO>> getUserSkillsById(@PathVariable Integer id) {
         var user = userService.findById(id);
         List<SkillDTO> skillDTOS = user.getUserSkills().stream().map(skillDTOMapper).toList();
@@ -184,6 +192,7 @@ public class GameUserController {
             summary = "Gives all info about user by uid",
             description = "Allows to get all info about user by id."
     )
+    @Transactional
     public ResponseEntity<List<GameUserDTO>> getUserByUsername(@RequestParam("username") String username){
         List<GameUserDTO> gameUserDTOS = new ArrayList<>();
 
@@ -257,6 +266,7 @@ public class GameUserController {
             summary = "Verifying email",
             description = "Allows to verifiy user email."
     )
+    @Transactional
     public ResponseEntity<String> verifyMe(){
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
