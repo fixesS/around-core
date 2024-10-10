@@ -1,33 +1,27 @@
 package com.around.aroundcore.config;
 
 import com.around.aroundcore.database.models.Role;
-import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
 import com.around.aroundcore.security.filters.JwtFilter;
 import com.around.aroundcore.security.filters.WebSocketFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     @Autowired
-    private AuthConfig authConfig;
-    @Autowired
-    @Qualifier("handlerExceptionResolver")
-    HandlerExceptionResolver resolver;
-
-    public static final String[] WHITE_LIST = {
+    public SecurityConfig(AuthConfig authConfig) {
+        this.authConfig = authConfig;
+    }
+    private final AuthConfig authConfig;
+    protected static final String[] WHITE_LIST = {
             "/v3/api-docs/**",
             "/v3/api-docs.yaml",
             "/swagger-ui/**",
@@ -42,6 +36,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
+                        .requestMatchers(WHITE_LIST).permitAll()
                         .requestMatchers("/api/**").hasAuthority(Role.USER.name())
                         .requestMatchers("/ws/**").hasAuthority(Role.USER.name())
                         .requestMatchers("/actuator/health").hasAuthority(Role.USER.name())
@@ -49,18 +44,9 @@ public class SecurityConfig {
                 )
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(authConfig.authenticationManager())
-                .addFilterBefore(new WebSocketFilter(authConfig.webSocketAuthService(), authConfig.webSocketHeaderService(),
-                        authConfig.authenticationManager()), BasicAuthenticationFilter.class)
-                .addFilterBefore(new JwtFilter(authConfig.jwtService(), authConfig.sessionService), WebSocketFilter.class)
-                .addFilterBefore(new ExceptionHandlerFilter(authConfig.resolver), JwtFilter.class)
-        ;
+                .addFilterBefore(authConfig.webSocketFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(authConfig.jwtFilter(), WebSocketFilter.class)
+                .addFilterBefore(authConfig.exceptionHandlerFilter(), JwtFilter.class);
         return http.build();
     }
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer()  {
-        return (web) -> web.ignoring().requestMatchers(WHITE_LIST);
-    }
-
-
-
 }

@@ -3,7 +3,7 @@ package com.around.aroundcore.web.mappers;
 import com.around.aroundcore.database.models.GameUser;
 
 import com.around.aroundcore.web.dtos.RoundStatDTO;
-import com.around.aroundcore.web.dtos.UserStatDTO;
+import com.around.aroundcore.web.dtos.GameUserStatDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,11 @@ import java.util.function.Function;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserStatDTOMapper implements Function<GameUser, UserStatDTO> {
+public class UserStatDTOMapper implements Function<GameUser, GameUserStatDTO> {
     private final GameChunkStatDTOMapper chunkDTOMapper;
     @Override
-    public UserStatDTO apply(GameUser user) {
-        return UserStatDTO.builder()
+    public GameUserStatDTO apply(GameUser user) {
+        return GameUserStatDTO.builder()
                 .id(user.getId())
                 .level(user.getLevel())
                 .roundStat(getRoundStatDTO(user))

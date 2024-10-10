@@ -23,17 +23,17 @@ public class ChunkDTO {
     @Override
     public boolean equals(Object object)
     {
-        boolean sameSame = false;
+        boolean same = false;
 
         if (object instanceof ChunkDTO chunkDTO)
         {
-            sameSame = Objects.equals(this.id, chunkDTO.getId());
+            same = Objects.equals(this.id, chunkDTO.getId());
         }
 
-        return sameSame;
+        return same;
     }
     @Override
     public String toString(){
-        return "ChunkDTO(id = "+this.id+",team_id = "+this.team_id+")";
+        return "ChunkDTO(id = "+this.id+",team_id = "+this.team_id+", round = "+this.round_id+")";
     }
 }

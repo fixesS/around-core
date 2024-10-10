@@ -4,24 +4,25 @@ import com.around.aroundcore.web.services.EmailQueueService;
 import com.around.aroundcore.web.services.EmailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 @AllArgsConstructor
-public class EmailSendingTask implements Runnable{
+public class SendEmailsTask {
     private EmailService emailService;
     private EmailQueueService emailQueueService;
 
-    @Override
-    public void run() {
+    @Scheduled(fixedRate = 100)
+    public void sendEmailMessages() {
         if(!emailQueueService.isSimpleMessageQueueEmpty()){
             emailService.send(emailQueueService.getAllSimpleMessagesFromQueue());
-            log.info("Simple email messages have been sent");
+            log.debug("Simple email messages have been sent");
         }
         if(!emailQueueService.isMimeMessageQueueEmpty()){
             emailService.sendHTML(emailQueueService.getAllMimeMessagesFromQueue());
-            log.info("Mime email messages have been sent");
+            log.debug("Mime email messages have been sent");
         }
     }
 }

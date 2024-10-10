@@ -93,7 +93,7 @@ public class GameUser implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
     )
     private List<MapEvent> visitedEvents;
-    @OneToMany(fetch=FetchType.EAGER,mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
+    @OneToMany(mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
     private List<GameUserSkill> userSkills;
 
     @Override
@@ -109,34 +109,6 @@ public class GameUser implements UserDetails {
         }else{
             this.userSkills = new ArrayList<>(gameUserSkill);
         }
-    }
-    public GameUserSkill getUserSkillBySkillId(Integer skillId) throws GameUserSkillNullException {
-        return userSkills.stream()
-                .filter(gameUserSkill -> Objects.equals(gameUserSkill.getGameUserSkillEmbedded().getSkill().getId(), skillId))
-                .findFirst().orElseThrow(GameUserSkillNullException::new);
-    }
-    public List<GameUserSkill> getUserSkills() {
-        return Collections.unmodifiableList(userSkills);
-    }
-    public void setCity(String s){
-        this.city = Objects.requireNonNullElse(s, "Екатеринбург");
-    }
-    public void setAvatar(String s){
-        this.avatar = Objects.requireNonNullElse(s, "1");
-    }
-    public Team getTeam(Round round){
-        UserRoundTeam urt = userRoundTeams.stream().filter(urt1 -> urt1.getRound() == round)
-                .findFirst().orElseThrow(TeamNullException::new);
-        return urt.getTeam();
-    }
-    public List<GameChunk> getCapturedChunks(Integer roundId){
-        return capturedChunks.stream().filter(chunk -> chunk.getRound().getId().equals(roundId)).toList();
-    }
-    public void setPassword(String newPassword){
-        if(this.password.equals(newPassword)){
-            throw new GameUserPasswordSame();
-        }
-        this.password = newPassword;
     }
     public void followUser(GameUser user) throws GameUserAlreadyFollowed, GameUserUsernameNotUnique{
         if(Objects.equals(user.getUsername(), getUsername())){
@@ -179,9 +151,38 @@ public class GameUser implements UserDetails {
             throw new GameUserNotEnoughCoins();
         }
     }
+    public Team getTeam(Round round){
+        UserRoundTeam urt = userRoundTeams.stream().filter(urt1 -> urt1.getRound() == round)
+                .findFirst().orElseThrow(TeamNullException::new);
+        return urt.getTeam();
+    }
+    public GameUserSkill getUserSkillBySkillId(Integer skillId) throws GameUserSkillNullException {
+        return this.userSkills.stream()
+                .filter(gameUserSkill -> Objects.equals(gameUserSkill.getGameUserSkillEmbedded().getSkill().getId(), skillId))
+                .findFirst().orElseThrow(GameUserSkillNullException::new);
+    }
+    public List<GameUserSkill> getUserSkills() {
+        return Collections.unmodifiableList(userSkills);
+    }
+
+    public List<GameChunk> getCapturedChunks(Integer roundId){
+        return this.capturedChunks.stream().filter(chunk -> chunk.getRound().getId().equals(roundId)).toList();
+    }
+    public void setCity(String s){
+        this.city = Objects.requireNonNullElse(s, "Yekaterinburg");
+    }
+    public void setAvatar(String s){
+        this.avatar = Objects.requireNonNullElse(s, "guest.jpg");
+    }
     @Override
     public String getPassword() {
         return password;
+    }
+    public void setPassword(String newPassword){
+        if(this.password.equals(newPassword)){
+            throw new GameUserPasswordSame();
+        }
+        this.password = newPassword;
     }
     @Override
     public String getUsername() {
@@ -202,5 +203,18 @@ public class GameUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameUser gameUser = (GameUser) o;
+        return Objects.equals(id, gameUser.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

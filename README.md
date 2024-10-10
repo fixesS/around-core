@@ -26,7 +26,7 @@ We are using stomp over WebSockets.
 ### Authorizing
 #### JWT
 1. Get access token from `auth/login`
-2. Set header Authorization with "Bearer <token>"
+2. Set header Authorization with "Bearer token"
 3. Connect `/ws`
 
 ### login and passcode
@@ -35,9 +35,11 @@ We are using stomp over WebSockets.
 3. Connect `/ws`
 
 ### Usage
-- Subscribe to `/topic/chunk.event` (type: List<ChunkDTO>)
+- Subscribe to `/topic/chunk.event` (type: List of ChunkDTO)
+- Subscribe to `/user/exchange/private.message/locations` (type: List of GameUserLocationDTO)
 - Subscribe to `/user/exchange/private.message/error` (type: ApiError)
-- Send messages to `topic/chunk.changes` (type: ChunkDTO)
+- Send messages to `app/chunk.changes` (type: ChunkDTO(only id))
+- Send messages to `app/chunk.changes` (type: GameUserLocationDTO(only lat and lon))
 
 
 

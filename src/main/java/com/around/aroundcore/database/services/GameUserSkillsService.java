@@ -5,7 +5,7 @@ import com.around.aroundcore.database.models.GameUserSkill;
 import com.around.aroundcore.database.models.GameUserSkillEmbedded;
 import com.around.aroundcore.database.models.Skill;
 import com.around.aroundcore.database.repositories.GameUserSkillsRepository;
-import com.around.aroundcore.web.exceptions.api.LevelsLessOrEqualZero;
+import com.around.aroundcore.web.exceptions.api.LevelsLessOrEqualZeroException;
 import com.around.aroundcore.web.exceptions.entity.GameUserSkillNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class GameUserSkillsService {
     @Transactional
     public void buyLevelsOfGameUserSkill(GameUser user, Skill skill, Integer levels){
         if(levels<=0){
-            throw new LevelsLessOrEqualZero();
+            throw new LevelsLessOrEqualZeroException();
         }
         GameUserSkill gameUserSkill;
         try{
