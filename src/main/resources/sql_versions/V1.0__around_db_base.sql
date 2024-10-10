@@ -19,8 +19,8 @@ CREATE TABLE public.game_user (
     "level" int8 NULL DEFAULT 1,
     coins int8 NULL DEFAULT 0,
     username varchar NOT NULL DEFAULT 'Гость'::character varying,
-    avatar varchar NOT NULL DEFAULT '1'::character varying,
-    city varchar(23) NULL DEFAULT 'Екатеринбург'::character varying,
+    avatar varchar NOT NULL DEFAULT 'guest.jpg'::character varying,
+    city varchar(23) NULL DEFAULT 'Yekaterinburg'::character varying,
     "password" varchar NOT NULL,
     "role" varchar NOT NULL,
     email varchar NOT NULL,
@@ -162,6 +162,7 @@ CREATE TABLE public.map_events (
     ends_at timestamp NULL,
     url varchar NULL,
     verified bool NOT NULL DEFAULT false,
+    ad bool NOT NULL DEFAULT false,
     CONSTRAINT map_events_pk PRIMARY KEY (id)
 );
 ALTER TABLE public.map_events ADD CONSTRAINT map_events_provider_fk FOREIGN KEY (provider_id) REFERENCES public.event_providers(id);

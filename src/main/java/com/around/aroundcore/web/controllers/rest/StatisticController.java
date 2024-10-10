@@ -5,7 +5,7 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.web.dtos.TeamStatDTO;
-import com.around.aroundcore.web.dtos.UserStatDTO;
+import com.around.aroundcore.web.dtos.GameUserStatDTO;
 import com.around.aroundcore.web.mappers.TeamStatDTOMapper;
 import com.around.aroundcore.web.mappers.UserStatDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,13 +39,13 @@ public class StatisticController {
             summary = "Gives all stat of my friends.",
             description = "Allows to get stat of my friends."
     )
-    public ResponseEntity<List<UserStatDTO>> getMyFriendsStat(){
+    public ResponseEntity<List<GameUserStatDTO>> getMyFriendsStat(){
         UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
-        List<UserStatDTO> userStatDTOS = user.getFriends().stream().map(userStatDTOMapper).toList();
+        List<GameUserStatDTO> gameUserStatDTOS = user.getFriends().stream().map(userStatDTOMapper).toList();
 
-        return ResponseEntity.ok(userStatDTOS);
+        return ResponseEntity.ok(gameUserStatDTOS);
     }
     @GetMapping("/team/all")
     @Operation(
@@ -75,34 +75,34 @@ public class StatisticController {
             summary = "Gives stat of user by id in active round.",
             description = "Allows to get stat of user by id.."
     )
-    public ResponseEntity<UserStatDTO> getUserStatById(@PathVariable @Parameter(description = "user id", example = "1") Integer id) {
-        UserStatDTO userStatDTO = userStatDTOMapper.apply(userService.findById(id));
+    public ResponseEntity<GameUserStatDTO> getUserStatById(@PathVariable @Parameter(description = "user id", example = "1") Integer id) {
+        GameUserStatDTO gameUserStatDTO = userStatDTOMapper.apply(userService.findById(id));
 
-        return ResponseEntity.ok(userStatDTO);
+        return ResponseEntity.ok(gameUserStatDTO);
     }
     @GetMapping("/user/me")
     @Operation(
             summary = "Gives all my stat in all rounds.",
             description = "Allows to get my stat."
     )
-    public ResponseEntity<UserStatDTO> getMyStat() {
+    public ResponseEntity<GameUserStatDTO> getMyStat() {
         UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
-        UserStatDTO userStatDTO = userStatDTOMapper.apply(user);
+        GameUserStatDTO gameUserStatDTO = userStatDTOMapper.apply(user);
 
-        return ResponseEntity.ok(userStatDTO);
+        return ResponseEntity.ok(gameUserStatDTO);
     }
     @GetMapping("/user/top")
     @Operation(
             summary = "Gives top 50 users in all rounds",
             description = "Allows to get top 50 users."
     )
-    public ResponseEntity<List<UserStatDTO>> getTopUsersStat() {
+    public ResponseEntity<List<GameUserStatDTO>> getTopUsersStat() {
         List<GameUser> topUsers = userService.getTopAll();
-        List<UserStatDTO> userStatDTOS = topUsers.stream().map(userStatDTOMapper).toList();
+        List<GameUserStatDTO> gameUserStatDTOS = topUsers.stream().map(userStatDTOMapper).toList();
 
-        return ResponseEntity.ok(userStatDTOS);
+        return ResponseEntity.ok(gameUserStatDTOS);
     }
 
 }

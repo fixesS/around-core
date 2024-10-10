@@ -9,6 +9,7 @@ import com.around.aroundcore.web.services.apis.coords.GeotreeAPIService;
 import com.kuliginstepan.dadata.client.DadataClient;
 import com.uber.h3core.H3Core;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+@Slf4j
 @EnableCaching
+@EnableScheduling
 @Configuration
 @RequiredArgsConstructor
 public class AroundConfig {
@@ -44,6 +48,7 @@ public class AroundConfig {
     public static final String API_V1_CHUNKS = API_V1+"/chunks";
     public static final String API_V1_STATISTIC = API_V1+"/stat";
     public static final String API_V1_SKILLS = API_V1+"/skills";
+    public static final String API_V1_IMAGE = API_V1+"/image";
     public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.])[a-zA-Z\\d!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.]{8,100}$";
     public static final String EMAIL_REGEX = "^[\\w-]+@([\\w-]+\\.)+[\\w-]+";
     public static final String USERNAME_REGEX = "[a-zA-Z0-9]+";
@@ -57,7 +62,7 @@ public class AroundConfig {
     public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
         ThreadPoolTaskScheduler threadPoolTaskScheduler
                 = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(3);
+        threadPoolTaskScheduler.setPoolSize(5);
         threadPoolTaskScheduler.setThreadNamePrefix(
                 "ThreadPoolTaskScheduler");
         return threadPoolTaskScheduler;

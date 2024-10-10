@@ -42,7 +42,11 @@ public enum ApiResponse {
     LEVELS_MUST_BE_MORE_THAN_ZERO(-8004,"Levels you tying to add(buy) must be more than 0."),
     NO_ACTIVE_ROUND(-9001,"There is no active round(probably game is stopped)."),
     ROUND_DOES_NOT_EXIST(-9002,"Round doest not exist."),
-    EVENT_DOES_NOT_EXIST(-10002,"Event doest not exist.");
+    EVENT_DOES_NOT_EXIST(-10001,"Event doest not exist."),
+    IMAGE_LOAD_ERROR(-11002,"Image does not exist."),
+    IMAGE_SIZE_TOO_BIG(-11003,"Image size is too big."),
+    IMAGE_EMPTY(-11004,"Image must be not empty."),
+    IMAGE_TYPE_ERROR(-11005,"Image type must be jpeg or png.");
 
     @Getter
     private Integer statusCode;

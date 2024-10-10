@@ -41,7 +41,7 @@ build/
 .env-dev
 .uml
 src/main/resources/application-dev.properties
-src/main/resources/application-test.properties
-src/main/resources/application-testcoordsbase.properties
-src/main/resources/application-testdadata.properties
-src/main/resources/application-testgeotree.properties
+src/test/resources/application-test.properties
+src/test/resources/application-testcoordsbase.properties
+src/test/resources/application-testdadata.properties
+src/test/resources/application-testgeotree.properties

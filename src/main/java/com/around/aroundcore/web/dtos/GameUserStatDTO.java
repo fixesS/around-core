@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Builder
 @Schema(description = "DTO for user stat info")
-public class UserStatDTO {
+public class GameUserStatDTO {
     @Nullable
     @Schema(description = "user id")
     private Integer id;

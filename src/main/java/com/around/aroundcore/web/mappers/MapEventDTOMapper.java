@@ -16,6 +16,7 @@ public class MapEventDTOMapper implements Function<MapEvent, MapEventDTO> {
                 .name(event.getName())
                 .url(event.getUrl())
                 .provider(event.getProvider().getName())
+                .is_ad(event.isAd())
                 .starts(event.getStarts())
                 .ends(event.getEnds())
                 .chunks(event.getChunks().stream().map(gameChunk -> ChunkDTO.builder().id(gameChunk.getId()).build()).toList())
