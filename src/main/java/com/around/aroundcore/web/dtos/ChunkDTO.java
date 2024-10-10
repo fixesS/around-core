@@ -21,19 +21,20 @@ public class ChunkDTO {
     private Integer round_id;
 
     @Override
-    public boolean equals(Object object)
-    {
-        boolean same = false;
-
-        if (object instanceof ChunkDTO chunkDTO)
-        {
-            same = Objects.equals(this.id, chunkDTO.getId());
-        }
-
-        return same;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChunkDTO chunkDTO = (ChunkDTO) o;
+        return Objects.equals(id, chunkDTO.id) && Objects.equals(round_id, chunkDTO.round_id);
     }
+
     @Override
     public String toString(){
         return "ChunkDTO(id = "+this.id+",team_id = "+this.team_id+", round = "+this.round_id+")";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, round_id);
     }
 }
