@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,7 +31,7 @@ import java.util.Date;
 @Slf4j
 @AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-
+    private String timeLocale;
     private JwtService jwtService;
     private SessionService sessionService;
 
@@ -83,7 +84,7 @@ public class JwtFilter extends OncePerRequestFilter {
         Claims claims = jwtService.getAccessClaims(accessToken);
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(session);
         Date iat = claims.getIssuedAt();
-        if(!iat.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().isAfter(session.getLastRefresh())){
+        if(!iat.toInstant().atZone(ZoneId.of(timeLocale)).toLocalDateTime().isAfter(session.getLastRefresh())){
             authentication.setAuthenticated(true);
         }else{
             log.error("Session expired");

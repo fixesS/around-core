@@ -13,10 +13,9 @@ import java.util.UUID;
 
 @AllArgsConstructor
 public class AuthService {
-
-    private JwtService jwtService;
-
-    private SessionService sessionService;
+    private final String timeLocale;
+    private final JwtService jwtService;
+    private final SessionService sessionService;
 
 
     public TokenData createSession(GameUser user, String userAgent, InetAddress address){
@@ -33,13 +32,13 @@ public class AuthService {
         Token refreshToken = jwtService.generateRefreshToken(session.getSessionUuid());
 
         session.setCreated(accessToken.getCreated().toInstant()
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneId.of(timeLocale))
                 .toLocalDateTime());
         session.setExpiresIn(accessToken.getExpiresIn().toInstant()
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneId.of(timeLocale))
                 .toLocalDateTime());
         session.setLastRefresh(accessToken.getCreated().toInstant()
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneId.of(timeLocale))
                 .toLocalDateTime());
 
         sessionService.create(session);
@@ -58,10 +57,10 @@ public class AuthService {
         Token refreshToken = jwtService.generateRefreshToken(session.getSessionUuid());
 
         session.setLastRefresh(accessToken.getCreated().toInstant()
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneId.of(timeLocale))
                 .toLocalDateTime());
         session.setExpiresIn(accessToken.getExpiresIn().toInstant()
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneId.of(timeLocale))
                 .toLocalDateTime());
 
         sessionService.update(session);

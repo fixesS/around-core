@@ -39,6 +39,7 @@ public class AroundConfig {
     public static final String API_V1_RECOVERY = API_V1_AUTH+"/recovery";
     public static final String API_V1_USER = API_V1+"/user";
     public static final String API_V1_TEAM = API_V1+"/team";
+    public static final String API_V1_ROUND = API_V1+"/round";
     public static final String API_V1_EVENTS = API_V1+"/map-events";
     public static final String API_V1_CHUNKS = API_V1+"/chunks";
     public static final String API_V1_STATISTIC = API_V1+"/stat";
@@ -96,6 +97,6 @@ public class AroundConfig {
     }
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("currentRound", "verifiedEvents","checkRound");
+        return new ConcurrentMapCacheManager("currentRound", "verifiedEvents","checkRound","getRoundById");
     }
 }
