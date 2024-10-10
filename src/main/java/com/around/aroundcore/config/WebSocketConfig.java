@@ -19,7 +19,10 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Autowired
-    private AuthConfig authConfig;
+    public WebSocketConfig(AuthConfig authConfig){
+        this.authConfig = authConfig;
+    }
+    private final AuthConfig authConfig;
     @Value("${spring.rabbitmq.port}")
     Integer port;
     @Value("${spring.rabbitmq.host}")
@@ -63,12 +66,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
     @Bean
     public UpgradeHttpToWebSocketHandshakeHandler handshakeHandler(){
-        return new UpgradeHttpToWebSocketHandshakeHandler(authConfig.sessionService, authConfig.jwtService(),
-                authConfig.webSocketHeaderService(), authConfig.authenticationManager(), authConfig.webSocketAuthService());
+        return new UpgradeHttpToWebSocketHandshakeHandler(authConfig.sessionService);
     }
     @Bean
     public HttpHandshakeInterceptor handshakeInterceptor(){
-        return new HttpHandshakeInterceptor(authConfig.sessionService, authConfig.jwtService(), new ObjectMapper(),
-                authConfig.webSocketHeaderService(), authConfig.authenticationManager());
+        return new HttpHandshakeInterceptor(authConfig.sessionService, new ObjectMapper());
     }
 }

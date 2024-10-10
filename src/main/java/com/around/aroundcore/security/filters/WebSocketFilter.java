@@ -38,7 +38,7 @@ public class WebSocketFilter  extends OncePerRequestFilter {
             login = headerService.getLogin(request);
             passcode = headerService.getPasscode(request);
         }catch (AuthHeaderNullException e) {
-            log.error("WEBSOCKET Auth header is null");
+            log.debug("WEBSOCKET Auth header is null");
             filterChain.doFilter(request, response);
             return;
         }

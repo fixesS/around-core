@@ -4,11 +4,8 @@ import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.services.JwtService;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
-import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
-import com.around.aroundcore.web.exceptions.auth.AuthSessionNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -20,7 +17,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -41,6 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             authHeader = jwtService.resolveAuthHeader(request);
         } catch (AuthHeaderNullException | AuthHeaderNotStartsWithPrefixException e) {
+            log.debug("Jwt Auth header is null");
             filterChain.doFilter(request, response);
             return;
         }
@@ -49,6 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             accessToken = jwtService.resolveToken(authHeader);
         } catch (AuthHeaderNotStartsWithPrefixException e) {
+            log.debug("JWT Auth token is null");
             filterChain.doFilter(request, response);
             return;
         }
@@ -56,19 +54,19 @@ public class JwtFilter extends OncePerRequestFilter {
         try{
             jwtService.validateAccessToken(accessToken);
         } catch (ExpiredJwtException expEx) {
-            log.error("Token expired");
+            log.debug("Token expired");
             filterChain.doFilter(request, response);
             return;
         } catch (UnsupportedJwtException unsEx) {
-            log.error("Unsupported jwt");
+            log.debug("Unsupported jwt");
             filterChain.doFilter(request, response);
             return;
         } catch (MalformedJwtException mjEx) {
-            log.error("Malformed jwt");
+            log.debug("Malformed jwt");
             filterChain.doFilter(request, response);
             return;
         } catch (RuntimeException e) {
-            log.error("invalid token");
+            log.debug("invalid token");
             filterChain.doFilter(request, response);
             return;
         }
@@ -76,7 +74,7 @@ public class JwtFilter extends OncePerRequestFilter {
         try{
             session = sessionService.findByUuid(jwtService.getSessionIdAccess(accessToken));
         }catch (SessionNullException e){
-            log.error(e.getMessage());
+            log.debug(e.getMessage());
             filterChain.doFilter(request, response);
             return;
         }
@@ -87,7 +85,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if(!iat.toInstant().atZone(ZoneId.of(timeLocale)).toLocalDateTime().isAfter(session.getLastRefresh())){
             authentication.setAuthenticated(true);
         }else{
-            log.error("Session expired");
+            log.debug("Session expired");
             filterChain.doFilter(request, response);
             return;
         }
