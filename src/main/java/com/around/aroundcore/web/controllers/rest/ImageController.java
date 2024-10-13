@@ -2,6 +2,7 @@ package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.services.SessionService;
+import com.around.aroundcore.web.image.ImageType;
 import com.around.aroundcore.web.services.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
@@ -28,17 +29,30 @@ public class ImageController {
 
     @GetMapping( value = "/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable String filename) {
-        byte[] image = imageService.loadImage(filename);
+        byte[] image = imageService.loadImage(filename, ImageType.IMAGE);
         return ResponseEntity.ok(image);
     }
 
-    @PostMapping("/upload")
+    @GetMapping( value = "avatar/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getAvatarImage(@PathVariable String filename) {
+        byte[] image = imageService.loadImage(filename, ImageType.AVATAR);
+        return ResponseEntity.ok(image);
+    }
+
+    @GetMapping( value = "icon/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getIconImage(@PathVariable String filename) {
+        byte[] image = imageService.loadImage(filename, ImageType.ICON);
+        return ResponseEntity.ok(image);
+    }
+
+    @PostMapping("/avatar")
     @Transactional
     public ResponseEntity<String> updateImage(@RequestParam MultipartFile file) {
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
-        String imageFileName = imageService.saveImage(file);
+        String imageFileName = imageService.saveImage(file, ImageType.AVATAR);
+        imageService.deleteImage(user.getAvatar(), ImageType.AVATAR);
         user.setAvatar(imageFileName);
         return ResponseEntity.ok("");
     }
