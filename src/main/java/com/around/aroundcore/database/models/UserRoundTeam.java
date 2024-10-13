@@ -13,7 +13,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Entity
-@Table(name = "user_round_team")
+@Table(name = "users_rounds_team")
 @ToString
 @IdClass(UserRoundTeamEmbedded.class)
 public class UserRoundTeam implements Serializable {

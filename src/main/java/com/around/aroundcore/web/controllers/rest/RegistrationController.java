@@ -62,7 +62,7 @@ public class RegistrationController {
                 .password(passwordEncoder.encode(registrationDTO.getPassword()))
                 .role(Role.USER)
                 .build();
-        user.setCity(registrationDTO.getCity());
+        //user.setCity(registrationDTO.getCity());
         user.setAvatar(registrationDTO.getAvatar());
 
         userService.create(user);

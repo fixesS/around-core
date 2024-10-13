@@ -14,7 +14,7 @@ import java.util.*;
 
 @Slf4j
 @Entity
-@Table(name = "game_user")
+@Table(name = "users")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,14 +52,10 @@ public class GameUser implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "city")
-    @Getter
-    private String city;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @Getter
     @JoinTable(
-            name = "user_round_team",
+            name = "users_rounds_team",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id",insertable=false, updatable=false),
                     @JoinColumn(name = "team_id", referencedColumnName = "team_id",insertable=false, updatable=false),
@@ -72,7 +68,7 @@ public class GameUser implements UserDetails {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
-            name = "user_friends",
+            name = "users_friends",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id")
     )
@@ -80,7 +76,7 @@ public class GameUser implements UserDetails {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
-            name = "user_followers",
+            name = "users_followers",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id")
     )
@@ -88,7 +84,7 @@ public class GameUser implements UserDetails {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
-            name="map_events_game_user",
+            name="map_events_users",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
     )
@@ -167,9 +163,6 @@ public class GameUser implements UserDetails {
 
     public List<GameChunk> getCapturedChunks(Integer roundId){
         return this.capturedChunks.stream().filter(chunk -> chunk.getRound().getId().equals(roundId)).toList();
-    }
-    public void setCity(String s){
-        this.city = Objects.requireNonNullElse(s, "Yekaterinburg");
     }
     public void setAvatar(String s){
         this.avatar = Objects.requireNonNullElse(s, "guest.jpg");

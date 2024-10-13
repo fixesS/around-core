@@ -21,7 +21,7 @@ public class GameUserDTOMapper implements Function<GameUser, GameUserDTO> {
                 .verified(user.getVerified())
                 .email(Optional.ofNullable(user.getEmail()).orElse(""))
                 .username(Optional.ofNullable(user.getUsername()).orElse(""))
-                .city(Optional.ofNullable(user.getCity()).orElse(""))
+                .city("Yekaterinburg")
                 .level(Optional.ofNullable(user.getLevel()).orElse(-1000))
                 .coins(Optional.ofNullable(user.getCoins()).orElse(-1000))
                 .team_id(getTeamIdByUserForCurrentRound(user))

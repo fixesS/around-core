@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "game_chunk")
+@Table(name = "chunks")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

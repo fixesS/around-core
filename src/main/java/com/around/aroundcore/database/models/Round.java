@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "round")
+@Table(name = "rounds")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +23,7 @@ public class Round implements Serializable {
 
     @ManyToMany
     @JoinTable(
-            name = "user_round_team",
+            name = "users_rounds_team",
             joinColumns = @JoinColumn(name = "round_id", referencedColumnName = "id"),
             inverseJoinColumns = {@JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false),
                     @JoinColumn(name = "user_id", referencedColumnName = "user_id",insertable=false, updatable=false),

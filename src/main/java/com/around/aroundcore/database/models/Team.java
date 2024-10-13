@@ -5,13 +5,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Entity
-@Table(name = "team")
+@Table(name = "teams")
 @Getter
 public class Team implements Serializable {
 
@@ -25,7 +23,7 @@ public class Team implements Serializable {
 
     @OneToMany
     @JoinTable(
-            name = "user_round_team",
+            name = "users_rounds_team",
             joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "id"),
             inverseJoinColumns = {@JoinColumn(name = "team_id", referencedColumnName = "team_id",insertable=false, updatable=false),
                     @JoinColumn(name = "user_id", referencedColumnName = "user_id",insertable=false, updatable=false),
