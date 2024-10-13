@@ -19,7 +19,10 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Autowired
-    private AuthConfig authConfig;
+    public WebSocketConfig(AuthConfig authConfig){
+        this.authConfig = authConfig;
+    }
+    private final AuthConfig authConfig;
     @Value("${spring.rabbitmq.port}")
     Integer port;
     @Value("${spring.rabbitmq.host}")
@@ -34,8 +37,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public static final String TOPIC_DESTINATION_PREFIX = "/topic";
     public static final String QUEUE_DESTINATION_PREFIX = "/queue";
     public static final String EXCHANGE_DESTINATION_PREFIX = "/exchange";
-    public static final String AMQ_QUEUE_DESTINATION_PREFIX = "/private.message";
+    public static final String PRIVATE_DESTINATION_PREFIX = "/private.message";
+    public static final String APP_DESTINATION_PREFIX = "/app";
     public static final String REGISTRY = "/ws";
+
+    public static final String QUEUE_ERROR_FOR_USER = "/exchange/private.message/error";
+    public static final String QUEUE_LOCATIONS_FOR_USER = "/exchange/private.message/locations";
 
 
     @Override
@@ -48,7 +55,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config
-                .enableStompBrokerRelay(TOPIC_DESTINATION_PREFIX,QUEUE_DESTINATION_PREFIX, AMQ_QUEUE_DESTINATION_PREFIX, EXCHANGE_DESTINATION_PREFIX)
+                .setApplicationDestinationPrefixes(APP_DESTINATION_PREFIX)
+                .enableStompBrokerRelay(TOPIC_DESTINATION_PREFIX,QUEUE_DESTINATION_PREFIX, PRIVATE_DESTINATION_PREFIX, EXCHANGE_DESTINATION_PREFIX)
                 .setRelayPort(port)
                 .setRelayHost(host)
                 .setClientLogin(username)
@@ -58,12 +66,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
     @Bean
     public UpgradeHttpToWebSocketHandshakeHandler handshakeHandler(){
-        return new UpgradeHttpToWebSocketHandshakeHandler(authConfig.sessionService, authConfig.jwtService(),
-                authConfig.webSocketHeaderService(), authConfig.authenticationManager(), authConfig.webSocketAuthService());
+        return new UpgradeHttpToWebSocketHandshakeHandler(authConfig.sessionService);
     }
     @Bean
     public HttpHandshakeInterceptor handshakeInterceptor(){
-        return new HttpHandshakeInterceptor(authConfig.sessionService, authConfig.jwtService(), new ObjectMapper(),
-                authConfig.webSocketHeaderService(), authConfig.authenticationManager());
+        return new HttpHandshakeInterceptor(authConfig.sessionService, new ObjectMapper());
     }
 }

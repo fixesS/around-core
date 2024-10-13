@@ -46,7 +46,7 @@ public class JwtAuthenticationToken implements Authentication {
 
     @Override
     public String getName() {
-        return session.getSessionUuid().toString();
+        return user.getUsername();
     }
 
     public JwtAuthenticationToken(

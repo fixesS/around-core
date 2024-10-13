@@ -15,19 +15,20 @@ public class ChunkStatDTO {
     private String id;
 
     @Override
-    public boolean equals(Object object)
-    {
-        boolean sameSame = false;
-
-        if (object instanceof ChunkDTO chunkDTO)
-        {
-            sameSame = Objects.equals(this.id, chunkDTO.getId());
-        }
-
-        return sameSame;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChunkStatDTO that = (ChunkStatDTO) o;
+        return Objects.equals(id, that.id);
     }
+
     @Override
     public String toString(){
         return "ChunkDTO(id = "+this.id+")";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

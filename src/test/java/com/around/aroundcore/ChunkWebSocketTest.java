@@ -3,6 +3,7 @@ package com.around.aroundcore;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.web.controllers.ws.ChunkWsController;
+import com.around.aroundcore.web.controllers.ws.UserLocationController;
 import com.around.aroundcore.web.dtos.ApiError;
 import com.around.aroundcore.web.dtos.AuthDTO;
 import com.around.aroundcore.web.dtos.ChunkDTO;
@@ -33,7 +34,6 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -85,7 +85,7 @@ class ChunkWebSocketTest {
 
 		//String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
 		String wsUrl = "wss://aroundgame.ru/ws";
-		log.info(wsUrl);
+		//log.info(wsUrl);
 
 		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
 
@@ -144,7 +144,7 @@ class ChunkWebSocketTest {
 			}
 		});
 
-		stompSession.subscribe("/user"+ChunkWsController.QUEUE_ERROR_FOR_SESSION, new StompFrameHandler() {
+		stompSession.subscribe("/user"+WebSocketConfig.QUEUE_ERROR_FOR_USER, new StompFrameHandler() {
 			@Override
 			public Type getPayloadType(StompHeaders headers) {
 				return new TypeReference<ApiError>(){}.getType();
@@ -157,7 +157,7 @@ class ChunkWebSocketTest {
 		});
 
 		stompSession.send(
-				ChunkWsController.CHUNK_CHANGES_FROM_USER,
+				"/app"+ChunkWsController.CHUNK_CHANGES_FROM_USER,
 				chunkDTO
 		);
 

@@ -34,6 +34,8 @@ public class MapEvent implements Serializable {
     private String url;
     @Column
     private boolean verified;
+    @Column(name = "ad")
+    private boolean isAd;
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(

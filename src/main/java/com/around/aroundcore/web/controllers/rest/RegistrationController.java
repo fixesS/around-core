@@ -11,26 +11,21 @@ import com.around.aroundcore.web.dtos.RegistrationDTO;
 import com.around.aroundcore.web.dtos.TokenData;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.tasks.EmailSendingTask;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -43,15 +38,7 @@ public class RegistrationController {
     private final GameUserService userService;
     private final TeamService teamService;
     private final VerificationTokenService verificationTokenService;
-    private final ThreadPoolTaskScheduler taskScheduler;
-    private final EmailSendingTask emailSendingTask;
     private final RoundService roundService;
-
-    @PostConstruct
-    public void executeSendingEmails(){
-        Duration duration = Duration.of(100, TimeUnit.MILLISECONDS.toChronoUnit());
-        taskScheduler.scheduleWithFixedDelay(emailSendingTask, duration);
-    }
 
     @PostMapping
     @Operation(
@@ -61,7 +48,7 @@ public class RegistrationController {
     @Transactional
     public ResponseEntity<TokenData> registration(HttpServletRequest request, @Validated @RequestBody RegistrationDTO registrationDTO) throws UnknownHostException {
         String userAgent = request.getHeader("User-Agent");//mobile-front
-        String ip_address = request.getRemoteAddr();
+        String ip = request.getRemoteAddr();
 
         userService.checkEmail(registrationDTO.getEmail());
         userService.checkUsername(registrationDTO.getUsername());
@@ -84,7 +71,7 @@ public class RegistrationController {
             userService.setTeamForRound(user,team,roundService.getCurrentRound());
         }
 
-        TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip_address));
+        TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));
         return ResponseEntity.ok(tokenData);
     }
     @PostMapping("/confirm")

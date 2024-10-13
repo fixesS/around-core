@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,7 @@ public class GameChunkController {
             summary = "Gives all captured chunks by user in specific round",
             description = "Allows to get all captured chunks in game field by user."
     )
+    @Transactional
     public ResponseEntity<List<ChunkDTO>> getMyChunksByRound(@RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId){
         UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
@@ -64,6 +66,7 @@ public class GameChunkController {
             summary = "Gives all captured chunks by certain user in specific round",
             description = "Allows to get all captured chunks in game field by certain user."
     )
+    @Transactional
     public ResponseEntity<List<ChunkDTO>> getUserChunksByRound(@PathVariable @Parameter(description = "User id", example = "1") Integer userId,
             @RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId ){
         var user = userService.findById(userId);
@@ -76,6 +79,7 @@ public class GameChunkController {
             summary = "Gives all captured chunks by team",
             description = "Allows to get all captured chunks in game field by team."
     )
+    @Transactional
     public ResponseEntity<List<ChunkDTO>> getTeamChunksByRound(@PathVariable @Parameter(description = "Team id", example = "1") Integer teamId,
                                                         @RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId ) {
         List<GameChunk> chunks = getChunksByTeamAndRound(teamId, roundId);

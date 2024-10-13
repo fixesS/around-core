@@ -1,5 +1,6 @@
 package com.around.aroundcore.web.controllers.ws;
 
+import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
@@ -10,8 +11,6 @@ import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.services.ChunkQueueService;
 import com.around.aroundcore.web.services.H3ChunkService;
-import com.around.aroundcore.web.tasks.ChunkEventTask;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,39 +18,27 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @AllArgsConstructor
 @Controller
 public class ChunkWsController {
-    private final ThreadPoolTaskScheduler taskScheduler;
     private final ChunkQueueService chunkQueueService;
     private final GameChunkService gameChunkService;
     private final SessionService sessionService;
     private final MapEventService mapEventService;
     private final GameUserService userService;
-    private final ChunkEventTask chunkEventTask;
     private final RoundService roundService;
     private final H3ChunkService h3ChunkService;
     private final SimpMessagingTemplate messagingTemplate;
-    public static final String CHUNK_CHANGES_FROM_USER = "/topic/chunk.changes";
+    public static final String CHUNK_CHANGES_FROM_USER = "/chunk.changes";
     public static final String CHUNK_CHANGES_EVENT = "/topic/chunk.event";
-    public static final String QUEUE_ERROR_FOR_SESSION = "/exchange/private.message/error";
-
-    @PostConstruct
-    public void executeSendingUpdates(){
-        Duration duration = Duration.of(100, TimeUnit.MILLISECONDS.toChronoUnit());
-        taskScheduler.scheduleWithFixedDelay(chunkEventTask, duration);
-    }
 
     @SubscribeMapping(CHUNK_CHANGES_EVENT)
     public void fetchChunkChangesEvent(Principal principal){
@@ -59,7 +46,7 @@ public class ChunkWsController {
             JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
             var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
             var session = sessionService.findByUuid(sessionUuid);
-            log.info("Got new subscription from: {}",session.getUser().getEmail());
+            log.debug("Got subscription from: {}",session.getUser().getEmail());
         }catch (Exception e){
             log.error(e.getMessage());
         }
@@ -68,14 +55,14 @@ public class ChunkWsController {
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
     @Transactional
     public void handleChunkChanges(@Payload ChunkDTO chunkDTO, Principal principal){
-        GameUser user;
+        GameUser user = null;
         Session session;
         GameUserSkill userWidthSkill;
         Round round;
 
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
         var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
-        try {// getting user
+        try {
             session = sessionService.findByUuid(sessionUuid);
             user = session.getUser();
             userWidthSkill = user.getUserSkillBySkillId(Skills.WIDTH.getId());
@@ -84,7 +71,9 @@ public class ChunkWsController {
         }catch (ApiException e){
             log.error(e.getMessage());
             ApiError apiError = ApiResponse.getApiError(e.getResponse());
-            messagingTemplate.convertAndSendToUser(sessionUuid.toString(), QUEUE_ERROR_FOR_SESSION, apiError);
+            if(user != null){
+                messagingTemplate.convertAndSendToUser(user.getUsername(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
+            }
             return;
         }
 

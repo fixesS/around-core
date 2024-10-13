@@ -11,24 +11,19 @@ import com.around.aroundcore.web.dtos.ResetPasswordDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.events.OnPasswordRecoveryEvent;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.tasks.CheckTokensTask;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -39,16 +34,9 @@ public class RecoveryController {
     private final ApplicationEventPublisher eventPublisher;
     private final RecoveryTokenService recoveryTokenService;
     private final GameUserService userService;
-    private final ThreadPoolTaskScheduler taskScheduler;
-    private final CheckTokensTask checkTokensTask;
     private final PasswordEncoder passwordEncoder;
     private final SessionService sessionService;
 
-    @PostConstruct
-    public void executeSendingEmails(){
-        Duration duration = Duration.of(10, TimeUnit.MINUTES.toChronoUnit());
-        taskScheduler.scheduleWithFixedDelay(checkTokensTask, duration);
-    }
     @PostMapping("/forgotPassword")
     @Operation(
             summary = "Sends email message",

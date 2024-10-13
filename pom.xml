@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.4</version>
+		<version>3.3.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.around</groupId>
 	<artifactId>around-core</artifactId>
-	<version>2.0.0</version>
+	<version>2.1.5</version>
 	<name>${project.artifactId}</name>
 	<description>around-core</description>
 	<properties>
@@ -167,6 +167,11 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<imageName>${project.artifactId}-image:${project.version}</imageName>
+					<image>
+						<bindings>
+							<binding>/opt/around_core/volumes/images/:/opt/around_core/images/:rw</binding>
+						</bindings>
+					</image>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
