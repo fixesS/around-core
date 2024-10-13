@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,10 +40,12 @@ public class ImageController {
         return ResponseEntity.ok(image);
     }
 
-    @GetMapping( value = "icon/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping( value = "icon/{filename}")
     public ResponseEntity<byte[]> getIconImage(@PathVariable String filename) {
         byte[] image = imageService.loadImage(filename, ImageType.ICON);
-        return ResponseEntity.ok(image);
+        HttpHeaders header = new HttpHeaders();
+        header.add("Content-Type","image/svg+xml");
+        return  ResponseEntity.ok().headers(header).body(image);
     }
 
     @PostMapping("/avatar")
