@@ -46,7 +46,8 @@ public enum ApiResponse {
     IMAGE_LOAD_ERROR(-11002,"Image does not exist."),
     IMAGE_SIZE_TOO_BIG(-11003,"Image size is too big."),
     IMAGE_EMPTY(-11004,"Image must be not empty."),
-    IMAGE_TYPE_ERROR(-11005,"Image type must be jpeg or png.");
+    IMAGE_TYPE_ERROR(-11005,"Image type must be jpeg or png."),
+    CITY_DOES_NOT_EXIST(-10001,"City doest not exist.", HttpStatus.NOT_FOUND);
 
     @Getter
     private Integer statusCode;

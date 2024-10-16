@@ -3,11 +3,11 @@ package com.around.aroundcore.database.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "chunks")
+@IdClass(GameChunkEmbedded.class)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,10 +19,18 @@ public class GameChunk implements Serializable {
     @Column
     private String id;
 
-    @Setter//todo разобраться
+    @Id
+    @Setter
+    @Getter
     @ManyToOne
     @JoinColumn(name = "round_id", referencedColumnName = "id")
     private Round round;
+
+    @Setter
+    @Getter
+    @ManyToOne
+    @JoinColumn(name = "city_id", referencedColumnName = "id")
+    private City city;
 
     @ManyToOne
     @JoinColumn(name = "owner", referencedColumnName = "id")

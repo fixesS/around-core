@@ -49,6 +49,7 @@ public class AroundConfig {
     public static final String API_V1_STATISTIC = API_V1+"/stat";
     public static final String API_V1_SKILLS = API_V1+"/skills";
     public static final String API_V1_IMAGE = API_V1+"/image";
+    public static final String API_V1_CITY = API_V1+"/city";
     public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.])[a-zA-Z\\d!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.]{8,100}$";
     public static final String EMAIL_REGEX = "^[\\w-]+@([\\w-]+\\.)+[\\w-]+";
     public static final String USERNAME_REGEX = "[a-zA-Z0-9]+";
@@ -102,6 +103,6 @@ public class AroundConfig {
     }
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("currentRound", "verifiedEvents","checkRound","getRoundById");
+        return new ConcurrentMapCacheManager("currentRound", "verifiedEventsByCity","checkRound","getRoundById","checkCity","findCityById");
     }
 }

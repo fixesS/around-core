@@ -17,7 +17,6 @@ import java.util.List;
 @Service
 @Slf4j
 @AllArgsConstructor
-@Transactional
 public class GameUserService {
 
     private final GameUserRepository userRepository;

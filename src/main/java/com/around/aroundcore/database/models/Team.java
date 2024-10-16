@@ -23,22 +23,14 @@ public class Team implements Serializable {
 
     @OneToMany
     @JoinTable(
-            name = "users_rounds_team",
+            name = "users_rounds_team_city",
             joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "id"),
             inverseJoinColumns = {@JoinColumn(name = "team_id", referencedColumnName = "team_id",insertable=false, updatable=false),
                     @JoinColumn(name = "user_id", referencedColumnName = "user_id",insertable=false, updatable=false),
-                    @JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false)}
+                    @JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false),
+                    @JoinColumn(name = "city_id", referencedColumnName = "city_id",insertable=false, updatable=false)}
     )
-    private List<UserRoundTeam> userRoundTeam;
-
-    public List<GameUser> getMembersForRound(Integer roundId){
-        return userRoundTeam.stream().filter(urt->urt.getRound().getId().equals(roundId)).map(UserRoundTeam::getUser).toList();
-    }
-    public List<GameChunk> getMembersChunksForRound(Integer roundId){
-        var users = getMembersForRound(roundId);
-        return users.stream().map(user -> user.getCapturedChunks(roundId)).flatMap(List::stream).toList();
-
-    }
+    private List<UserRoundTeamCity> userRoundTeamCity;
 
     @Override
     public String toString(){

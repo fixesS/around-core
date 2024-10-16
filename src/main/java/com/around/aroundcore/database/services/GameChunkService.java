@@ -3,6 +3,7 @@ package com.around.aroundcore.database.services;
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
 import com.around.aroundcore.web.dtos.ChunkDTO;
+import com.around.aroundcore.web.exceptions.entity.CityNullException;
 import com.around.aroundcore.web.exceptions.entity.GameChunkNullException;
 import com.around.aroundcore.web.exceptions.entity.RoundNullException;
 import jakarta.transaction.Transactional;
@@ -17,6 +18,7 @@ import java.util.List;
 public class GameChunkService {
     private GameChunkRepository gameChunkRepository;
     private RoundService roundService;
+    private CityService cityService;
 
     public void create(GameChunk gameChunk){
         gameChunkRepository.save(gameChunk);
@@ -40,15 +42,16 @@ public class GameChunkService {
         roundService.checkById(roundId);
         return gameChunkRepository.findByIdAndRoundId(id, roundId).orElseThrow(GameChunkNullException::new);
     }
-    public List<GameChunk> findAllByRound(Integer roundId) throws RoundNullException{
+    public List<GameChunk> findAllByRoundAndCity(Integer roundId, Integer cityId) throws RoundNullException, CityNullException {
         roundService.checkById(roundId);
-        return gameChunkRepository.findAllByRound(roundId);
+        cityService.checkById(cityId);
+        return gameChunkRepository.findAllByRoundIdAndCityId(roundId,cityId);
     }
-    public List<GameChunk> findAllByOwner(GameUser gameUser){
-        return gameChunkRepository.findAllByOwner(gameUser);
+    public List<GameChunk> findAllByOwnerAndRoundAndCity(GameUser gameUser, Round round, City city) {
+        return gameChunkRepository.findAllByOwnerIdAndRoundIdAndCityId(gameUser.getId(), round.getId(), city.getId());
     }
-    public List<GameChunk> findAllByUserRoundTeam(UserRoundTeam urt){
-        return gameChunkRepository.findAllByTeamAndRound(urt.getRound().getId(), urt.getTeam().getId());
+    public List<GameChunk> findAllByRoundAndTeamAndCity(Round round, Team team, City city) {
+        return gameChunkRepository.findAllByTeamIdAndRoundIdAndCityId(round.getId(), team.getId(), city.getId());
     }
     public void saveListOfChunkDTOs(List<ChunkDTO> chunkDTOList, GameUser user, Round round){
         List<GameChunk> gameChunkList = chunkDTOList.stream().map(chunk ->

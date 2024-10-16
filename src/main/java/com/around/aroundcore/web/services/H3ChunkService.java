@@ -2,7 +2,7 @@ package com.around.aroundcore.web.services;
 
 import com.around.aroundcore.database.models.GameUserSkill;
 import com.around.aroundcore.database.models.Skill;
-import com.around.aroundcore.database.models.UserRoundTeam;
+import com.around.aroundcore.database.models.UserRoundTeamCity;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.chunk.WrongChunkResolution;
 import com.around.aroundcore.web.exceptions.entity.RoundNullException;
@@ -49,7 +49,7 @@ public class H3ChunkService {
         Integer skillRuleValue = skill.getRule().getValue().get(userSkill.getCurrentLevel());
         List<String> neighbours = getNeighboursForSkillRuleValue(chunkId, skillRuleValue);
         List<ChunkDTO> chunkDTOList = neighbours.stream().map(stringGameChunkDTOMapper).toList();
-        UserRoundTeam urt = userSkill.getGameUserSkillEmbedded().getGameUser().getUserRoundTeams().stream().filter(urt1->urt1.getRound().getActive()).findFirst().orElseThrow(RoundNullException::new);
+        UserRoundTeamCity urt = userSkill.getGameUserSkillEmbedded().getGameUser().getUserRoundTeamCities().stream().filter(urt1->urt1.getRound().getActive()).findFirst().orElseThrow(RoundNullException::new);
         chunkDTOList.forEach(chunkDTO -> chunkDTO.setTeam_id(urt.getTeam().getId()));
         return chunkDTOList;
     }

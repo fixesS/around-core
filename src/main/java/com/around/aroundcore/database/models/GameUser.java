@@ -46,6 +46,9 @@ public class GameUser implements UserDetails {
     @Setter
     @Getter
     private Boolean verified;
+    @Column(name = "captured_chunks")
+    @Getter
+    private Long capturedChunks;
 
     @Column
     @Getter
@@ -55,16 +58,14 @@ public class GameUser implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     @Getter
     @JoinTable(
-            name = "users_rounds_team",
+            name = "users_rounds_team_city",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id",insertable=false, updatable=false),
                     @JoinColumn(name = "team_id", referencedColumnName = "team_id",insertable=false, updatable=false),
-                    @JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false)}
+                    @JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false),
+                    @JoinColumn(name = "city_id", referencedColumnName = "city_id",insertable=false, updatable=false)}
     )
-    private List<UserRoundTeam> userRoundTeams;
-
-    @OneToMany(mappedBy = "owner")
-    private List<GameChunk> capturedChunks;
+    private List<UserRoundTeamCity> userRoundTeamCities;
     @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
@@ -148,7 +149,7 @@ public class GameUser implements UserDetails {
         }
     }
     public Team getTeam(Round round){
-        UserRoundTeam urt = userRoundTeams.stream().filter(urt1 -> urt1.getRound() == round)
+        UserRoundTeamCity urt = userRoundTeamCities.stream().filter(urt1 -> urt1.getRound() == round)
                 .findFirst().orElseThrow(TeamNullException::new);
         return urt.getTeam();
     }
@@ -161,8 +162,8 @@ public class GameUser implements UserDetails {
         return Collections.unmodifiableList(userSkills);
     }
 
-    public List<GameChunk> getCapturedChunks(Integer roundId){
-        return this.capturedChunks.stream().filter(chunk -> chunk.getRound().getId().equals(roundId)).toList();
+    public Long getCapturedChunks(){
+        return this.capturedChunks;
     }
     public void setAvatar(String s){
         this.avatar = Objects.requireNonNullElse(s, "guest.jpg");

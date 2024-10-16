@@ -23,13 +23,14 @@ public class Round implements Serializable {
 
     @ManyToMany
     @JoinTable(
-            name = "users_rounds_team",
+            name = "users_rounds_team_city",
             joinColumns = @JoinColumn(name = "round_id", referencedColumnName = "id"),
             inverseJoinColumns = {@JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false),
                     @JoinColumn(name = "user_id", referencedColumnName = "user_id",insertable=false, updatable=false),
-                    @JoinColumn(name = "team_id", referencedColumnName = "team_id",insertable=false, updatable=false)}
+                    @JoinColumn(name = "team_id", referencedColumnName = "team_id",insertable=false, updatable=false),
+                    @JoinColumn(name = "city_id", referencedColumnName = "city_id",insertable=false, updatable=false)}
     )
-    private List<UserRoundTeam> userRoundTeam;
+    private List<UserRoundTeamCity> userRoundTeamCity;
 
     @Column
     private String name;

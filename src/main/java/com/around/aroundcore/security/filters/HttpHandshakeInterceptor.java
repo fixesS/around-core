@@ -1,6 +1,6 @@
 package com.around.aroundcore.security.filters;
 
-import com.around.aroundcore.database.models.UserRoundTeam;
+import com.around.aroundcore.database.models.UserRoundTeamCity;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.entity.GameUserTeamNullForRound;
@@ -32,7 +32,7 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 
         try{
             log.debug("Getting team from user in current round");
-            UserRoundTeam.findTeamForCurrentRoundAndUser(user);
+            UserRoundTeamCity.findTeamForCurrentRoundAndUser(user);
             return true;
         }catch (GameUserTeamNullForRound | NoActiveRoundException e){
             log.debug("User has no team in current round");

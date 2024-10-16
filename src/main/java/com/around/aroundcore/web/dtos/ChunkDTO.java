@@ -1,15 +1,16 @@
 package com.around.aroundcore.web.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Objects;
 
 @Data
 @Builder
+@ToString
 @AllArgsConstructor
 @Schema(description = "DTO for chunk info")
 public class ChunkDTO {
@@ -26,11 +27,6 @@ public class ChunkDTO {
         if (o == null || getClass() != o.getClass()) return false;
         ChunkDTO chunkDTO = (ChunkDTO) o;
         return Objects.equals(id, chunkDTO.id) && Objects.equals(round_id, chunkDTO.round_id);
-    }
-
-    @Override
-    public String toString(){
-        return "ChunkDTO(id = "+this.id+",team_id = "+this.team_id+", round = "+this.round_id+")";
     }
 
     @Override

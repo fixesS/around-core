@@ -3,7 +3,6 @@ package com.around.aroundcore.web.controllers.rest;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.UserRoundTeam;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.entity.*;
@@ -35,6 +34,8 @@ public class GameChunkController {
     private final GameChunkService gameChunkService;
     private final GameChunkDTOMapper gameChunkDTOMapper;
     private final RoundService roundService;
+    private final TeamService teamService;
+    private final CityService cityService;
 
     @GetMapping("/{chunkId}")
     @Operation(
@@ -53,11 +54,12 @@ public class GameChunkController {
             description = "Allows to get all captured chunks in game field by user."
     )
     @Transactional
-    public ResponseEntity<List<ChunkDTO>> getMyChunksByRound(@RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId){
+    public ResponseEntity<List<ChunkDTO>> getMyChunksByRoundAndCity(@RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId,
+                                                                    @RequestParam("city_id") Integer cityId){
         UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
-        List<ChunkDTO> chunkDTOList = getFilteredChunkDTOs(user, roundId);
+        List<ChunkDTO> chunkDTOList = getChunksByUserAndRoundAndCity(user, roundId, cityId);
 
         return ResponseEntity.ok(chunkDTOList);
     }
@@ -68,9 +70,9 @@ public class GameChunkController {
     )
     @Transactional
     public ResponseEntity<List<ChunkDTO>> getUserChunksByRound(@PathVariable @Parameter(description = "User id", example = "1") Integer userId,
-            @RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId ){
+            @RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId, @RequestParam("city_id") Integer cityId){
         var user = userService.findById(userId);
-        List<ChunkDTO> chunkDTOList = getFilteredChunkDTOs(user,roundId);
+        List<ChunkDTO> chunkDTOList = getChunksByUserAndRoundAndCity(user,roundId,cityId);
 
         return ResponseEntity.ok(chunkDTOList);
     }
@@ -81,19 +83,21 @@ public class GameChunkController {
     )
     @Transactional
     public ResponseEntity<List<ChunkDTO>> getTeamChunksByRound(@PathVariable @Parameter(description = "Team id", example = "1") Integer teamId,
-                                                        @RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId ) {
-        List<GameChunk> chunks = getChunksByTeamAndRound(teamId, roundId);
+                                                        @RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId,
+                                                        @RequestParam("city_id") Integer cityId) {
+        List<GameChunk> chunks = getChunksByTeamAndRoundAndCity(teamId, roundId, cityId);
         List<ChunkDTO> chunkDTOList = chunks.stream().map(gameChunkDTOMapper).toList();
 
         return ResponseEntity.ok(chunkDTOList);
     }
     @GetMapping("/all")
     @Operation(
-            summary = "Gives all captured chunks in specific round",
+            summary = "Gives all captured chunks in specific round and city",
             description = "Allows to get all captured chunks by users. Chunk not in list => chunk does not exist or has not been captured by any user."
     )
-    public ResponseEntity<List<ChunkDTO>> getAllByRound(@RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId){
-        List<GameChunk> chunkList = getChunksByRound(roundId);
+    public ResponseEntity<List<ChunkDTO>> getAllByRound(@RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId,
+                                                        @RequestParam("city_id") Integer cityId ){
+        List<GameChunk> chunkList = getChunksByRoundAndCity(roundId,cityId);
         List<ChunkDTO> chunkDTOList = chunkList.stream().map(gameChunkDTOMapper).toList();
 
         return ResponseEntity.ok(chunkDTOList);
@@ -106,29 +110,27 @@ public class GameChunkController {
             return gameChunkService.findByIdAndRoundId(chunkId,roundId);
         }
     }
-    private List<GameChunk> getChunksByTeamAndRound(Integer teamId, Integer roundId) throws RoundNullException, NoActiveRoundException,TeamNullException, URTNullException{
-        UserRoundTeam urt;
+    private List<GameChunk> getChunksByTeamAndRoundAndCity(Integer teamId, Integer roundId, Integer cityId) throws RoundNullException, NoActiveRoundException,TeamNullException, URTNullException{
         if(roundId == 0){
-            urt = roundService.getUserRoundTeamByTeamInCurrentRound(teamId);
+            return gameChunkService.findAllByRoundAndTeamAndCity(roundService.getCurrentRound(), teamService.findById(teamId), cityService.findById(cityId));
         }else{
-            urt = roundService.getUserRoundTeamByTeamInRound(teamId, roundId);
-        }
-        return gameChunkService.findAllByUserRoundTeam(urt);
-    }
-    private List<GameChunk> getChunksByRound(Integer roundId) throws RoundNullException, NoActiveRoundException{
-        if(roundId == 0 ){
-            return gameChunkService.findAllByRound(roundService.getCurrentRound().getId());
-        }else{
-            roundService.checkById(roundId);
-            return gameChunkService.findAllByRound(roundId);
+            return gameChunkService.findAllByRoundAndTeamAndCity(roundService.getRoundById(roundId), teamService.findById(teamId), cityService.findById(cityId));
         }
     }
-    private List<ChunkDTO> getFilteredChunkDTOs(GameUser user, Integer roundId) throws RoundNullException, NoActiveRoundException{
+    private List<GameChunk> getChunksByRoundAndCity(Integer roundId, Integer cityId) throws RoundNullException, NoActiveRoundException{
         if(roundId == 0 ){
-            return user.getCapturedChunks(roundService.getCurrentRound().getId()).stream().map(gameChunkDTOMapper).toList();
+            return gameChunkService.findAllByRoundAndCity(roundService.getCurrentRound().getId(),cityService.findById(cityId).getId());
         }else{
             roundService.checkById(roundId);
-            return user.getCapturedChunks(roundId).stream().map(gameChunkDTOMapper).toList();
+            cityService.checkById(cityId);
+            return gameChunkService.findAllByRoundAndCity(roundId,cityId);
+        }
+    }
+    private List<ChunkDTO> getChunksByUserAndRoundAndCity(GameUser user, Integer roundId, Integer cityId) throws RoundNullException, NoActiveRoundException{
+        if(roundId == 0 ){
+            return gameChunkService.findAllByOwnerAndRoundAndCity(user,roundService.getCurrentRound(),cityService.findById(cityId)).stream().map(gameChunkDTOMapper).toList();
+        }else{
+            return gameChunkService.findAllByOwnerAndRoundAndCity(user,roundService.getRoundById(roundId),cityService.findById(cityId)).stream().map(gameChunkDTOMapper).toList();
         }
     }
 }

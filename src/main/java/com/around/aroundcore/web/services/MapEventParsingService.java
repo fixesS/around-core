@@ -3,7 +3,9 @@ package com.around.aroundcore.web.services;
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.repositories.CategoryRepository;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
+import com.around.aroundcore.database.services.CityService;
 import com.around.aroundcore.database.services.EventProviderService;
+import com.around.aroundcore.database.services.RoundService;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.dtos.coords.Location;
 import com.around.aroundcore.web.dtos.events.timepad.TimepadEvent;
@@ -38,6 +40,8 @@ public class MapEventParsingService {
     private final TimepadAPIService timepadAPIService;
     private final CategoryRepository categoryRepository;
     private final GameChunkRepository gameChunkRepository;
+    private final RoundService roundService;
+    private final CityService cityService;
     private final EventProviderService eventProviderService;
     private final H3ChunkService h3ChunkService;
     private final CategoryMapper categoryMapper;
@@ -50,10 +54,12 @@ public class MapEventParsingService {
     private Integer radius;
 
     @Value("${around.mapevents.parsing.city}")
-    private String city;
+    private String cityName;
 
     public List<MapEvent> parseEvents() throws EventsNotFoundException{
-        CityEnum cityEnum = CityEnum.valueOf(city);
+        CityEnum cityEnum = CityEnum.valueOf(cityName);
+        City city = cityService.findById(cityEnum.getId());
+        Round currentRound = roundService.getCurrentRound();
         TimepadEvents subEvents = timepadAPIService.getEventsForCity(limit,cityEnum.getName());
         List<TimepadEvent> events = subEvents.getValues();
         List<MapEvent> mapEvents = new ArrayList<>();
@@ -84,9 +90,11 @@ public class MapEventParsingService {
                 List<ChunkDTO> chunkDTOS = h3ChunkService.getChunkByLatLon(coords.get(0),coords.get(1),radius);
                 List<GameChunk> chunks = chunkDTOS.stream().map(gameChunkMapper).toList();
                 List<GameChunk> chunkList = chunks.stream().map(chunk -> {
-                    if(gameChunkRepository.existsById(chunk.getId())){
+                    if(Boolean.TRUE.equals(gameChunkRepository.existsByIdAndRoundId(chunk.getId(), currentRound.getId()))){
                         return gameChunkRepository.findById(chunk.getId()).orElse(null);
                     }else{
+                        chunk.setCity(city);
+                        chunk.setRound(currentRound);
                         return gameChunkRepository.saveAndFlush(chunk);
                     }
                 }).toList();

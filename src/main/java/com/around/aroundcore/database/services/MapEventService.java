@@ -54,9 +54,9 @@ public class MapEventService {
     public List<MapEvent> findAll(){
         return mapEventRepository.findAll();
     }
-    @Cacheable(value = "verifiedEvents")
-    public List<MapEvent> findAllVerified() {
-        return mapEventRepository.findAllByVerified(true);
+    @Cacheable(value = "verifiedEventsByCity", key = "#cityId")
+    public List<MapEvent> findAllVerifiedInCity(Integer cityId) {
+        return mapEventRepository.findAllByVerifiedAndCityId(true, cityId);
     }
     public boolean existByUrl(String url){
         return mapEventRepository.existsByUrl(url);

@@ -1,6 +1,6 @@
 package com.around.aroundcore.security.filters;
 
-import com.around.aroundcore.database.models.UserRoundTeam;
+import com.around.aroundcore.database.models.UserRoundTeamCity;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.exceptions.entity.GameUserTeamNullForRound;
@@ -32,7 +32,7 @@ public class UpgradeHttpToWebSocketHandshakeHandler extends DefaultHandshakeHand
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(session);
         authentication.setAuthenticated(true);
         try{
-            UserRoundTeam.findTeamForCurrentRoundAndUser(user);
+            UserRoundTeamCity.findTeamForCurrentRoundAndUser(user);
             authentication.setAuthenticated(true);
         }catch (NoActiveRoundException | GameUserTeamNullForRound e){
             authentication.setAuthenticated(false);

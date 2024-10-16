@@ -4,11 +4,13 @@ import lombok.Getter;
 
 @Getter
 public enum CityEnum {
-    EKB("Екатеринбург");
+    Yekaterinburg("Екатеринбург",1);
 
     private final String name;
+    private final Integer id;
 
-    CityEnum(String name){
+    CityEnum(String name, Integer id) {
         this.name = name;
+        this.id = id;
     }
 }

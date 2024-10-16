@@ -1,7 +1,7 @@
 package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.Round;
-import com.around.aroundcore.database.models.UserRoundTeam;
+import com.around.aroundcore.database.models.UserRoundTeamCity;
 import com.around.aroundcore.database.repositories.RoundRepository;
 import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
 import com.around.aroundcore.web.exceptions.entity.NoActiveRoundException;
@@ -31,12 +31,12 @@ public class RoundService {
     public Round getRoundById(Integer id) throws RoundNullException{
         return roundRepository.findById(id).orElseThrow(RoundNullException::new);
     }
-    public UserRoundTeam getUserRoundTeamByTeamInCurrentRound(Integer teamId) throws NoActiveRoundException, TeamNullException, URTNullException {
+    public UserRoundTeamCity getUserRoundTeamByTeamInCurrentRound(Integer teamId) throws NoActiveRoundException, TeamNullException, URTNullException {
         teamService.checkById(teamId);
         Round round = roundRepository.findFirstByActiveIsTrue().orElseThrow(NoActiveRoundException::new);
         return userRoundTeamRepository.findByRoundIdAndTeamId(round.getId(), teamId).stream().findFirst().orElseThrow(URTNullException::new);
     }
-    public UserRoundTeam getUserRoundTeamByTeamInRound(Integer teamId, Integer roundId) throws RoundNullException, TeamNullException, URTNullException{
+    public UserRoundTeamCity getUserRoundTeamByTeamInRound(Integer teamId, Integer roundId) throws RoundNullException, TeamNullException, URTNullException{
         if(!roundRepository.existsById(roundId)){
             throw new RoundNullException();
         }

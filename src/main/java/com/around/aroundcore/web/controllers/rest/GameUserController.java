@@ -277,14 +277,14 @@ public class GameUserController {
     }
     private List<GameUser> getUserFriendsSortedByCurrentRound(GameUser user){
         try{
-            return user.getFriends().stream().sorted(Comparator.comparingInt(friend -> -friend.getCapturedChunks(roundService.getCurrentRound().getId()).size())).toList();
+            return user.getFriends().stream().sorted(Comparator.comparingLong(friend -> -friend.getCapturedChunks())).toList();
         }catch (RoundNullException | NoActiveRoundException  e){
             return user.getFriends();
         }
     }
     private List<GameUser> sortSuggestionUsersByCurrentRound(List<GameUser> suggestions){
         try{
-            return suggestions.stream().sorted(Comparator.comparingInt(user -> -user.getCapturedChunks(roundService.getCurrentRound().getId()).size())).toList();
+            return suggestions.stream().sorted(Comparator.comparingLong(user -> -user.getCapturedChunks())).toList();
         }catch (RoundNullException e ){
             return suggestions;
         }

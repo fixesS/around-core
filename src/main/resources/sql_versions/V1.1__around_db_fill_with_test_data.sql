@@ -54,8 +54,8 @@ VALUES(0, '[
   12
 ]');
 
-INSERT INTO public.users_rounds_team(user_id, round_id, team_id)
-VALUES (1,1,1);
+INSERT INTO public.users_rounds_team_city(user_id, round_id, team_id, city_id)
+VALUES (1,1,1, 1);
 
 INSERT INTO public.skills
 ("name", max_level, description, image_name, icon, rule_id, cost_id)
@@ -67,4 +67,13 @@ VALUES(1, 1, 0);
 
 INSERT INTO public.event_providers
 (id, name, url)
-VALUES (0,'timepad','dev.timepad.ru')
+VALUES (1,'timepad','dev.timepad.ru');
+
+INSERT INTO chunks(id, round_id,city_id, owner)
+values (1,1,1,1);
+
+INSERT INTO map_events(id,provider_id,"name",starts_at,ends_at,url,verified,ad)
+values (1,1,'Тестовое событие','2024-09-11 00:00:00'::TIMESTAMP,'2024-12-14 23:59:59'::TIMESTAMP,'',false, false);
+
+INSERT INTO map_events_chunks(event_id, round_id, city_id, chunk_id)
+VALUES (1,1,1,1);
