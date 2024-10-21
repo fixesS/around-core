@@ -2,10 +2,7 @@ package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.*;
-import com.around.aroundcore.database.services.GameUserService;
-import com.around.aroundcore.database.services.RoundService;
-import com.around.aroundcore.database.services.TeamService;
-import com.around.aroundcore.database.services.VerificationTokenService;
+import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.web.dtos.RegistrationDTO;
 import com.around.aroundcore.web.dtos.TokenData;
@@ -39,6 +36,7 @@ public class RegistrationController {
     private final TeamService teamService;
     private final VerificationTokenService verificationTokenService;
     private final RoundService roundService;
+    private final CityService cityService;
 
     @PostMapping
     @Operation(
@@ -62,13 +60,12 @@ public class RegistrationController {
                 .password(passwordEncoder.encode(registrationDTO.getPassword()))
                 .role(Role.USER)
                 .build();
-        user.setCity(registrationDTO.getCity());
-        user.setAvatar(registrationDTO.getAvatar());
 
         userService.create(user);
-        if(registrationDTO.getTeam_id() != null){
-            Team team = teamService.findById(registrationDTO.getTeam_id());
-            userService.setTeamForRound(user,team,roundService.getCurrentRound());
+        if(registrationDTO.getTeam_id() != null && registrationDTO.getCity_id() != null){
+            var team = teamService.findById(registrationDTO.getTeam_id());
+            var city = cityService.findById(registrationDTO.getCity_id());
+            userService.createTeamCityForRound(user,team,city,roundService.getCurrentRound());
         }
 
         TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));

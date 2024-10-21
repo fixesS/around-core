@@ -49,6 +49,7 @@ public class AroundConfig {
     public static final String API_V1_STATISTIC = API_V1+"/stat";
     public static final String API_V1_SKILLS = API_V1+"/skills";
     public static final String API_V1_IMAGE = API_V1+"/image";
+    public static final String API_V1_CITY = API_V1+"/city";
     public static final String URL_AVATAR = AroundConfig.API_V1_IMAGE+"/avatar/";
     public static final String URL_ICON = AroundConfig.API_V1_IMAGE+"/icon/";
     public static final String URL_IMAGE = AroundConfig.API_V1_IMAGE+"/";
@@ -61,6 +62,8 @@ public class AroundConfig {
     private String geotreeKey;
     @Value("${geotree.api.url}")
     private String geotreeMainUrl;
+    @Value("${around.chunks.resolution}")
+    private Integer chunksResolution;
     @Bean
     public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
         ThreadPoolTaskScheduler threadPoolTaskScheduler
@@ -80,7 +83,7 @@ public class AroundConfig {
     }
     @Bean
     public H3ChunkService h3ChunkService() throws IOException {
-        return new H3ChunkService(h3Core(),stringGameChunkDTOMapper());
+        return new H3ChunkService(h3Core(),stringGameChunkDTOMapper(),chunksResolution);
     }
     @Bean
     public RestTemplate restTemplate() {
@@ -105,6 +108,6 @@ public class AroundConfig {
     }
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("currentRound", "verifiedEvents","checkRound","getRoundById");
+        return new ConcurrentMapCacheManager("currentRound", "verifiedAndActiveEventsByCity","checkRound","getRoundById","checkCity","findCityById");
     }
 }

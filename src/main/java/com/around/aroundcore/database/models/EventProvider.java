@@ -6,13 +6,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "event_providers")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class EventProvider {
+public class EventProvider implements Serializable {
     @Id
     private Integer id;
     @Column

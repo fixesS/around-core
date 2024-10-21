@@ -25,7 +25,7 @@ public enum ApiResponse {
     AUTH_INCORRECT_USERNAME_SIZE(-3005,"Username length must be more than 2."),
     AUTH_INCORRECT_TEAM_ID_NULL(-3006,"Team id cannot be empty."),
     AUTH_INCORRECT_TEAM_ID_FORMAT(-3007,"Team id cannot be less than 1."),
-    AUTH_INCORRECT_CITY_FORMAT(-3008,"City cannot be empty."),
+    AUTH_INCORRECT_CITY_FORMAT(-3008,"City id cannot be less than 1."),
     AUTH_INCORRECT_TYPE_OF_FIELD(-3009,"Incorrect type of field."),
     AUTH_INCORRECT_AVATAR(-3010,"Avatar must be not empty."),
     INVALID_TOKEN(-4001, "Token is invalid."),
@@ -35,6 +35,7 @@ public enum ApiResponse {
     SESSION_DOES_NOT_EXIST(-5001,"Session does not exist.", HttpStatus.NOT_FOUND),
     SESSION_EXPIRED(-5002,"Session is expired."),
     CHUNK_DOES_NOT_EXIST(-6001,"Chunk you trying get does not exist or has not been captured by any user.", HttpStatus.NOT_FOUND),
+    CHUNK_DOES_NOT_CORRELATES_WITH_USER_CITY(-6002,"Chunk you trying to own is not in your city."),
     TEAM_DOES_NOT_EXIST(-7001,"Team does not exist.", HttpStatus.NOT_FOUND),
     SKILL_DOES_NOT_EXIST(-8001,"Skill does not exist."),
     SKILL_LEVEL_UNREACHABLE(-8002,"Skill level you trying to get more than max level for skill."),
@@ -46,7 +47,8 @@ public enum ApiResponse {
     IMAGE_LOAD_ERROR(-11002,"Image does not exist."),
     IMAGE_SIZE_TOO_BIG(-11003,"Image size is too big."),
     IMAGE_EMPTY(-11004,"Image must be not empty."),
-    IMAGE_TYPE_ERROR(-11005,"Image type must be jpeg or png.");
+    IMAGE_TYPE_ERROR(-11005,"Image type must be jpeg or png."),
+    CITY_DOES_NOT_EXIST(-10001,"City doest not exist.", HttpStatus.NOT_FOUND);
 
     @Getter
     private Integer statusCode;
