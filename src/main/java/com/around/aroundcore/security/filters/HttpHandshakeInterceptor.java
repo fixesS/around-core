@@ -3,7 +3,7 @@ package com.around.aroundcore.security.filters;
 import com.around.aroundcore.database.models.UserRoundTeamCity;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.entity.GameUserTeamNullForRound;
+import com.around.aroundcore.web.exceptions.entity.GameUserTeamCityNullForRound;
 import com.around.aroundcore.web.exceptions.entity.NoActiveRoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
             log.debug("Getting team from user in current round");
             UserRoundTeamCity.findTeamForCurrentRoundAndUser(user);
             return true;
-        }catch (GameUserTeamNullForRound | NoActiveRoundException e){
+        }catch (GameUserTeamCityNullForRound | NoActiveRoundException e){
             log.debug("User has no team in current round");
             response.getBody().write(objectMapper.writeValueAsBytes(ApiResponse.USER_HAS_NO_TEAM_IN_ROUND));
             response.setStatusCode(HttpStatus.METHOD_NOT_ALLOWED);

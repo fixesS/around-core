@@ -9,7 +9,6 @@ import com.around.aroundcore.web.exceptions.entity.RoundNullException;
 import com.around.aroundcore.web.mappers.StringGameChunkDTOMapper;
 import com.uber.h3core.H3Core;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
@@ -17,8 +16,7 @@ import java.util.List;
 public class H3ChunkService {
     private final H3Core h3Core;
     private final StringGameChunkDTOMapper stringGameChunkDTOMapper;
-    @Setter
-    private Integer resolution = 11;
+    private final Integer resolution;
 
     /**
      * for radius = 1
@@ -57,5 +55,8 @@ public class H3ChunkService {
         String id =  h3Core.latLngToCellAddress(lat,lon,resolution);
         List<String> neighbours = h3Core.gridDisk(id, radius);
         return neighbours.stream().map(stringGameChunkDTOMapper).toList();
+    }
+    public String getParentId(ChunkDTO childChunk, Integer parentResolution){
+        return h3Core.cellToParentAddress(childChunk.getId(), parentResolution);
     }
 }

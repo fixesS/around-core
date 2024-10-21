@@ -2,10 +2,7 @@ package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.services.GameUserService;
-import com.around.aroundcore.database.services.RoundService;
-import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.database.services.TeamService;
+import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.web.dtos.GameUserDTO;
 import com.around.aroundcore.web.dtos.SkillDTO;
 import com.around.aroundcore.web.dtos.UpdateGameUserDTO;
@@ -51,6 +48,7 @@ public class GameUserController {
     private final EntityPatcher patcher;
     private final ApplicationEventPublisher eventPublisher;
     private final RoundService roundService;
+    private final CityService cityService;
 
     @GetMapping("/me")
     @Operation(
@@ -122,9 +120,6 @@ public class GameUserController {
         if(updateGameUserDTO.getUsername()!=null){
             userService.checkUsername(updateGameUserDTO.getUsername());
         }
-//      if(updateGameUserDTO.getEmail()!=null){
-//          userService.checkEmail(updateGameUserDTO.getUsername());
-//      }
         try {
             patcher.patch(user,updateGameUserDTO);
         }  catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
@@ -133,7 +128,11 @@ public class GameUserController {
         userService.update(user);
         if(updateGameUserDTO.getTeam_id()!=null){
             var team = teamService.findById(updateGameUserDTO.getTeam_id());
-            userService.setTeamForRound(user,team,roundService.getCurrentRound());
+            userService.updateTeamForRound(user,team,roundService.getCurrentRound());
+        }
+        if(updateGameUserDTO.getCity_id()!=null){
+            var city = cityService.findById(updateGameUserDTO.getCity_id());
+            userService.updateCityForRound(user,city,roundService.getCurrentRound());
         }
         GameUserDTO gameUserDTO = gameUserDTOMapper.apply(user);
 

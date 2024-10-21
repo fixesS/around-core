@@ -2,6 +2,7 @@ package com.around.aroundcore.database.models;
 
 import com.around.aroundcore.database.converters.ListOfChunkDTOConverter;
 import com.around.aroundcore.database.dtos.ChunkDTOForCity;
+import com.around.aroundcore.web.dtos.ChunkDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +41,14 @@ public class City implements Serializable {
     @Column
     private String locale;
 
-    @Column
+    @Column(name = "chunks_resolution")
+    private Integer chunksResolution;
+
+    @Column(updatable = false)
     @Convert(converter = ListOfChunkDTOConverter.class)
     private List<ChunkDTOForCity> chunks;
+
+    public boolean containsChunkDTO(ChunkDTO chunk) {
+        return chunks.stream().map(ChunkDTOForCity::getId).toList().contains(chunk.getId());
+    }
 }

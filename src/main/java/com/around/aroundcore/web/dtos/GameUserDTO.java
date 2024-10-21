@@ -15,7 +15,7 @@ public class GameUserDTO {
     private String username;
     private String avatar;
     private String email;
-    private String city;
+    private Integer city_id;
     @Schema(description = "User team id")
     private Integer team_id;
     private Integer level;

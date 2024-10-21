@@ -34,6 +34,8 @@ public class MapEvent implements Serializable {
     private String url;
     @Column
     private boolean verified;
+    @Column
+    private boolean active;
     @Column(name = "ad")
     private boolean isAd;
 

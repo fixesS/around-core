@@ -5,8 +5,10 @@ import com.around.aroundcore.database.repositories.MapEventRepository;
 import com.around.aroundcore.web.exceptions.entity.MapEventNullException;
 import com.around.aroundcore.web.services.MapEventParsingService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,11 +19,13 @@ import java.util.List;
 
 @Service
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class MapEventService {
     private final MapEventRepository mapEventRepository;
     private final MapEventParsingService mapEventParsingService;
+    @Value("${around.time.locale}")
+    private String timeLocale;
     private void create(MapEvent event){
         mapEventRepository.save(event);
     }
@@ -41,12 +45,13 @@ public class MapEventService {
         return mapEventRepository.findById(id).orElseThrow(MapEventNullException::new);
     }
     @Scheduled(fixedRate = 900000)
-    public void makeEndedEventsNotVerified(){
+    @CacheEvict(value = "verifiedAndActiveEventsByCity")
+    public void makeEndedEventsNotActive(){
         List<MapEvent> events = findAll();
         events.forEach(event -> {
             if(event.getEnds()!=null &&
-                    event.getEnds().isAfter(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())){
-                event.setVerified(false);
+                    event.getEnds().isBefore(new Date().toInstant().atZone(ZoneId.of(timeLocale)).toLocalDateTime())){
+                event.setActive(false);
             }
         });
         mapEventRepository.saveAllAndFlush(events);
@@ -54,9 +59,9 @@ public class MapEventService {
     public List<MapEvent> findAll(){
         return mapEventRepository.findAll();
     }
-    @Cacheable(value = "verifiedEventsByCity", key = "#cityId")
+    @Cacheable(value = "verifiedAndActiveEventsByCity", key = "#cityId")
     public List<MapEvent> findAllVerifiedInCity(Integer cityId) {
-        return mapEventRepository.findAllByVerifiedAndCityId(true, cityId);
+        return mapEventRepository.findAllByVerifiedAndActiveAndCityId(true,true, cityId);
     }
     public boolean existByUrl(String url){
         return mapEventRepository.existsByUrl(url);

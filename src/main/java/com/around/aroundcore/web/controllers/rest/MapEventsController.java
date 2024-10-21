@@ -33,7 +33,7 @@ public class MapEventsController {
             summary = "Gives all map-events in city",
             description = "Allows to get all map-events in city."
     )
-    public ResponseEntity<List<MapEventDTO>> getAllEventsInCity(@RequestParam("round_id") Integer cityId) {
+    public ResponseEntity<List<MapEventDTO>> getAllEventsInCity(@RequestParam("city_id") Integer cityId) {
         List<MapEvent> events = mapEventService.findAllVerifiedInCity(cityId);
         List<MapEventDTO> eventDTOS = events.stream().map(mapEventDTOMapper).toList();
 

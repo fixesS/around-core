@@ -14,7 +14,24 @@ INSERT INTO public.rounds(starts, ends,active)
 Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, true );
 
 INSERT INTO public.cities(chunks)
-Values('[0,1]' );
+Values('[
+{"id":"8610c221fffffff"},
+{"id":"8610c22f7ffffff"},
+{"id":"8610c22afffffff"},
+{"id":"8610c22d7ffffff"},
+{"id":"8610c228fffffff"},
+{"id":"8610c2287ffffff"},
+{"id":"8610c22b7ffffff"},
+{"id":"8610dc92fffffff"},
+{"id":"8610dc927ffffff"},
+{"id":"8610c229fffffff"},
+{"id":"8610c2297ffffff"},
+{"id":"8610dc907ffffff"},
+{"id":"8610dc937ffffff"},
+{"id":"8610c266fffffff"},
+{"id":"8610dc917ffffff"},
+{"id":"8610c264fffffff"}
+]' );
 
 INSERT INTO public.users ("level", coins, username, avatar, "password", "role", email, verified)
 VALUES(1, 0, 'username','guest.jpg', '$2a$10$yatZBPQE4uvwPoRSwN/8ZuyJXpBY8HTOGlknkfB4dTbfNlREA4UsS',

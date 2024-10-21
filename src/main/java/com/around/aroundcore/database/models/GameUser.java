@@ -46,8 +46,8 @@ public class GameUser implements UserDetails {
     @Setter
     @Getter
     private Boolean verified;
-    @Column(name = "captured_chunks")
     @Getter
+    @Column(name = "captured_chunks")
     private Long capturedChunks;
 
     @Column
@@ -162,8 +162,8 @@ public class GameUser implements UserDetails {
         return Collections.unmodifiableList(userSkills);
     }
 
-    public Long getCapturedChunks(){
-        return this.capturedChunks;
+    public void addCapturedChunks(Integer value){
+        this.capturedChunks += value;
     }
     public void setAvatar(String s){
         this.avatar = Objects.requireNonNullElse(s, "guest.jpg");

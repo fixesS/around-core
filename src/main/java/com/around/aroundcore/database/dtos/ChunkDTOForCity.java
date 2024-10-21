@@ -1,16 +1,24 @@
 package com.around.aroundcore.database.dtos;
 
+import com.around.aroundcore.database.converters.ChunkDTOForCityDeserializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-@Getter
 @Setter
+@Getter
+@JsonDeserialize(using = ChunkDTOForCityDeserializer.class)
+@NoArgsConstructor
 public class ChunkDTOForCity implements Serializable{
+    @JsonSerialize(using = StringSerializer.class, as = String.class)
     private String id;
 
     @JsonCreator
