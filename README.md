@@ -39,7 +39,7 @@ We are using stomp over WebSockets.
 - Subscribe to `/user/exchange/private.message/locations` (type: List of GameUserLocationDTO)
 - Subscribe to `/user/exchange/private.message/error` (type: ApiError)
 - Send messages to `app/chunk.changes` (type: ChunkDTO(only id))
-- Send messages to `app/chunk.changes` (type: GameUserLocationDTO(only lat and lon))
+- Send messages to `app/locations` (type: GameUserLocationDTO(only lat and lon))
 
 
 
