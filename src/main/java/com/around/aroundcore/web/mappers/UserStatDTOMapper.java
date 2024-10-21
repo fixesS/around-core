@@ -1,5 +1,6 @@
 package com.around.aroundcore.web.mappers;
 
+import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameUser;
 
 import com.around.aroundcore.web.dtos.RoundStatDTO;
@@ -24,7 +25,7 @@ public class UserStatDTOMapper implements Function<GameUser, GameUserStatDTO> {
                 .level(user.getLevel())
                 .roundStat(getRoundStatDTO(user))
                 .username(user.getUsername())
-                .avatar(user.getAvatar())
+                .avatar(AroundConfig.URL_AVATAR+user.getAvatar())
                 .build();
     }
     public List<RoundStatDTO> getRoundStatDTO(GameUser user){
