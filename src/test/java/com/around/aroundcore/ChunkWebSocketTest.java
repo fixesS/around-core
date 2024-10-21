@@ -83,8 +83,8 @@ class ChunkWebSocketTest {
 
 		RunStopFrameHandler runStopFrameHandler = new RunStopFrameHandler(new CompletableFuture<>());
 
-		//String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
-		String wsUrl = "wss://aroundgame.ru/ws";
+		String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
+		//String wsUrl = "wss://aroundgame.ru/ws";
 		//log.info(wsUrl);
 
 		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
@@ -128,6 +128,7 @@ class ChunkWebSocketTest {
 
 		ChunkDTO chunkDTO = ChunkDTO.builder()
 				.id("8b10dc9268adfff")
+				//.id("8b10dc058444fff") // wrong chunk id (not in yekaterinburg)
 				.build();
 
 		StompHeaders headers1 = new StompHeaders();

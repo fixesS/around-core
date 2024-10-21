@@ -53,9 +53,9 @@ public class GameChunkService {
     public List<GameChunk> findAllByRoundAndTeamAndCity(Round round, Team team, City city) {
         return gameChunkRepository.findAllByTeamIdAndRoundIdAndCityId(round.getId(), team.getId(), city.getId());
     }
-    public void saveListOfChunkDTOs(List<ChunkDTO> chunkDTOList, GameUser user, Round round){
+    public void saveListOfChunkDTOs(List<ChunkDTO> chunkDTOList, GameUser user, Round round, City city){
         List<GameChunk> gameChunkList = chunkDTOList.stream().map(chunk ->
-                GameChunk.builder().round(round).owner(user).id(chunk.getId()).build()
+                GameChunk.builder().round(round).owner(user).city(city).id(chunk.getId()).build()
         ).toList();
         gameChunkRepository.saveAll(gameChunkList);
     }

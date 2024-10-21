@@ -28,6 +28,7 @@ public class H3ChunkService {
      * 5 - top
      * 6 - left-top
     */
+    //important: int value 0 returns empty list. It's ok.
     public List<String> getNeighboursForSkillRuleValue(String chunkId, int value){
         if(h3Core.getResolution(chunkId) != resolution){
             throw new WrongChunkResolution();
@@ -56,7 +57,7 @@ public class H3ChunkService {
         List<String> neighbours = h3Core.gridDisk(id, radius);
         return neighbours.stream().map(stringGameChunkDTOMapper).toList();
     }
-    public String getParentId(ChunkDTO childChunk, Integer parentResolution){
-        return h3Core.cellToParentAddress(childChunk.getId(), parentResolution);
+    public String getParentId(String childChunkId, Integer parentResolution){
+        return h3Core.cellToParentAddress(childChunkId, parentResolution);
     }
 }

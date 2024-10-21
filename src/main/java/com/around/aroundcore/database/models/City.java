@@ -48,7 +48,7 @@ public class City implements Serializable {
     @Convert(converter = ListOfChunkDTOConverter.class)
     private List<ChunkDTOForCity> chunks;
 
-    public boolean containsChunkDTO(ChunkDTO chunk) {
-        return chunks.stream().map(ChunkDTOForCity::getId).toList().contains(chunk.getId());
+    public boolean containsChunkDTO(String chunk) {
+        return chunks.stream().map(ChunkDTOForCity::getId).toList().contains(chunk);
     }
 }

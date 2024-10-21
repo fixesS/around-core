@@ -77,15 +77,15 @@ public class ChunkWsController {
             return;
         }
 
-        if(!city.containsChunkDTO(chunkDTO)){// if chunk is not in user city
+        if(!city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(),city.getChunksResolution()))){// if chunk is not in user city
             ApiError apiError = ApiResponse.getApiError(ApiResponse.CHUNK_DOES_NOT_CORRELATES_WITH_USER_CITY);
             messagingTemplate.convertAndSendToUser(user.getUsername(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
             return;
         }
 
         List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill); // getting neighbours for width userskill level
-        chunksDTOList = chunksDTOList.stream().filter(city::containsChunkDTO).toList(); // filtering for chunks by city
-        gameChunkService.saveListOfChunkDTOs(chunksDTOList, user, round);// adding chunks
+        chunksDTOList = chunksDTOList.stream().filter(chunk -> city.containsChunkDTO(h3ChunkService.getParentId(chunk.getId(),city.getChunksResolution()))).toList(); // filtering for chunks by city
+        gameChunkService.saveListOfChunkDTOs(chunksDTOList, user, round, city);// adding chunks
         user.addCapturedChunks(chunksDTOList.size()); // increase captured chunks value
         chunksDTOList.forEach(chunkDTO1 -> chunkDTO1.setRound_id(round.getId()));
 
