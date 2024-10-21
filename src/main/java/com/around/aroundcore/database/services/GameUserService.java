@@ -17,7 +17,6 @@ import java.util.List;
 @Service
 @Slf4j
 @AllArgsConstructor
-@Transactional
 public class GameUserService {
 
     private final GameUserRepository userRepository;
@@ -80,7 +79,13 @@ public class GameUserService {
     public List<GameUser> getTopAll(){
         return userRepository.getStatTopAll();
     }
-    public void setTeamForRound(GameUser user, Team team, Round round){
+    public void updateTeamForRound(GameUser user, Team team, Round round){
         userRepository.setTeamForRound(round.getId(), team.getId(), user.getId());
+    }
+    public void updateCityForRound(GameUser user, City city, Round round){
+        userRepository.setCityForRound(round.getId(), city.getId(), user.getId());
+    }
+    public void createTeamCityForRound(GameUser user, Team team, City city, Round round){
+        userRepository.createTeamAndCityForRound(round.getId(), team.getId(), city.getId(), user.getId());
     }
 }

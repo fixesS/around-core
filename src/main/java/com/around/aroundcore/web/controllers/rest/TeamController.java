@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,7 @@ public class TeamController {
             summary = "Gives team info by id",
             description = "Allows to get info about team by id."
     )
+    @Transactional
     public ResponseEntity<TeamDTO> getTeamById(@PathVariable @Parameter(description = "team id") Integer id){
         var team = teamService.findById(id);
         TeamDTO teamDTO = teamDTOMapper.apply(team);
@@ -45,6 +47,7 @@ public class TeamController {
             summary = "Gives all teams info",
             description = "Allows to get info about all created teams."
     )
+    @Transactional
     public ResponseEntity<List<TeamDTO>> getAllTeams(){
         List<Team> teamList = teamService.findAll();
         List<TeamDTO> teamDTOList = teamList.stream().map(teamDTOMapper).toList();

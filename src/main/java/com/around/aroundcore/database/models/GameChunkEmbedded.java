@@ -1,6 +1,9 @@
 package com.around.aroundcore.database.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -9,20 +12,20 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRoundTeamEmbedded implements Serializable {
+public class GameChunkEmbedded implements Serializable {
     private Round round;
-    private GameUser user;
+    private String id;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserRoundTeamEmbedded that = (UserRoundTeamEmbedded) o;
-        return Objects.equals(round, that.round) && Objects.equals(user, that.user);
+        GameChunkEmbedded that = (GameChunkEmbedded) o;
+        return Objects.equals(round, that.round) && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(round, user);
+        return Objects.hash(round, id);
     }
 }

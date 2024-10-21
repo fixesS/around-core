@@ -18,22 +18,24 @@ public interface GameUserRepository extends JpaRepository<GameUser, Integer> {
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
 
-    @Query(nativeQuery = true, value = "SELECT u.id, u.level, u.coins, u.username, u.avatar, u.city, u.password, u.role, u.email, u.verified, count(c.id) AS captured_cells\n" +
-            "FROM game_user u\n" +
-            "         JOIN game_chunk c ON u.id = c.owner\n" +
-            "GROUP BY u.id\n" +
-            "ORDER BY captured_cells DESC\n" +
+    @Query(nativeQuery = true, value = "SELECT u.id, u.level, u.coins, u.username, u.avatar, u.password, u.role, u.email, u.verified, u.captured_chunks\n" +
+            "FROM users u\n" +
+            "ORDER BY u.captured_chunks DESC\n" +
             "LIMIT 5;")
     List<GameUser> getStatTop5();
-    @Query(nativeQuery = true, value = "SELECT u.id, u.level, u.coins, u.username, u.avatar, u.city, u.password, u.role, u.email, u.verified, count(c.id) AS captured_cells\n" +
-            "FROM game_user u\n" +
-            "         JOIN game_chunk c ON u.id = c.owner\n" +
-            "GROUP BY u.id\n" +
-            "ORDER BY captured_cells DESC\n"+
+    @Query(nativeQuery = true, value = "SELECT u.id, u.level, u.coins, u.username, u.avatar, u.password, u.role, u.email, u.verified, u.captured_chunks\n" +
+            "FROM users u\n" +
+            "ORDER BY u.captured_chunks DESC\n" +
             "LIMIT 50;"
             )
     List<GameUser> getStatTopAll();
     @Modifying
-    @Query(nativeQuery = true, value = "insert into user_round_team (user_id, round_id, team_id) VALUES (:userId, :roundId, :teamId) on conflict(user_id,round_id) do  update set team_id = :teamId")
+    @Query(nativeQuery = true, value = "update public.users_rounds_team_city set team_id = :teamId where user_id = :userId and round_id = :roundId")
     void setTeamForRound(@Param("roundId") Integer roundId, @Param("teamId") Integer teamId, @Param("userId") Integer userId);
+    @Modifying
+    @Query(nativeQuery = true, value = "insert into users_rounds_team_city (user_id, round_id, team_id, city_id) VALUES (:userId, :roundId, :teamId, :cityId) on conflict(user_id,round_id) do  update set team_id = :teamId, city_id = :cityId")
+    void createTeamAndCityForRound(@Param("roundId") Integer roundId, @Param("teamId") Integer teamId,@Param("cityId") Integer cityId, @Param("userId") Integer userId);
+    @Modifying
+    @Query(nativeQuery = true, value = "update public.users_rounds_team_city set city_id = :cityId where user_id = :userId and round_id = :roundId")
+    void setCityForRound(@Param("roundId") Integer roundId, @Param("cityId") Integer cityId, @Param("userId") Integer userId);
 }

@@ -7,7 +7,6 @@ import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -21,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -79,10 +79,9 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        Claims claims = jwtService.getAccessClaims(accessToken);
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(session);
-        Date iat = claims.getIssuedAt();
-        if(!iat.toInstant().atZone(ZoneId.of(timeLocale)).toLocalDateTime().isAfter(session.getLastRefresh())){
+        LocalDateTime now = new Date().toInstant().atZone(ZoneId.of(timeLocale)).toLocalDateTime();
+        if(!now.isAfter(session.getExpiresIn())){
             authentication.setAuthenticated(true);
         }else{
             log.debug("Session expired");

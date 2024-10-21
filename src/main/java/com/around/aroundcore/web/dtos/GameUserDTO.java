@@ -3,8 +3,6 @@ package com.around.aroundcore.web.dtos;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.util.Objects;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,13 +15,13 @@ public class GameUserDTO {
     private String username;
     private String avatar;
     private String email;
-    private String city;
+    private Integer city_id;
     @Schema(description = "User team id")
     private Integer team_id;
     private Integer level;
     private Integer coins;
     @Schema(description = "Is user email verified")
     private Boolean verified;
-    private Integer captured_chunks;
+    private Long captured_chunks;
 }
 

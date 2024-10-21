@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,7 @@ public class SkillController {
             summary = "Gives info about skill by id",
             description = "Allows to get info about skill by id."
     )
+    @Transactional
     public ResponseEntity<String> handleGetSkillById(@PathVariable @Parameter(description = "Skill id", example = "0") Integer id,
                                                        @RequestParam("levels") @Schema(description = "number of levels you want buy") Integer levels){
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
