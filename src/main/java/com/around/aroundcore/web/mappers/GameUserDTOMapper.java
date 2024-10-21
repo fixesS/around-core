@@ -7,6 +7,7 @@ import com.around.aroundcore.web.dtos.GameUserDTO;
 import com.around.aroundcore.web.exceptions.entity.GameUserTeamCityNullForRound;
 import com.around.aroundcore.web.exceptions.entity.NoActiveRoundException;
 import com.around.aroundcore.web.exceptions.entity.RoundNullException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,11 +15,13 @@ import java.util.function.Function;
 
 @Service
 public class GameUserDTOMapper implements Function<GameUser, GameUserDTO> {
+    @Value("${around.home}")
+    private String aroundHome;
     @Override
     public GameUserDTO apply(GameUser user) {
         return GameUserDTO.builder()
                 .id(Optional.ofNullable(user.getId()).orElse(-1000))
-                .avatar(AroundConfig.URL_AVATAR +user.getAvatar())
+                .avatar(aroundHome+AroundConfig.URL_AVATAR +user.getAvatar())
                 .verified(user.getVerified())
                 .email(Optional.ofNullable(user.getEmail()).orElse(""))
                 .username(Optional.ofNullable(user.getUsername()).orElse(""))
