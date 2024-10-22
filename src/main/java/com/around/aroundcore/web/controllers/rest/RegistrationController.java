@@ -53,9 +53,6 @@ public class RegistrationController {
 
         GameUser user = GameUser.builder()
                 .username(registrationDTO.getUsername())
-                .verified(false)
-                .level(0)
-                .coins(0)
                 .email(registrationDTO.getEmail())
                 .password(passwordEncoder.encode(registrationDTO.getPassword()))
                 .role(Role.USER)

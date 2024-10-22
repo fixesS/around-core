@@ -25,30 +25,35 @@ public class GameUser implements UserDetails {
     @Column(name = "id")
     @Getter
     private Integer id;
-    @Column(name = "level")
+    @Column(name = "level",nullable = false,columnDefinition = "int8 default 0")
+    @Builder.Default
     @Getter
-    private Integer level;
-    @Column(name = "coins")
+    private Integer level = 0;
+    @Column(name = "coins",nullable = false, columnDefinition = "int8 default 0")
+    @Builder.Default
     @Getter
-    private Integer coins;
+    private Integer coins = 0;
     @Column(name = "username", unique = true)
     @Setter
     private String username;
-    @Column(name = "avatar")
+    @Column(name = "avatar", nullable = false,columnDefinition = "varchar default 'guest.jpg'")
+    @Builder.Default
     @Getter
-    private String avatar;
+    private String avatar = "guest.jpg";
     @Column(unique=true)
     @Getter
     private String email;
     @Column
     private String password;
-    @Column(columnDefinition = "boolean default false")
+    @Column(nullable = false,columnDefinition = "boolean default false")
+    @Builder.Default
     @Setter
     @Getter
-    private Boolean verified;
+    private Boolean verified = false;
+    @Column(name = "captured_chunks",nullable = false, columnDefinition = "int8 default 0")
+    @Builder.Default
     @Getter
-    @Column(name = "captured_chunks")
-    private Long capturedChunks;
+    private Long capturedChunks = 0L;
 
     @Column
     @Getter
