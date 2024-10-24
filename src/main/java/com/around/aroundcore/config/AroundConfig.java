@@ -37,6 +37,7 @@ public class AroundConfig {
     public static final String API = "api";
     public static final String API_V1 = API+"/v1";
     public static final String API_V1_AUTH = API_V1+"/auth";
+    public static final String API_V1_OAUTH = API_V1_AUTH+"/oauth2";
     public static final String API_V1_LOGIN = API_V1_AUTH+"/login";
     public static final String API_V1_REGISTRATION = API_V1_AUTH+"/registration";
     public static final String API_V1_REFRESH= API_V1_AUTH+"/refresh";

@@ -1,7 +1,9 @@
-package com.around.aroundcore.web.dtos;
+package com.around.aroundcore.web.dtos.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,5 +25,6 @@ public class GameUserDTO {
     @Schema(description = "Is user email verified")
     private Boolean verified;
     private Long captured_chunks;
+    private List<GameUserOAuthProvider> providers;
 }
 

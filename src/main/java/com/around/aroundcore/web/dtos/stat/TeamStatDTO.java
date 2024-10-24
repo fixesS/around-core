@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.dtos;
+package com.around.aroundcore.web.dtos.stat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

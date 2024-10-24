@@ -2,8 +2,7 @@ package com.around.aroundcore.security.filters;
 
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Session;
-import com.around.aroundcore.security.services.WebSocketAuthService;
-import com.around.aroundcore.security.services.WebSocketHeaderService;
+import com.around.aroundcore.security.services.LoginPasscodeService;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
 import jakarta.servlet.FilterChain;
@@ -23,9 +22,8 @@ import java.net.InetAddress;
 
 @Slf4j
 @AllArgsConstructor
-public class WebSocketFilter  extends OncePerRequestFilter {
-    private final WebSocketAuthService authService;
-    private final WebSocketHeaderService headerService;
+public class LoginPasscodeFilter extends OncePerRequestFilter {
+    private final LoginPasscodeService authService;
     private final AuthenticationManager authenticationManager;
 
     @Override
@@ -35,8 +33,8 @@ public class WebSocketFilter  extends OncePerRequestFilter {
         String login;
         String passcode;
         try {
-            login = headerService.getLogin(request);
-            passcode = headerService.getPasscode(request);
+            login = authService.getLogin(request);
+            passcode = authService.getPasscode(request);
         }catch (AuthHeaderNullException e) {
             log.debug("WEBSOCKET Auth header is null");
             filterChain.doFilter(request, response);

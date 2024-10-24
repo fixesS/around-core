@@ -2,7 +2,7 @@ package com.around.aroundcore.config;
 
 import com.around.aroundcore.database.models.Role;
 import com.around.aroundcore.security.filters.JwtFilter;
-import com.around.aroundcore.security.filters.WebSocketFilter;
+import com.around.aroundcore.security.filters.LoginPasscodeFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(authConfig.authenticationManager())
                 .addFilterBefore(authConfig.webSocketFilter(), BasicAuthenticationFilter.class)
-                .addFilterBefore(authConfig.jwtFilter(), WebSocketFilter.class)
+                .addFilterBefore(authConfig.jwtFilter(), LoginPasscodeFilter.class)
                 .addFilterBefore(authConfig.exceptionHandlerFilter(), JwtFilter.class);
         return http.build();
     }

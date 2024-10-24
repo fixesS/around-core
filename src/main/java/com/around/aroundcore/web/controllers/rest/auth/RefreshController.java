@@ -1,10 +1,10 @@
-package com.around.aroundcore.web.controllers.rest;
+package com.around.aroundcore.web.controllers.rest.auth;
 
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.security.services.JwtService;
-import com.around.aroundcore.web.dtos.TokenData;
+import com.around.aroundcore.web.dtos.auth.TokenData;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import io.jsonwebtoken.JwtException;

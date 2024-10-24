@@ -88,4 +88,10 @@ public class GameUserService {
     public void createTeamCityForRound(GameUser user, Team team, City city, Round round){
         userRepository.createTeamAndCityForRound(round.getId(), team.getId(), city.getId(), user.getId());
     }
+    public GameUser findByOAuthIdAndProvider(Long oauthId, OAuthProvider provider){
+        return userRepository.findByOAuthIdAndProvider(oauthId,provider.name()).orElseThrow(GameUserNullException::new);
+    }
+    public boolean isOAuthProviderAccountAdded(GameUser user,OAuthProvider provider){
+        return  userRepository.existsByUserIdAndProvider(user.getId(), provider.name());
+    }
 }

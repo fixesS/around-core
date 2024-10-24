@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.dtos;
+package com.around.aroundcore.web.dtos.user;
 
 import com.around.aroundcore.annotations.NotRead;
 import com.around.aroundcore.config.AroundConfig;

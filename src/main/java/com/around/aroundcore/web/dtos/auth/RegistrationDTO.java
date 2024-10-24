@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.dtos;
+package com.around.aroundcore.web.dtos.auth;
 
 import com.around.aroundcore.config.AroundConfig;
 import io.swagger.v3.oas.annotations.media.Schema;

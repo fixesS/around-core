@@ -1,0 +1,57 @@
+package com.around.aroundcore.web.services.apis.oauth;
+
+import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
+import com.around.aroundcore.web.dtos.oauth.vk.VkUserModel;
+import com.around.aroundcore.web.dtos.oauth.vk.VkUserModelWrapper;
+import com.around.aroundcore.web.exceptions.oauth.OAuthException;
+import com.around.aroundcore.web.exceptions.oauth.VkOAuthException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class VkOAuthService implements ProviderOAuthService {
+    private final RestTemplate restTemplate;
+
+    @Value("${around.oauth.url.vk}")
+    private String checkTokenUrl;
+    @Value("${around.oauth.client_id.vk}")
+    private String clientId;
+
+    @Override
+    public OAuthResponse checkToken(String token) throws OAuthException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("id_token", token);
+        body.add("client_id", clientId);
+
+        try{
+            ResponseEntity<VkUserModelWrapper> response = restTemplate.postForEntity(checkTokenUrl, body, VkUserModelWrapper.class, headers);
+            VkUserModel vkUserModel = response.getBody().getUser();
+            log.info(response.toString());
+            log.info(vkUserModel.toString());
+            return OAuthResponse.builder()
+                    .user_id(Long.valueOf(vkUserModel.getUser_id()))
+                    .first_name(vkUserModel.getFirst_name())
+                    .last_name(vkUserModel.getLast_name())
+                    .email(vkUserModel.getEmail())
+                    .avatar(vkUserModel.getAvatar())
+                    .build();
+        }catch (HttpClientErrorException e){
+            throw new VkOAuthException("some error");
+        } catch (NullPointerException e) {
+            throw new VkOAuthException("null pointer");
+        }
+    }
+}

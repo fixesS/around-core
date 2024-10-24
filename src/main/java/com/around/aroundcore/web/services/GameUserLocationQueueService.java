@@ -1,6 +1,6 @@
 package com.around.aroundcore.web.services;
 
-import com.around.aroundcore.web.dtos.GameUserLocationDTO;
+import com.around.aroundcore.web.dtos.user.GameUserLocationDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
 public class GameUserLocationQueueService {
-    private LinkedBlockingQueue<GameUserLocationDTO> locationChangesQueue = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<GameUserLocationDTO> locationChangesQueue = new LinkedBlockingQueue<>();
     public void addToQueue(GameUserLocationDTO locationDTO) {
         locationChangesQueue.add(locationDTO);
     }

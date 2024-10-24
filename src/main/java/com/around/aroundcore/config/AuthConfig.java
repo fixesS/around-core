@@ -4,7 +4,7 @@ import com.around.aroundcore.database.repositories.GameUserRepository;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
 import com.around.aroundcore.security.filters.JwtFilter;
-import com.around.aroundcore.security.filters.WebSocketFilter;
+import com.around.aroundcore.security.filters.LoginPasscodeFilter;
 import com.around.aroundcore.security.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,26 +48,17 @@ public class AuthConfig {
         return new JwtFilter(timeLocale,jwtService(),sessionService);
     }
     @Bean
-    public WebSocketFilter webSocketFilter(){
-        return new WebSocketFilter(webSocketAuthService(),webSocketHeaderService(),authenticationManager());
+    public LoginPasscodeFilter webSocketFilter(){
+        return new LoginPasscodeFilter(loginPasscodeAuthService(),authenticationManager());
     }
     @Bean
     public ExceptionHandlerFilter exceptionHandlerFilter(){
         return new ExceptionHandlerFilter(resolver);
     }
-     @Bean
-    public WebSocketAuthService webSocketAuthService(){
-        return new WebSocketAuthService(sessionService);
-    }
-    @Bean
-    public WebSocketHeaderService webSocketHeaderService(){
-        return  new WebSocketHeaderService();
-    }
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public AuthenticationManager authenticationManager() {
         var authProvider = new DaoAuthenticationProvider();
@@ -75,10 +66,13 @@ public class AuthConfig {
         authProvider.setPasswordEncoder(passwordEncoder());
         return new ProviderManager(authProvider);
     }
-
     @Bean
     public AuthService authService(){
         return new AuthService(timeLocale,jwtService(),sessionService);
+    }
+    @Bean
+    public LoginPasscodeService loginPasscodeAuthService(){
+        return new LoginPasscodeService(sessionService);
     }
 }
 

@@ -60,6 +60,10 @@ public class GameUser implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "oAuthUserEmbedded.gameUser", cascade = CascadeType.ALL)
+    @Getter
+    private List<OAuthUser> oAuths;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @Getter
     @JoinTable(
@@ -111,6 +115,12 @@ public class GameUser implements UserDetails {
         }else{
             this.userSkills = new ArrayList<>(gameUserSkill);
         }
+    }
+    public void addOAuthToUser(OAuthUser oAuthUser){
+        if(oAuths == null){
+            this.oAuths = new ArrayList<>();
+        }
+        this.oAuths.add(oAuthUser);
     }
     public void followUser(GameUser user) throws GameUserAlreadyFollowed, GameUserUsernameNotUnique{
         if(Objects.equals(user.getUsername(), getUsername())){

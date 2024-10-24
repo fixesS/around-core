@@ -3,13 +3,15 @@ package com.around.aroundcore.web.mappers;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.UserRoundTeamCity;
-import com.around.aroundcore.web.dtos.GameUserDTO;
+import com.around.aroundcore.web.dtos.user.GameUserDTO;
+import com.around.aroundcore.web.dtos.user.GameUserOAuthProvider;
 import com.around.aroundcore.web.exceptions.entity.GameUserTeamCityNullForRound;
 import com.around.aroundcore.web.exceptions.entity.NoActiveRoundException;
 import com.around.aroundcore.web.exceptions.entity.RoundNullException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -29,8 +31,13 @@ public class GameUserDTOMapper implements Function<GameUser, GameUserDTO> {
                 .level(Optional.ofNullable(user.getLevel()).orElse(-1000))
                 .coins(Optional.ofNullable(user.getCoins()).orElse(-1000))
                 .team_id(getTeamIdByUserForCurrentRound(user))
+                .providers(getProviders(user))
                 .captured_chunks(user.getCapturedChunks())
                 .build();
+    }
+    private List<GameUserOAuthProvider> getProviders(GameUser user) {
+        return user.getOAuths().stream().map(oAuthUser -> new GameUserOAuthProvider(oAuthUser.getProvider().name())).toList();
+
     }
     private Integer getTeamIdByUserForCurrentRound(GameUser user){
         try{

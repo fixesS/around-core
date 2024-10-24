@@ -1,7 +1,7 @@
 package com.around.aroundcore.web.tasks;
 
 import com.around.aroundcore.config.WebSocketConfig;
-import com.around.aroundcore.web.dtos.GameUserLocationDTO;
+import com.around.aroundcore.web.dtos.user.GameUserLocationDTO;
 import com.around.aroundcore.web.services.GameUserLocationQueueService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
