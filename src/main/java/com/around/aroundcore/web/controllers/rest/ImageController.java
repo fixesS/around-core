@@ -1,9 +1,11 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
+import com.around.aroundcore.database.models.Image;
+import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.web.image.ImageType;
-import com.around.aroundcore.web.services.ImageService;
+import com.around.aroundcore.database.services.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -27,6 +29,7 @@ import java.util.UUID;
 public class ImageController {
     private final ImageService imageService;
     private final SessionService sessionService;
+    private final GameUserService gameUserService;
 
     @GetMapping( value = "/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage(@PathVariable String filename) {
@@ -54,9 +57,10 @@ public class ImageController {
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
-        String imageFileName = imageService.saveImage(file, ImageType.AVATAR);
-        imageService.deleteImage(user.getAvatar(), ImageType.AVATAR);
-        user.setAvatar(imageFileName);
+        Image image = imageService.saveImage(file, ImageType.AVATAR);
+        imageService.deleteImage(user.getAvatar().getFile());
+        user.setAvatar(image);
+        gameUserService.update(user);
         return ResponseEntity.ok("");
     }
 }

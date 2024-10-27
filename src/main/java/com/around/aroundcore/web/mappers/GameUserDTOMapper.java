@@ -1,6 +1,5 @@
 package com.around.aroundcore.web.mappers;
 
-import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.UserRoundTeamCity;
 import com.around.aroundcore.web.dtos.user.GameUserDTO;
@@ -8,7 +7,6 @@ import com.around.aroundcore.web.dtos.user.GameUserOAuthProvider;
 import com.around.aroundcore.web.exceptions.entity.GameUserTeamCityNullForRound;
 import com.around.aroundcore.web.exceptions.entity.NoActiveRoundException;
 import com.around.aroundcore.web.exceptions.entity.RoundNullException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +15,11 @@ import java.util.function.Function;
 
 @Service
 public class GameUserDTOMapper implements Function<GameUser, GameUserDTO> {
-    @Value("${around.home}")
-    private String aroundHome;
     @Override
     public GameUserDTO apply(GameUser user) {
         return GameUserDTO.builder()
                 .id(Optional.ofNullable(user.getId()).orElse(-1000))
-                .avatar(aroundHome+AroundConfig.URL_AVATAR +user.getAvatar())
+                .avatar(user.getAvatar().getUrl())
                 .verified(user.getVerified())
                 .email(Optional.ofNullable(user.getEmail()).orElse(""))
                 .username(Optional.ofNullable(user.getUsername()).orElse(""))

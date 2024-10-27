@@ -26,6 +26,9 @@ public class MapEvent implements Serializable {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "provider_id", referencedColumnName = "id")
     private EventProvider provider;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(referencedColumnName = "uuid")
+    private Image image;
     @Column(name = "starts_at")
     private LocalDateTime starts;
     @Column(name = "ends_at")
