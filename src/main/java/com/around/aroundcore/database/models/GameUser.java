@@ -14,7 +14,7 @@ import java.util.*;
 
 @Slf4j
 @Entity
-@Table(name = "game_user")
+@Table(name = "users")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,54 +25,60 @@ public class GameUser implements UserDetails {
     @Column(name = "id")
     @Getter
     private Integer id;
-    @Column(name = "level")
+    @Column(name = "level",nullable = false,columnDefinition = "int8 default 0")
+    @Builder.Default
     @Getter
-    private Integer level;
-    @Column(name = "coins")
+    private Integer level = 0;
+    @Column(name = "coins",nullable = false, columnDefinition = "int8 default 0")
+    @Builder.Default
     @Getter
-    private Integer coins;
+    private Integer coins = 0;
     @Column(name = "username", unique = true)
     @Setter
     private String username;
-    @Column(name = "avatar")
+    @Column(name = "avatar", nullable = false,columnDefinition = "varchar default 'guest.jpg'")
+    @Builder.Default
     @Getter
-    private String avatar;
+    private String avatar = "guest.jpg";
     @Column(unique=true)
     @Getter
     private String email;
     @Column
     private String password;
-    @Column(columnDefinition = "boolean default false")
+    @Column(nullable = false,columnDefinition = "boolean default false")
+    @Builder.Default
     @Setter
     @Getter
-    private Boolean verified;
+    private Boolean verified = false;
+    @Column(name = "captured_chunks",nullable = false, columnDefinition = "int8 default 0")
+    @Builder.Default
+    @Getter
+    private Long capturedChunks = 0L;
 
     @Column
     @Getter
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "city")
+    @OneToMany(mappedBy = "oAuthUserEmbedded.gameUser", cascade = CascadeType.ALL)
     @Getter
-    private String city;
+    private List<OAuthUser> oAuths;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Getter
     @JoinTable(
-            name = "user_round_team",
+            name = "users_rounds_team_city",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id",insertable=false, updatable=false),
                     @JoinColumn(name = "team_id", referencedColumnName = "team_id",insertable=false, updatable=false),
-                    @JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false)}
+                    @JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false),
+                    @JoinColumn(name = "city_id", referencedColumnName = "city_id",insertable=false, updatable=false)}
     )
-    private List<UserRoundTeam> userRoundTeams;
-
-    @OneToMany(mappedBy = "owner")
-    private List<GameChunk> capturedChunks;
+    private List<UserRoundTeamCity> userRoundTeamCities;
     @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
-            name = "user_friends",
+            name = "users_friends",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id")
     )
@@ -80,7 +86,7 @@ public class GameUser implements UserDetails {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
-            name = "user_followers",
+            name = "users_followers",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "follower_id", referencedColumnName = "id")
     )
@@ -88,7 +94,7 @@ public class GameUser implements UserDetails {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
-            name="map_events_game_user",
+            name="map_events_users",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
     )
@@ -109,6 +115,12 @@ public class GameUser implements UserDetails {
         }else{
             this.userSkills = new ArrayList<>(gameUserSkill);
         }
+    }
+    public void addOAuthToUser(OAuthUser oAuthUser){
+        if(oAuths == null){
+            this.oAuths = new ArrayList<>();
+        }
+        this.oAuths.add(oAuthUser);
     }
     public void followUser(GameUser user) throws GameUserAlreadyFollowed, GameUserUsernameNotUnique{
         if(Objects.equals(user.getUsername(), getUsername())){
@@ -152,7 +164,7 @@ public class GameUser implements UserDetails {
         }
     }
     public Team getTeam(Round round){
-        UserRoundTeam urt = userRoundTeams.stream().filter(urt1 -> urt1.getRound() == round)
+        UserRoundTeamCity urt = userRoundTeamCities.stream().filter(urt1 -> urt1.getRound() == round)
                 .findFirst().orElseThrow(TeamNullException::new);
         return urt.getTeam();
     }
@@ -165,11 +177,8 @@ public class GameUser implements UserDetails {
         return Collections.unmodifiableList(userSkills);
     }
 
-    public List<GameChunk> getCapturedChunks(Integer roundId){
-        return this.capturedChunks.stream().filter(chunk -> chunk.getRound().getId().equals(roundId)).toList();
-    }
-    public void setCity(String s){
-        this.city = Objects.requireNonNullElse(s, "Yekaterinburg");
+    public void addCapturedChunks(Integer value){
+        this.capturedChunks += value;
     }
     public void setAvatar(String s){
         this.avatar = Objects.requireNonNullElse(s, "guest.jpg");
@@ -217,4 +226,5 @@ public class GameUser implements UserDetails {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
 }

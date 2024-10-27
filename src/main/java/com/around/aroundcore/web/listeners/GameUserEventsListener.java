@@ -8,7 +8,7 @@ import com.around.aroundcore.database.services.RecoveryTokenService;
 import com.around.aroundcore.database.services.VerificationTokenService;
 import com.around.aroundcore.web.events.OnEmailVerificationEvent;
 import com.around.aroundcore.web.events.OnPasswordRecoveryEvent;
-import com.around.aroundcore.web.services.EmailQueueService;
+import com.around.aroundcore.web.services.queues.EmailQueueService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

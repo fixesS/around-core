@@ -1,6 +1,6 @@
 package com.around.aroundcore.web.tasks;
 
-import com.around.aroundcore.web.services.EmailQueueService;
+import com.around.aroundcore.web.services.queues.EmailQueueService;
 import com.around.aroundcore.web.services.EmailService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

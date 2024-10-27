@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -29,11 +30,11 @@ public class MapEventsController {
     private final MapEventDTOMapper mapEventDTOMapper;
     @GetMapping("/all")
     @Operation(
-            summary = "Gives all map-events",
-            description = "Allows to get all map-events."
+            summary = "Gives all map-events in city",
+            description = "Allows to get all map-events in city."
     )
-    public ResponseEntity<List<MapEventDTO>> getAllEvents() {
-        List<MapEvent> events = mapEventService.findAllVerified();
+    public ResponseEntity<List<MapEventDTO>> getAllEventsInCity(@RequestParam("city_id") Integer cityId) {
+        List<MapEvent> events = mapEventService.findAllVerifiedInCity(cityId);
         List<MapEventDTO> eventDTOS = events.stream().map(mapEventDTOMapper).toList();
 
         return ResponseEntity.ok(eventDTOS);

@@ -3,11 +3,10 @@ package com.around.aroundcore;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.web.controllers.ws.ChunkWsController;
-import com.around.aroundcore.web.controllers.ws.UserLocationController;
 import com.around.aroundcore.web.dtos.ApiError;
-import com.around.aroundcore.web.dtos.AuthDTO;
+import com.around.aroundcore.web.dtos.auth.AuthDTO;
 import com.around.aroundcore.web.dtos.ChunkDTO;
-import com.around.aroundcore.web.dtos.TokenData;
+import com.around.aroundcore.web.dtos.auth.TokenData;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
@@ -83,8 +82,8 @@ class ChunkWebSocketTest {
 
 		RunStopFrameHandler runStopFrameHandler = new RunStopFrameHandler(new CompletableFuture<>());
 
-		//String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
-		String wsUrl = "wss://aroundgame.ru/ws";
+		String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
+		//String wsUrl = "wss://aroundgame.ru/ws";
 		//log.info(wsUrl);
 
 		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
@@ -128,6 +127,7 @@ class ChunkWebSocketTest {
 
 		ChunkDTO chunkDTO = ChunkDTO.builder()
 				.id("8b10dc9268adfff")
+				//.id("8b10dc058444fff") // wrong chunk id (not in yekaterinburg)
 				.build();
 
 		StompHeaders headers1 = new StompHeaders();

@@ -3,8 +3,9 @@ package com.around.aroundcore.web.mappers;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameUser;
 
-import com.around.aroundcore.web.dtos.RoundStatDTO;
-import com.around.aroundcore.web.dtos.GameUserStatDTO;
+import com.around.aroundcore.database.services.GameChunkService;
+import com.around.aroundcore.web.dtos.stat.RoundStatDTO;
+import com.around.aroundcore.web.dtos.stat.GameUserStatDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class UserStatDTOMapper implements Function<GameUser, GameUserStatDTO> {
     private final GameChunkStatDTOMapper chunkDTOMapper;
+    private final GameChunkService gameChunkService;
     @Override
     public GameUserStatDTO apply(GameUser user) {
         return GameUserStatDTO.builder()
@@ -30,8 +32,8 @@ public class UserStatDTOMapper implements Function<GameUser, GameUserStatDTO> {
     }
     public List<RoundStatDTO> getRoundStatDTO(GameUser user){
         List<RoundStatDTO> roundStatDTOs = new ArrayList<>();
-        user.getUserRoundTeams().forEach(urt -> {
-            var chunks = urt.getUser().getCapturedChunks(urt.getRound().getId());
+        user.getUserRoundTeamCities().forEach(urt -> {
+            var chunks = gameChunkService.findAllByOwnerAndRoundAndCity(user,urt.getRound(),urt.getCity());
             roundStatDTOs.add(RoundStatDTO.builder()
                 .round_id(urt.getRound().getId())
                 .team_id(urt.getTeam().getId())
