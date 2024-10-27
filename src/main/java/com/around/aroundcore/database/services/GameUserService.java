@@ -20,6 +20,7 @@ import java.util.Random;
 @AllArgsConstructor
 public class GameUserService {
     private final GameUserRepository userRepository;
+    private final ImageService imageService;
     private final SkillService skillService;
     private final Random random = new Random();
 
@@ -36,6 +37,7 @@ public class GameUserService {
             gameUserSkillList.add(gameUserSkill);
         }
         user.addSkillToUserSkillList(gameUserSkillList);
+        user.setAvatar(imageService.getDefaultAvatar());
         userRepository.save(user);
     }
 

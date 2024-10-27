@@ -5,7 +5,7 @@ CREATE TYPE public.oauth_providers_enum AS ENUM (
 CREATE TABLE public.images(
     uuid uuid not null,
     url varchar unique not null,
-    file varchar unique not null,
+    file varchar unique null,
     CONSTRAINT images_pkey PRIMARY KEY (uuid)
 );
 CREATE TABLE public.teams(

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -39,7 +39,7 @@ public class ImageService {
     @Value("${around.image.default.directory}")
     String imageDefaultDirectory;
 
-    public Image saveImage(MultipartFile imageFile, ImageType imageType) throws ImageSaveException, ImageSizeException, ImageEmptyException {
+    public Image createImage(MultipartFile imageFile, ImageType imageType) throws ImageSaveException, ImageSizeException, ImageEmptyException {
         if(imageFile.getSize() > FileUtils.ONE_MB*imageLimitSize){
             throw new ImageSizeException();
         }
@@ -91,7 +91,6 @@ public class ImageService {
 
         return image;
     }
-
     public byte[] loadImage(String imageName, ImageType imageType){
         Path imagePath;
         switch (imageType) {
@@ -130,5 +129,9 @@ public class ImageService {
             throw new IllegalStateException();
         }
         return multipartFile;
+    }
+    @Cacheable("defaultAvatar")
+    public Image getDefaultAvatar(){
+        return imageRepository.findByFile(Path.of(imageAvatarDirectory).resolve("guest.jpg").toString()).orElseThrow(ImageNullException::new);
     }
 }

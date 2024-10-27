@@ -109,6 +109,6 @@ public class AroundConfig {
     }
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("currentRound", "verifiedAndActiveEventsByCity","checkRound","getRoundById","checkCity","findCityById");
+        return new ConcurrentMapCacheManager("defaultAvatar","currentRound", "verifiedAndActiveEventsByCity","checkRound","getRoundById","checkCity","findCityById");
     }
 }

@@ -57,7 +57,7 @@ public class ImageController {
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
-        Image image = imageService.saveImage(file, ImageType.AVATAR);
+        Image image = imageService.createImage(file, ImageType.AVATAR);
         imageService.deleteImage(user.getAvatar().getFile());
         user.setAvatar(image);
         gameUserService.update(user);
