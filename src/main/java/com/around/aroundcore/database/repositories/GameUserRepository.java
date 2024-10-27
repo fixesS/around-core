@@ -38,4 +38,9 @@ public interface GameUserRepository extends JpaRepository<GameUser, Integer> {
     @Modifying
     @Query(nativeQuery = true, value = "update public.users_rounds_team_city set city_id = :cityId where user_id = :userId and round_id = :roundId")
     void setCityForRound(@Param("roundId") Integer roundId, @Param("cityId") Integer cityId, @Param("userId") Integer userId);
+
+    @Query(nativeQuery = true, value = "select * from users where users.id = (select users_oauth.user_id from users_oauth where oauth_id = :oauth_id and oauth_provider = CAST(:provider as public.oauth_providers_enum))")
+    Optional<GameUser> findByOAuthIdAndProvider(@Param("oauth_id") String oauthId, @Param("provider") String provider);
+    @Query(nativeQuery = true, value = " select exists (select * from users_oauth where user_id = :userId and oauth_provider = CAST(:provider as public.oauth_providers_enum) )")
+    boolean existsByUserIdAndProvider(@Param("userId") Integer userId, @Param("provider") String provider);
 }

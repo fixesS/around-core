@@ -9,7 +9,7 @@ import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.services.ChunkQueueService;
+import com.around.aroundcore.web.services.queues.ChunkQueueService;
 import com.around.aroundcore.web.services.H3ChunkService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

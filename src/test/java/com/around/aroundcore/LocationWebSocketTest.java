@@ -1,10 +1,10 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.config.WebSocketConfig;
-import com.around.aroundcore.web.controllers.ws.ChunkWsController;
 import com.around.aroundcore.web.controllers.ws.UserLocationController;
 import com.around.aroundcore.web.dtos.*;
+import com.around.aroundcore.web.dtos.auth.TokenData;
+import com.around.aroundcore.web.dtos.user.GameUserLocationDTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
@@ -25,12 +25,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
-import org.springframework.web.socket.sockjs.client.Transport;
-import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
