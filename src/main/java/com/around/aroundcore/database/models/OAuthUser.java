@@ -6,19 +6,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Entity
 @Table(name = "users_oauth")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OAuthUser {
+public class OAuthUser implements Serializable {
 
     @EmbeddedId
     private OAuthUserEmbedded oAuthUserEmbedded;
 
     @Getter
     @Column(name = "oauth_id")
-    private Long oauthId;
+    private String oauthId;
 
     public OAuthProvider getProvider() {
         return this.oAuthUserEmbedded.getOauthProvider();

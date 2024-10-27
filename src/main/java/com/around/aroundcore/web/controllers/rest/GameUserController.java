@@ -17,7 +17,8 @@ import com.around.aroundcore.web.exceptions.entity.*;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
 import com.around.aroundcore.web.mappers.SkillDTOWithCurrentLevelMapper;
 import com.around.aroundcore.web.services.EntityPatcher;
-import com.around.aroundcore.web.services.apis.oauth.OAuthService;
+import com.around.aroundcore.web.services.apis.oauth.OAuthProviderRouter;
+import com.around.aroundcore.web.services.apis.oauth.ProviderOAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -46,7 +47,7 @@ import java.util.UUID;
 @SecurityRequirement(name = "JWT")
 public class GameUserController {
     private final SessionService sessionService;
-    private final OAuthService oAuthService;
+    private final OAuthProviderRouter oAuthProviderRouter;
     private final GameUserService userService;
     private final GameUserDTOMapper gameUserDTOMapper;
     private final TeamService teamService;
@@ -165,7 +166,6 @@ public class GameUserController {
     public ResponseEntity<List<GameUserDTO>> getUserFriendsById(@PathVariable Integer id) {
         var user = userService.findById(id);
         List<GameUserDTO> friends = user.getFriends().stream().map(gameUserDTOMapper).toList();
-
         return ResponseEntity.ok(friends);
     }
     @GetMapping("/{id}/followers")
@@ -280,7 +280,7 @@ public class GameUserController {
 
         return ResponseEntity.ok("");
     }
-    @PatchMapping("me/oauth")
+    @PatchMapping("me/oauth2")
     @Operation(
             summary = "Adding provider account as oauth login ",
             description = "Allows user to add account in Google or Vk, to login with it in future."
@@ -291,7 +291,8 @@ public class GameUserController {
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
         if(!userService.isOAuthProviderAccountAdded(user, oAuthDTO.getProvider())){
-            OAuthResponse oAuthResponse = oAuthService.getOAuthResponse(oAuthDTO.getProvider(),oAuthDTO.getAccess_token());
+            ProviderOAuthService providerOAuthService = oAuthProviderRouter.getProviderOAuthService(oAuthDTO.getProvider());
+            OAuthResponse oAuthResponse = providerOAuthService.checkToken(oAuthDTO.getAccess_token());
             OAuthUser oAuthUser = OAuthUser.builder()
                     .oauthId(oAuthResponse.getUser_id())
                     .oAuthUserEmbedded(new OAuthUserEmbedded(oAuthDTO.getProvider(), user))

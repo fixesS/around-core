@@ -226,4 +226,5 @@ public class GameUser implements UserDetails {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
 }

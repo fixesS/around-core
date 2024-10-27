@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.services;
+package com.around.aroundcore.web.services.queues;
 
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import org.springframework.stereotype.Service;

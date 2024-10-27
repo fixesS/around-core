@@ -44,7 +44,7 @@ CREATE TABLE public.users(
 );
 CREATE TABLE public.users_oauth(
     user_id int8 not null,
-    oauth_id int8 not null,
+    oauth_id varchar not null,
     oauth_provider public.oauth_providers_enum not null,
     CONSTRAINT users_oauth_pkey PRIMARY KEY (user_id, oauth_provider),
     unique (user_id, oauth_provider)

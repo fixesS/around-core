@@ -8,9 +8,7 @@ import com.around.aroundcore.web.exceptions.oauth.VkOAuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -35,14 +33,15 @@ public class VkOAuthService implements ProviderOAuthService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("id_token", token);
         body.add("client_id", clientId);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
         try{
-            ResponseEntity<VkUserModelWrapper> response = restTemplate.postForEntity(checkTokenUrl, body, VkUserModelWrapper.class, headers);
+            ResponseEntity<VkUserModelWrapper> response = restTemplate.exchange(checkTokenUrl, HttpMethod.POST, requestEntity, VkUserModelWrapper.class);
             VkUserModel vkUserModel = response.getBody().getUser();
             log.info(response.toString());
             log.info(vkUserModel.toString());
             return OAuthResponse.builder()
-                    .user_id(Long.valueOf(vkUserModel.getUser_id()))
+                    .user_id(vkUserModel.getUser_id())
                     .first_name(vkUserModel.getFirst_name())
                     .last_name(vkUserModel.getLast_name())
                     .email(vkUserModel.getEmail())

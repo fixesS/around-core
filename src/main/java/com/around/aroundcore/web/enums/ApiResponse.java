@@ -29,7 +29,7 @@ public enum ApiResponse {
     AUTH_INCORRECT_CITY_FORMAT(-3008,"City id cannot be less than 1."),
     AUTH_INCORRECT_TYPE_OF_FIELD(-3009,"Incorrect type of field."),
     AUTH_INCORRECT_AVATAR(-3010,"Avatar must be not empty."),
-    AUTH_OAUTH2_ERROR(-3011,"Something went wrong during oauth2 authentication."),
+    AUTH_OAUTH2_ERROR(-3011,"Something went wrong during oauth2 authentication.", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_TOKEN(-4001, "Token is invalid."),
     REFRESH_TOKEN_ALREADY_USED(-4002,"Refresh token already has been used."),
     VERIFIED_TOKEN_EXPIRED(-4003,"VerifiedToken is invalid"),

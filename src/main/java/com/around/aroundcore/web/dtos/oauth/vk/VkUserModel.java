@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class VkUserModel {
-    private Integer user_id;
+    private String user_id;
     private String first_name;
     private String last_name;
     private String avatar;

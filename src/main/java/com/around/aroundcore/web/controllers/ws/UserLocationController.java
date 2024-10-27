@@ -11,7 +11,7 @@ import com.around.aroundcore.web.dtos.user.GameUserLocationDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
-import com.around.aroundcore.web.services.GameUserLocationQueueService;
+import com.around.aroundcore.web.services.queues.GameUserLocationQueueService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

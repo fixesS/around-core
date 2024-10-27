@@ -8,7 +8,8 @@ import com.around.aroundcore.web.dtos.auth.OAuthDTO;
 import com.around.aroundcore.web.dtos.auth.TokenData;
 import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
 import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
-import com.around.aroundcore.web.services.apis.oauth.OAuthService;
+import com.around.aroundcore.web.services.apis.oauth.OAuthProviderRouter;
+import com.around.aroundcore.web.services.apis.oauth.ProviderOAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Random;
 
 @Slf4j
 @RestController
@@ -32,7 +32,7 @@ public class OAuthController {
     private final GameUserService gameUserService;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
-    private final OAuthService oAuthService;
+    private final OAuthProviderRouter oAuthProviderRouter;
 
     @PostMapping
     @Operation(
@@ -44,7 +44,8 @@ public class OAuthController {
         String userAgent = request.getHeader("User-Agent");
         String ip = request.getRemoteAddr();
         GameUser user;
-        OAuthResponse oAuthResponse = oAuthService.getOAuthResponse(oAuthDTO.getProvider(),oAuthDTO.getAccess_token());
+        ProviderOAuthService providerOAuthService = oAuthProviderRouter.getProviderOAuthService(oAuthDTO.getProvider());
+        OAuthResponse oAuthResponse = providerOAuthService.checkToken(oAuthDTO.getAccess_token());
 
         try{
             user = gameUserService.findByOAuthIdAndProvider(oAuthResponse.getUser_id(), oAuthDTO.getProvider());
@@ -55,14 +56,12 @@ public class OAuthController {
 
         return ResponseEntity.ok(tokenData);
     }
-
-
     private GameUser createUser(OAuthResponse oAuthResponse, OAuthProvider oAuthProvider){
         log.info("Creating user");
         GameUser user = GameUser.builder()
-                .username(generateUsername())
+                .username(gameUserService.generateUsername())
                 .email(oAuthResponse.getEmail())
-                .password(passwordEncoder.encode(generatePassword()))
+                .password(passwordEncoder.encode(gameUserService.generatePassword()))
                 .role(Role.USER)
                 .build();
         OAuthUser oAuthUser = OAuthUser.builder()
@@ -72,37 +71,5 @@ public class OAuthController {
         user.addOAuthToUser(oAuthUser);
         gameUserService.create(user);
         return user;
-    }
-    private String generateUsername(){
-        log.info("Creating username");
-        boolean isFree = false;
-        Random random = new Random();
-        String username = "user@";
-        while(!isFree){
-            username = "user@"+random.nextInt(100000);
-            isFree = !gameUserService.existByUsername(username);
-        }
-        return username;
-    }
-    private String generatePassword(){
-        log.info("Creating password");
-        String lowercase = "abcdefghijklmnopqrstuvwxyz";
-        String uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String specialChars = "!@#%^&*()_+-=:;\"'{}<>?|`~,.";
-
-        Random random = new Random();
-        StringBuilder password = new StringBuilder();
-        password.append(uppercase.charAt(random.nextInt(0,uppercase.length())));
-        password.append(lowercase.charAt(random.nextInt(0,uppercase.length())));
-        for (int i = 0; i < 8; i++) {
-            if(random.nextBoolean()){
-                password.append(uppercase.charAt(random.nextInt(uppercase.length())));
-            }else{
-                password.append(lowercase.charAt(random.nextInt(lowercase.length())));
-            }
-        }
-        password.append(random.nextInt(0,10000));
-        password.append(specialChars.charAt(random.nextInt(0,specialChars.length())));
-        return password.toString();
     }
 }

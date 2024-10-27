@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.services;
+package com.around.aroundcore.web.services.queues;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
