@@ -85,7 +85,6 @@ public class ImageService {
             imageRepository.save(image);
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
             throw new ImageSaveException();
         }
 
