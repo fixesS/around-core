@@ -46,7 +46,7 @@ public enum ApiResponse {
     NO_ACTIVE_ROUND(-9001,"There is no active round(probably game is stopped)."),
     ROUND_DOES_NOT_EXIST(-9002,"Round doest not exist.", HttpStatus.NOT_FOUND),
     EVENT_DOES_NOT_EXIST(-10001,"Event doest not exist.", HttpStatus.NOT_FOUND),
-    IMAGE_LOAD_ERROR(-11002,"Image does not exist."),
+    IMAGE_LOAD_ERROR(-11002,"Image does not exist.", HttpStatus.NOT_FOUND),
     IMAGE_SIZE_TOO_BIG(-11003,"Image size is too big."),
     IMAGE_EMPTY(-11004,"Image must be not empty."),
     IMAGE_TYPE_ERROR(-11005,"Image type must be jpeg or png."),

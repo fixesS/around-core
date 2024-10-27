@@ -13,6 +13,15 @@ VALUES('DARK_PURPLE');
 INSERT INTO public.rounds(starts, ends,active)
 Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, true );
 
+INSERT INTO public.images(uuid,url,file)
+values ('b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid,'https://aroundgame.ru/api/v1/image/avatar/guest.jpg','avatars/guest.jpg');
+INSERT INTO public.images(uuid,url,file)
+values ('2da609a9-f54a-4c64-bf8d-88e38cdbc541'::uuid,'https://aroundgame.ru/api/v1/image/width_skill_image.jpg','width_skill_image.jpg');
+INSERT INTO public.images(uuid,url,file)
+values ('aba1bbbe-af69-4da6-83ce-572546e2f37e'::uuid,'https://aroundgame.ru/api/v1/image/icon/width_skill_icon.svg','icons/width_skill_icon.svg');
+INSERT INTO public.images(uuid,url,file)
+values ('aad50520-1509-4a34-925e-72bc182189e2'::uuid,'https://aroundgame.ru/api/v1/image/event.jpg','event.jpg');
+
 INSERT INTO public.cities(chunks)
 Values('[
 {"id":"8610c221fffffff"},
@@ -33,8 +42,8 @@ Values('[
 {"id":"8610c264fffffff"}
 ]' );
 
-INSERT INTO public.users ("level", coins, username, avatar, "password", "role", email, verified)
-VALUES(1, 0, 'username','guest.jpg', '$2a$10$yatZBPQE4uvwPoRSwN/8ZuyJXpBY8HTOGlknkfB4dTbfNlREA4UsS',
+INSERT INTO public.users ("level", coins, username, "password", "role", email, verified)
+VALUES(1, 0, 'username', '$2a$10$yatZBPQE4uvwPoRSwN/8ZuyJXpBY8HTOGlknkfB4dTbfNlREA4UsS',
        'USER', 'mikefixeloqq@gmail.com', true);
 
 INSERT INTO public.costs
@@ -75,8 +84,8 @@ INSERT INTO public.users_rounds_team_city(user_id, round_id, team_id, city_id)
 VALUES (1,1,1, 1);
 
 INSERT INTO public.skills
-("name", max_level, description, image_name, icon, rule_id, cost_id)
-VALUES('width', 11, ''::character varying, ''::character varying, '1'::character varying, 0, 0);
+("name", max_level, description, rule_id, cost_id)
+VALUES('width', 11, ''::character varying, 0, 0);
 
 INSERT INTO public.users_skills
 (user_id, skill_id, current_level)

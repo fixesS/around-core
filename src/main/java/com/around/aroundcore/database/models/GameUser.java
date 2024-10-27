@@ -36,10 +36,12 @@ public class GameUser implements UserDetails {
     @Column(name = "username", unique = true)
     @Setter
     private String username;
-    @Column(name = "avatar", nullable = false,columnDefinition = "varchar default 'guest.jpg'")
-    @Builder.Default
+
     @Getter
-    private String avatar = "guest.jpg";
+    @Setter
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(referencedColumnName = "uuid", columnDefinition = "int8 default 'b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid")
+    private Image avatar;
     @Column(unique=true)
     @Getter
     private String email;
@@ -179,9 +181,6 @@ public class GameUser implements UserDetails {
 
     public void addCapturedChunks(Integer value){
         this.capturedChunks += value;
-    }
-    public void setAvatar(String s){
-        this.avatar = Objects.requireNonNullElse(s, "guest.jpg");
     }
     @Override
     public String getPassword() {
