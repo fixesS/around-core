@@ -2,10 +2,14 @@ package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.OAuthUser;
+import com.around.aroundcore.database.models.OAuthUserEmbedded;
 import com.around.aroundcore.database.services.*;
-import com.around.aroundcore.web.dtos.GameUserDTO;
+import com.around.aroundcore.web.dtos.auth.OAuthDTO;
+import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
+import com.around.aroundcore.web.dtos.user.GameUserDTO;
 import com.around.aroundcore.web.dtos.SkillDTO;
-import com.around.aroundcore.web.dtos.UpdateGameUserDTO;
+import com.around.aroundcore.web.dtos.user.UpdateGameUserDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.events.OnEmailVerificationEvent;
 import com.around.aroundcore.web.exceptions.api.ApiException;
@@ -13,6 +17,8 @@ import com.around.aroundcore.web.exceptions.entity.*;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
 import com.around.aroundcore.web.mappers.SkillDTOWithCurrentLevelMapper;
 import com.around.aroundcore.web.services.EntityPatcher;
+import com.around.aroundcore.web.services.apis.oauth.OAuthProviderRouter;
+import com.around.aroundcore.web.services.apis.oauth.ProviderOAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -41,6 +47,7 @@ import java.util.UUID;
 @SecurityRequirement(name = "JWT")
 public class GameUserController {
     private final SessionService sessionService;
+    private final OAuthProviderRouter oAuthProviderRouter;
     private final GameUserService userService;
     private final GameUserDTOMapper gameUserDTOMapper;
     private final TeamService teamService;
@@ -159,7 +166,6 @@ public class GameUserController {
     public ResponseEntity<List<GameUserDTO>> getUserFriendsById(@PathVariable Integer id) {
         var user = userService.findById(id);
         List<GameUserDTO> friends = user.getFriends().stream().map(gameUserDTOMapper).toList();
-
         return ResponseEntity.ok(friends);
     }
     @GetMapping("/{id}/followers")
@@ -263,7 +269,7 @@ public class GameUserController {
     @PostMapping("me/verify")
     @Operation(
             summary = "Verifying email",
-            description = "Allows to verifiy user email."
+            description = "Allows to verify user email."
     )
     @Transactional
     public ResponseEntity<String> verifyMe(){
@@ -274,6 +280,31 @@ public class GameUserController {
 
         return ResponseEntity.ok("");
     }
+    @PatchMapping("me/oauth2")
+    @Operation(
+            summary = "Adding provider account as oauth login ",
+            description = "Allows user to add account in Google or Vk, to login with it in future."
+    )
+    @Transactional
+    public ResponseEntity<String> addOAuthAccount(@RequestBody OAuthDTO oAuthDTO){
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        if(!userService.isOAuthProviderAccountAdded(user, oAuthDTO.getProvider())){
+            ProviderOAuthService providerOAuthService = oAuthProviderRouter.getProviderOAuthService(oAuthDTO.getProvider());
+            OAuthResponse oAuthResponse = providerOAuthService.checkToken(oAuthDTO.getAccess_token());
+            OAuthUser oAuthUser = OAuthUser.builder()
+                    .oauthId(oAuthResponse.getUser_id())
+                    .oAuthUserEmbedded(new OAuthUserEmbedded(oAuthDTO.getProvider(), user))
+                    .build();
+            user.addOAuthToUser(oAuthUser);
+            userService.update(user);
+        }else{
+         throw new GameUserOAuthProviderAlreadyExistsException();
+        }
+        return ResponseEntity.ok("");
+    }
+
     private List<GameUser> getUserFriendsSortedByCurrentRound(GameUser user){
         try{
             return user.getFriends().stream().sorted(Comparator.comparingLong(friend -> -friend.getCapturedChunks())).toList();

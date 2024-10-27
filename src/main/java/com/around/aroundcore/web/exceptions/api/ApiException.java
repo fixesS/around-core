@@ -16,4 +16,5 @@ public class ApiException extends RuntimeException{
         this.response = response;
     }
     private final ApiResponse response;
+
 }

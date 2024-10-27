@@ -25,35 +25,46 @@ public class GameUser implements UserDetails {
     @Column(name = "id")
     @Getter
     private Integer id;
-    @Column(name = "level")
+    @Column(name = "level",nullable = false,columnDefinition = "int8 default 0")
+    @Builder.Default
     @Getter
-    private Integer level;
-    @Column(name = "coins")
+    private Integer level = 0;
+    @Column(name = "coins",nullable = false, columnDefinition = "int8 default 0")
+    @Builder.Default
     @Getter
-    private Integer coins;
+    private Integer coins = 0;
     @Column(name = "username", unique = true)
     @Setter
     private String username;
-    @Column(name = "avatar")
+
     @Getter
-    private String avatar;
+    @Setter
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(referencedColumnName = "uuid", columnDefinition = "int8 default 'b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid")
+    private Image avatar;
     @Column(unique=true)
     @Getter
     private String email;
     @Column
     private String password;
-    @Column(columnDefinition = "boolean default false")
+    @Column(nullable = false,columnDefinition = "boolean default false")
+    @Builder.Default
     @Setter
     @Getter
-    private Boolean verified;
+    private Boolean verified = false;
+    @Column(name = "captured_chunks",nullable = false, columnDefinition = "int8 default 0")
+    @Builder.Default
     @Getter
-    @Column(name = "captured_chunks")
-    private Long capturedChunks;
+    private Long capturedChunks = 0L;
 
     @Column
     @Getter
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "oAuthUserEmbedded.gameUser", cascade = CascadeType.ALL)
+    @Getter
+    private List<OAuthUser> oAuths;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Getter
@@ -106,6 +117,12 @@ public class GameUser implements UserDetails {
         }else{
             this.userSkills = new ArrayList<>(gameUserSkill);
         }
+    }
+    public void addOAuthToUser(OAuthUser oAuthUser){
+        if(oAuths == null){
+            this.oAuths = new ArrayList<>();
+        }
+        this.oAuths.add(oAuthUser);
     }
     public void followUser(GameUser user) throws GameUserAlreadyFollowed, GameUserUsernameNotUnique{
         if(Objects.equals(user.getUsername(), getUsername())){
@@ -165,9 +182,6 @@ public class GameUser implements UserDetails {
     public void addCapturedChunks(Integer value){
         this.capturedChunks += value;
     }
-    public void setAvatar(String s){
-        this.avatar = Objects.requireNonNullElse(s, "guest.jpg");
-    }
     @Override
     public String getPassword() {
         return password;
@@ -211,4 +225,5 @@ public class GameUser implements UserDetails {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
 }

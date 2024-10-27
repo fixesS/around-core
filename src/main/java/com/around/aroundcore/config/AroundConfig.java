@@ -37,6 +37,7 @@ public class AroundConfig {
     public static final String API = "api";
     public static final String API_V1 = API+"/v1";
     public static final String API_V1_AUTH = API_V1+"/auth";
+    public static final String API_V1_OAUTH = API_V1_AUTH+"/oauth2";
     public static final String API_V1_LOGIN = API_V1_AUTH+"/login";
     public static final String API_V1_REGISTRATION = API_V1_AUTH+"/registration";
     public static final String API_V1_REFRESH= API_V1_AUTH+"/refresh";
@@ -54,7 +55,7 @@ public class AroundConfig {
     public static final String URL_ICON = "/"+AroundConfig.API_V1_IMAGE+"/icon/";
     public static final String URL_IMAGE = "/"+AroundConfig.API_V1_IMAGE+"/";
     public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.])[a-zA-Z\\d!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.]{8,100}$";
-    public static final String EMAIL_REGEX = "^[\\w-]+@([\\w-]+\\.)+[\\w-]+";
+    public static final String EMAIL_REGEX = "^[a-z0-9-]+@([a-z0-9-]+\\.)+[a-z]{2,}$";
     public static final String USERNAME_REGEX = "[a-zA-Z0-9]+";
     @Value("${around.coordsapi}")
     private String coordsAPIType;
@@ -108,6 +109,6 @@ public class AroundConfig {
     }
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("currentRound", "verifiedAndActiveEventsByCity","checkRound","getRoundById","checkCity","findCityById");
+        return new ConcurrentMapCacheManager("defaultAvatar","currentRound", "verifiedAndActiveEventsByCity","checkRound","getRoundById","checkCity","findCityById");
     }
 }
