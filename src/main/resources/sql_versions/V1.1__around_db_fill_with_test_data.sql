@@ -24,22 +24,22 @@ values ('aad50520-1509-4a34-925e-72bc182189e2'::uuid,'https://aroundgame.ru/api/
 
 INSERT INTO public.cities(chunks)
 Values('[
-{"id":"8610c221fffffff"},
-{"id":"8610c22f7ffffff"},
-{"id":"8610c22afffffff"},
-{"id":"8610c22d7ffffff"},
-{"id":"8610c228fffffff"},
-{"id":"8610c2287ffffff"},
-{"id":"8610c22b7ffffff"},
-{"id":"8610dc92fffffff"},
-{"id":"8610dc927ffffff"},
-{"id":"8610c229fffffff"},
-{"id":"8610c2297ffffff"},
-{"id":"8610dc907ffffff"},
-{"id":"8610dc937ffffff"},
-{"id":"8610c266fffffff"},
-{"id":"8610dc917ffffff"},
-{"id":"8610c264fffffff"}
+"8610c221fffffff",
+"8610c22f7ffffff",
+"8610c22afffffff",
+"8610c22d7ffffff",
+"8610c228fffffff",
+"8610c2287ffffff",
+"8610c22b7ffffff",
+"8610dc92fffffff",
+"8610dc927ffffff",
+"8610c229fffffff",
+"8610c2297ffffff",
+"8610dc907ffffff",
+"8610dc937ffffff",
+"8610c266fffffff",
+"8610dc917ffffff",
+"8610c264fffffff"
 ]' );
 
 INSERT INTO public.users ("level", coins, username, "password", "role", email, verified)
@@ -95,11 +95,11 @@ INSERT INTO public.event_providers
 (id, name, url)
 VALUES (1,'timepad','dev.timepad.ru');
 
-INSERT INTO chunks(id, round_id,city_id, owner)
-values (1,1,1,1);
-
-INSERT INTO map_events(id,provider_id,"name",starts_at,ends_at,url,verified,ad)
-values (1,1,'Тестовое событие','2024-09-11 00:00:00'::TIMESTAMP,'2024-12-14 23:59:59'::TIMESTAMP,'',false, false);
-
-INSERT INTO map_events_chunks(event_id, round_id, city_id, chunk_id)
-VALUES (1,1,1,1);
+-- INSERT INTO chunks(id, round_id,city_id, owner)
+-- values (1,1,1,1);
+--
+-- INSERT INTO map_events(id,provider_id,"name",starts_at,ends_at,url,verified,ad)
+-- values (1,1,'Тестовое событие','2024-09-11 00:00:00'::TIMESTAMP,'2024-12-14 23:59:59'::TIMESTAMP,'',false, false);
+--
+-- INSERT INTO map_events_chunks(event_id, round_id, city_id, chunk_id)
+-- VALUES (1,1,1,1);

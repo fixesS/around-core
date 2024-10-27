@@ -298,7 +298,7 @@ public class GameUserController {
                     .oAuthUserEmbedded(new OAuthUserEmbedded(oAuthDTO.getProvider(), user))
                     .build();
             user.addOAuthToUser(oAuthUser);
-            userService.create(user);
+            userService.update(user);
         }else{
          throw new GameUserOAuthProviderAlreadyExistsException();
         }
