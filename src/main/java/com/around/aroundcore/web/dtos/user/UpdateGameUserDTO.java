@@ -2,20 +2,20 @@ package com.around.aroundcore.web.dtos.user;
 
 import com.around.aroundcore.annotations.NotRead;
 import com.around.aroundcore.config.AroundConfig;
+import com.around.aroundcore.web.dtos.auth.ChangePasswordDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Schema(description = "DTO for update user info")
 public class UpdateGameUserDTO {
     @Nullable
@@ -32,4 +32,8 @@ public class UpdateGameUserDTO {
     @Schema(example = "1")
     @NotRead
     private Integer team_id;
+    @Nullable
+    @Valid
+    @NotRead
+    private ChangePasswordDTO password;
 }
