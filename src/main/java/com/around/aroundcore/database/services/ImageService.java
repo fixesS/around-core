@@ -81,7 +81,7 @@ public class ImageService {
             }
             imageFile.transferTo(filePath);
             image.setUrl(url);
-            image.setFile(filePath.toString());
+            image.setFile(uniqueFileName);
             imageRepository.save(image);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -90,12 +90,15 @@ public class ImageService {
 
         return image;
     }
+    public void create(Image image){
+        imageRepository.save(image);
+    }
     public byte[] loadImage(String imageName, ImageType imageType){
         Path imagePath;
         switch (imageType) {
-            case AVATAR -> imagePath = Path.of(imageAvatarDirectory, imageName);
-            case ICON -> imagePath = Path.of(imageIconDirectory, imageName);
-            default -> imagePath = Path.of(imageDefaultDirectory, imageName);
+            case AVATAR -> imagePath = Path.of(imageAvatarDirectory).resolve(imageName);
+            case ICON -> imagePath = Path.of(imageIconDirectory).resolve(imageName);
+            default -> imagePath = Path.of(imageDefaultDirectory).resolve(imageName);
         }
         try{
             if (Files.exists(imagePath)) {
@@ -107,9 +110,21 @@ public class ImageService {
             throw new ImageLoadException();
         }
     }
-    public void deleteImage(String file){
-        imageRepository.deleteByFile(file);
-        File fileToDelete = FileUtils.getFile(file);
+    public void deleteImage(Image image,ImageType imageType){
+        if(Boolean.TRUE.equals(image.getIs_default())){
+            return;
+        }
+        imageRepository.deleteByUuid(image.getUuid());
+        if(image.getFile()==null || image.getFile().isEmpty()){
+            return;
+        }
+        Path imagePath;
+        switch (imageType) {
+            case AVATAR -> imagePath = Path.of(imageAvatarDirectory, image.getFile());
+            case ICON -> imagePath = Path.of(imageIconDirectory, image.getFile());
+            default -> imagePath = Path.of(imageDefaultDirectory, image.getFile());
+        }
+        File fileToDelete = FileUtils.getFile(imagePath.toFile());
         FileUtils.deleteQuietly(fileToDelete);
     }
     private MultipartFile convertToJpeg(MultipartFile originalImage) throws IllegalStateException, IOException {
@@ -131,6 +146,6 @@ public class ImageService {
     }
     @Cacheable("defaultAvatar")
     public Image getDefaultAvatar(){
-        return imageRepository.findByFile(Path.of(imageAvatarDirectory).resolve("guest.jpg").toString()).orElseThrow(ImageNullException::new);
+        return imageRepository.findByFile("guest.jpg").orElseThrow(ImageNullException::new);
     }
 }

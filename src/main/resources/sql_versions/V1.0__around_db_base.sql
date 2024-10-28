@@ -6,6 +6,7 @@ CREATE TABLE public.images(
     uuid uuid not null,
     url varchar unique not null,
     file varchar unique null,
+    is_default boolean not null default false,
     CONSTRAINT images_pkey PRIMARY KEY (uuid)
 );
 CREATE TABLE public.teams(

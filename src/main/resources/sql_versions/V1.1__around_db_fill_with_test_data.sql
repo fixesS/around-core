@@ -13,12 +13,12 @@ VALUES('DARK_PURPLE');
 INSERT INTO public.rounds(starts, ends,active)
 Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, true );
 
-INSERT INTO public.images(uuid,url,file)
-values ('b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid,'https://aroundgame.ru/api/v1/image/avatar/guest.jpg','avatars/guest.jpg');
-INSERT INTO public.images(uuid,url,file)
-values ('2da609a9-f54a-4c64-bf8d-88e38cdbc541'::uuid,'https://aroundgame.ru/api/v1/image/width_skill_image.jpg','width_skill_image.jpg');
-INSERT INTO public.images(uuid,url,file)
-values ('aba1bbbe-af69-4da6-83ce-572546e2f37e'::uuid,'https://aroundgame.ru/api/v1/image/icon/width_skill_icon.svg','icons/width_skill_icon.svg');
+INSERT INTO public.images(is_default,uuid,url,file)
+values (true,'b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid,'https://aroundgame.ru/api/v1/image/avatar/guest.jpg','guest.jpg');
+INSERT INTO public.images(is_default,uuid,url,file)
+values (true,'2da609a9-f54a-4c64-bf8d-88e38cdbc541'::uuid,'https://aroundgame.ru/api/v1/image/width_skill_image.jpg','width_skill_image.jpg');
+INSERT INTO public.images(is_default,uuid,url,file)
+values (true,'aba1bbbe-af69-4da6-83ce-572546e2f37e'::uuid,'https://aroundgame.ru/api/v1/image/icon/width_skill_icon.svg','width_skill_icon.svg');
 INSERT INTO public.images(uuid,url,file)
 values ('aad50520-1509-4a34-925e-72bc182189e2'::uuid,'https://aroundgame.ru/api/v1/image/event.jpg','event.jpg');
 

@@ -32,6 +32,8 @@ public class GoogleOAuthService implements ProviderOAuthService{
             log.info(headers.toString());
             ResponseEntity<GooglePerson> response = restTemplate.exchange(getUserUrl, HttpMethod.GET, requestEntity, GooglePerson.class);
             GooglePerson googlePerson = response.getBody();
+            log.info(response.toString());
+            log.info(googlePerson.toString());
             return OAuthResponse.builder()
                     .user_id(googlePerson.getId())
                     .first_name(googlePerson.getGiven_name())

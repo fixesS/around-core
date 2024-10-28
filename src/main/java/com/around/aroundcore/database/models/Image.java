@@ -1,12 +1,10 @@
 package com.around.aroundcore.database.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 @ToString
@@ -28,4 +26,20 @@ public class Image implements Serializable {
     @Column
     @Setter
     private String url;
+    @Column
+    @Builder.Default
+    private Boolean is_default = false;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Image image = (Image) o;
+        return Objects.equals(uuid, image.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(uuid);
+    }
 }

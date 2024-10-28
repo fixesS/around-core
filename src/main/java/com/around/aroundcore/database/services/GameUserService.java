@@ -20,7 +20,6 @@ import java.util.Random;
 @AllArgsConstructor
 public class GameUserService {
     private final GameUserRepository userRepository;
-    private final ImageService imageService;
     private final SkillService skillService;
     private final Random random = new Random();
 
@@ -37,12 +36,14 @@ public class GameUserService {
             gameUserSkillList.add(gameUserSkill);
         }
         user.addSkillToUserSkillList(gameUserSkillList);
-        user.setAvatar(imageService.getDefaultAvatar());
         userRepository.save(user);
     }
 
     public void update(GameUser user) {
         userRepository.save(user);
+    }
+    public void updateAndFlush(GameUser user) {
+        userRepository.saveAndFlush(user);
     }
     public GameUser findById(Integer id) throws GameUserNullException {
         return userRepository.findById(id).orElseThrow(GameUserNullException::new);
