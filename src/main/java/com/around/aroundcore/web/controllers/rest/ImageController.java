@@ -58,7 +58,7 @@ public class ImageController {
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
         Image image = imageService.createImage(file, ImageType.AVATAR);
-        imageService.deleteImage(user.getAvatar().getFile());
+        imageService.deleteImage(user.getAvatar(), ImageType.AVATAR);
         user.setAvatar(image);
         gameUserService.update(user);
         return ResponseEntity.ok("");

@@ -39,7 +39,7 @@ public class GameUser implements UserDetails {
 
     @Getter
     @Setter
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     @JoinColumn(referencedColumnName = "uuid", columnDefinition = "int8 default 'b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid")
     private Image avatar;
     @Column(unique=true)
