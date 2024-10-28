@@ -5,6 +5,6 @@ import com.around.aroundcore.web.exceptions.api.ApiException;
 
 public class GameUserOAuthProviderAlreadyExistsException extends ApiException {
     public GameUserOAuthProviderAlreadyExistsException() {
-        super(ApiResponse.USER_ALREADY_HAVE_OAUTH_ACCOUNT);
+        super(ApiResponse.USER_ALREADY_HAS_OAUTH_ACCOUNT);
     }
 }

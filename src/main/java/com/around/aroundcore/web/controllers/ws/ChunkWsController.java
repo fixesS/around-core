@@ -78,7 +78,7 @@ public class ChunkWsController {
         }
 
         if(!city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(),city.getChunksResolution()))){// if chunk is not in user city
-            ApiError apiError = ApiResponse.getApiError(ApiResponse.CHUNK_DOES_NOT_CORRELATES_WITH_USER_CITY);
+            ApiError apiError = ApiResponse.getApiError(ApiResponse.CHUNK_DOES_NOT_RELATES_WITH_USER_CITY);
             messagingTemplate.convertAndSendToUser(user.getUsername(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
             return;
         }
