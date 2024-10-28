@@ -59,9 +59,9 @@ public class OAuthController {
         return ResponseEntity.ok(tokenData);
     }
     private GameUser createUser(OAuthResponse oAuthResponse, OAuthProvider oAuthProvider){
-        log.info("Creating user");
         GameUser user = GameUser.builder()
                 .username(gameUserService.generateUsername())
+                .avatar(imageService.getDefaultAvatar())
                 .email(oAuthResponse.getEmail())
                 .password(passwordEncoder.encode(gameUserService.generatePassword()))
                 .role(Role.USER)
@@ -74,11 +74,10 @@ public class OAuthController {
         if(oAuthResponse.getAvatar()!=null && !oAuthResponse.getAvatar().isEmpty()){
             avatar = Image.builder()
                     .url(oAuthResponse.getAvatar())
+                    .file(null)
                     .build();
-        }else{
-            avatar = imageService.getDefaultAvatar();
+            user.setAvatar(avatar);
         }
-        user.setAvatar(avatar);
         user.addOAuthToUser(oAuthUser);
         gameUserService.create(user);
         return user;

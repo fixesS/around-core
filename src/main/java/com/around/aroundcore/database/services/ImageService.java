@@ -90,6 +90,9 @@ public class ImageService {
 
         return image;
     }
+    public void create(Image image){
+        imageRepository.save(image);
+    }
     public byte[] loadImage(String imageName, ImageType imageType){
         Path imagePath;
         switch (imageType) {
@@ -111,7 +114,10 @@ public class ImageService {
         if(Boolean.TRUE.equals(image.getIs_default())){
             return;
         }
-        imageRepository.deleteByFile(image.getFile());
+        imageRepository.deleteByUuid(image.getUuid());
+        if(image.getFile()==null || image.getFile().isEmpty()){
+            return;
+        }
         Path imagePath;
         switch (imageType) {
             case AVATAR -> imagePath = Path.of(imageAvatarDirectory, image.getFile());

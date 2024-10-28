@@ -34,6 +34,7 @@ public class RegistrationController {
     private final AuthService authService;
     private final GameUserService userService;
     private final TeamService teamService;
+    private final ImageService imageService;
     private final VerificationTokenService verificationTokenService;
     private final RoundService roundService;
     private final CityService cityService;
@@ -54,6 +55,7 @@ public class RegistrationController {
         GameUser user = GameUser.builder()
                 .username(registrationDTO.getUsername())
                 .email(registrationDTO.getEmail())
+                .avatar(imageService.getDefaultAvatar())
                 .password(passwordEncoder.encode(registrationDTO.getPassword()))
                 .role(Role.USER)
                 .build();
@@ -74,7 +76,7 @@ public class RegistrationController {
             description = "Confirming registration with token from email message"
     )
     @Transactional
-    public ResponseEntity<String> registrationConfrim(@RequestParam("token") String token) {
+    public ResponseEntity<String> registrationConfirm(@RequestParam("token") String token) {
         VerificationToken verificationToken;
         GameUser user;
 
