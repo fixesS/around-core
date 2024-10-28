@@ -44,6 +44,9 @@ public class GameUserService {
     public void update(GameUser user) {
         userRepository.save(user);
     }
+    public void updateAndFlush(GameUser user) {
+        userRepository.saveAndFlush(user);
+    }
     public GameUser findById(Integer id) throws GameUserNullException {
         return userRepository.findById(id).orElseThrow(GameUserNullException::new);
     }
