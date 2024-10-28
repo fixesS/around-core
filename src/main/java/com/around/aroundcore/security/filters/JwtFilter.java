@@ -2,14 +2,14 @@ package com.around.aroundcore.security.filters;
 
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.security.services.JwtService;
-import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.api.ApiException;
+import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
 import com.around.aroundcore.web.exceptions.entity.SessionNullException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,13 +20,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
 @Slf4j
 @AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-
+    private String timeLocale;
     private JwtService jwtService;
     private SessionService sessionService;
 
@@ -35,68 +36,60 @@ public class JwtFilter extends OncePerRequestFilter {
         final String authHeader;
         try {
             authHeader = jwtService.resolveAuthHeader(request);
-        } catch (AuthHeaderNullException e) {
-            String errmsg = "Auth header is null";
-            log.debug(errmsg, e);
-            e.setMessage(errmsg);
-            throw e;
-        } catch (AuthHeaderNotStartsWithPrefixException e) {
-            String errmsg = String.format("Auth header does not starts with '%s'",JwtService.JWT_PREFIX);
-            log.debug(errmsg, e);
-            e.setMessage(errmsg);
-            throw e;
+        } catch (AuthHeaderNullException | AuthHeaderNotStartsWithPrefixException e) {
+            log.debug("Jwt Auth header is null");
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        String accessToken = null;
+        String accessToken;
         try {
             accessToken = jwtService.resolveToken(authHeader);
         } catch (AuthHeaderNotStartsWithPrefixException e) {
-            String errmsg = String.format("Auth header does not starts with '%s'",JwtService.JWT_PREFIX);
-            log.debug(errmsg, e);
-            e.setMessage(errmsg);
-            throw e;
+            log.debug("JWT Auth token is null");
+            filterChain.doFilter(request, response);
+            return;
         }
 
         try{
             jwtService.validateAccessToken(accessToken);
         } catch (ExpiredJwtException expEx) {
-            log.debug("Token expired", expEx);
-            throw expEx;
+            log.debug("Token expired");
+            filterChain.doFilter(request, response);
+            return;
         } catch (UnsupportedJwtException unsEx) {
-            log.debug("Unsupported jwt", unsEx);
-            throw unsEx;
+            log.debug("Unsupported jwt");
+            filterChain.doFilter(request, response);
+            return;
         } catch (MalformedJwtException mjEx) {
-            log.debug("Malformed jwt", mjEx);
-            throw mjEx;
+            log.debug("Malformed jwt");
+            filterChain.doFilter(request, response);
+            return;
         } catch (RuntimeException e) {
-            log.debug("invalid token", e);
-            throw e;
+            log.debug("invalid token");
+            filterChain.doFilter(request, response);
+            return;
         }
-        Session session = null;
+        Session session;
         try{
             session = sessionService.findByUuid(jwtService.getSessionIdAccess(accessToken));
         }catch (SessionNullException e){
-            String errmsg = "Session is null";
-            log.debug(errmsg, e);
-            e.setMessage(errmsg);
-            throw e;
+            log.debug(e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        Claims claims = jwtService.getAccessClaims(accessToken);
-        JwtAuthenticationToken authentication = new JwtAuthenticationToken(session,session.getUser());
-        Date iat = claims.getIssuedAt();
-        if(!iat.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().isAfter(session.getLastRefresh())){
-            if(session.getUser().getVerified()){
-                authentication.setAuthenticated(true);
-            }else{
-                log.debug("User is not verified");
-                throw new ApiException(ApiResponse.USER_IS_NOT_VERIFIED);
-            }
+        JwtAuthenticationToken authentication = new JwtAuthenticationToken(session);
+        LocalDateTime now = new Date().toInstant().atZone(ZoneId.of(timeLocale)).toLocalDateTime();
+        if(!now.isAfter(session.getExpiresIn())){
+            authentication.setAuthenticated(true);
         }else{
             log.debug("Session expired");
-            throw new ApiException(ApiResponse.SESSION_EXPIRED);
+            filterChain.doFilter(request, response);
+            return;
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.debug("JWT Auth complete");
         filterChain.doFilter(request, response);
     }
 

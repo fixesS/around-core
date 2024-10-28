@@ -1,24 +1,47 @@
 package com.around.aroundcore.database.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Entity
-@Table(name = "game_chunk")
+@Table(name = "chunks")
+@IdClass(GameChunkEmbedded.class)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class GameChunk {
+@Getter
+public class GameChunk implements Serializable {
 
     @Id
+    @Setter
     @Column
     private String id;
+
+    @Id
+    @Setter
+    @Getter
+    @ManyToOne
+    @JoinColumn(name = "round_id", referencedColumnName = "id")
+    private Round round;
+
+    @Setter
+    @Getter
+    @ManyToOne
+    @JoinColumn(name = "city_id", referencedColumnName = "id")
+    private City city;
 
     @ManyToOne
     @JoinColumn(name = "owner", referencedColumnName = "id")
     private GameUser owner;
+
+    @Override
+    public String toString(){
+        return String.format("chunk_id: %s ",this.id);
+    }
+
+    public Team getTeam(){
+        return this.owner.getTeam(this.round);
+    }
 }

@@ -2,7 +2,6 @@ package com.around.aroundcore.security.tokens;
 
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Session;
-import lombok.Setter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -11,10 +10,8 @@ import java.util.Collection;
 public class JwtAuthenticationToken implements Authentication {
 
     private boolean authenticated;
-    @Setter
-    private Session session;
-    @Setter
-    private GameUser user;
+    private final Session session;
+    private final GameUser user;
 
 
     @Override
@@ -24,7 +21,7 @@ public class JwtAuthenticationToken implements Authentication {
 
     @Override
     public Object getCredentials() {
-        return null;
+        return user.getEmail();
     }
 
     @Override
@@ -49,15 +46,13 @@ public class JwtAuthenticationToken implements Authentication {
 
     @Override
     public String getName() {
-        return session.getUser().getEmail();
+        return user.getUsername();
     }
 
     public JwtAuthenticationToken(
-            Session session,
-            GameUser user ) {
+            Session session) {
         this.session = session;
-        this.user = user;
-
+        this.user = session.getUser();
     }
 
 }

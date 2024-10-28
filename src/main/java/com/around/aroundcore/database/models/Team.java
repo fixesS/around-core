@@ -1,16 +1,17 @@
 package com.around.aroundcore.database.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.List;
 
+@Slf4j
 @Entity
-@Table(name = "team")
-@Data
-public class Team {
+@Table(name = "teams")
+@Getter
+public class Team implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +21,19 @@ public class Team {
     @Column(name = "color")
     private String color;
 
-    @OneToMany(mappedBy = "team")
-    private List<GameUser> members;
+    @OneToMany
+    @JoinTable(
+            name = "users_rounds_team_city",
+            joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "id"),
+            inverseJoinColumns = {@JoinColumn(name = "team_id", referencedColumnName = "team_id",insertable=false, updatable=false),
+                    @JoinColumn(name = "user_id", referencedColumnName = "user_id",insertable=false, updatable=false),
+                    @JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false),
+                    @JoinColumn(name = "city_id", referencedColumnName = "city_id",insertable=false, updatable=false)}
+    )
+    private List<UserRoundTeamCity> userRoundTeamCity;
+
+    @Override
+    public String toString(){
+        return String.format("team_id: %d, color: %s",this.id,this.color);
+    }
 }

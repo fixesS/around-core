@@ -5,16 +5,18 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.4</version>
+		<version>3.3.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.around</groupId>
 	<artifactId>around-core</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>around-core</name>
+	<version>2.4.0</version>
+	<name>${project.artifactId}</name>
 	<description>around-core</description>
 	<properties>
 		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 	<dependencies>
 		<!--SPRING-->
@@ -41,6 +43,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -127,6 +133,31 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+		<!--Uber H3 Core-->
+		<dependency>
+			<groupId>com.uber</groupId>
+			<artifactId>h3</artifactId>
+			<version>4.1.1</version>
+		</dependency>
+		<!-- DADATA -->
+		<dependency>
+			<groupId>com.github.kuliginstepan</groupId>
+			<artifactId>dadata-client</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+		<!-- APACHE HTTPCLIENTS -->
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>5.2</version>
+		</dependency>
+		<!-- APACHE COMMONS -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.17.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -135,12 +166,21 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<imageName>${project.artifactId}-image:${project.version}</imageName>
+					<image>
+						<bindings>
+							<binding>/opt/around_core/volumes/images/:/opt/around_core/images/:rw</binding>
+						</bindings>
+					</image>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<docker>
+						<host>//./pipe/dockerDesktopLinuxEngine</host>
+					</docker>
 				</configuration>
 			</plugin>
 		</plugins>

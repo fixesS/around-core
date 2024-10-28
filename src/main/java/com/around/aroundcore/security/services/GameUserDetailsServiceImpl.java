@@ -1,6 +1,7 @@
 package com.around.aroundcore.security.services;
 
 import com.around.aroundcore.database.repositories.GameUserRepository;
+import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,7 +15,7 @@ public class GameUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(GameUserNullException::new);
     }
 
 }

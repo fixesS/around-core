@@ -1,6 +1,6 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.web.services.EmailQueueService;
+import com.around.aroundcore.web.services.queues.EmailQueueService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

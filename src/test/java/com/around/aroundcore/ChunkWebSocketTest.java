@@ -3,9 +3,10 @@ package com.around.aroundcore;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.web.controllers.ws.ChunkWsController;
-import com.around.aroundcore.web.dtos.AuthDTO;
+import com.around.aroundcore.web.dtos.ApiError;
+import com.around.aroundcore.web.dtos.auth.AuthDTO;
 import com.around.aroundcore.web.dtos.ChunkDTO;
-import com.around.aroundcore.web.dtos.TokenData;
+import com.around.aroundcore.web.dtos.auth.TokenData;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
@@ -49,6 +50,8 @@ class ChunkWebSocketTest {
 	private final String host = "localhost:";
 	@Value("${local.server.port}")
 	private int port;
+	@Value("${around.home}")
+	private String home;
 	@Value("${testing.team1.email}")
 	private String email1;
 	@Value("${testing.team1.password}")
@@ -61,6 +64,7 @@ class ChunkWebSocketTest {
 	private static WebClient client;
 
 	LinkedBlockingQueue<ArrayList<ChunkDTO>> blockingQueue;
+	LinkedBlockingQueue<ApiError> blockingQueueError;
 	@Autowired
 	private ObjectMapper objectMapper;
 	@Autowired
@@ -70,25 +74,33 @@ class ChunkWebSocketTest {
 	@BeforeAll
 	public void setup() throws Exception {
 
-		token = getTokenData(email1,pass1);
+		//token = getTokenData(email1,pass1);
 
+		String token_s = "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhY2Nlc3MiLCJqdGkiOiJhY2E0MzgzZC05YWY2LTRlMWMtYmRlNS03OWZlY2IxZTVkNTAiLCJpYXQiOjE3Mjc2MjE5OTIsImV4cCI6MTcyNzYyMzc5Mn0.BWOt3BdsFw_I5ibmos1Q2r4hXDRiPhZftY2lgd4V1VLQPa420SyWpWBFFBIJ82Pd";
 		blockingQueue = new LinkedBlockingQueue<>();
+		blockingQueueError = new LinkedBlockingQueue<>();
 
 		RunStopFrameHandler runStopFrameHandler = new RunStopFrameHandler(new CompletableFuture<>());
 
-		String wsUrl = ws+ host + port + WebSocketConfig.REGISTRY;
+		String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
+		//String wsUrl = "wss://aroundgame.ru/ws";
+		//log.info(wsUrl);
 
 		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
 
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
 		WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
-		headers.set("Authorization", "Bearer "+token.getAccess_token());
+		//headers.set("Authorization", "Bearer "+token_s);
+		headers.set("login", email1);
+		headers.set("passcode", pass1);
+		//log.info(headers.get("Authorization").toString());
+		//log.info(Objects.requireNonNull(headers.get("login")).toString());
+		//log.info(Objects.requireNonNull(headers.get("passcode")).toString());
 
 		StompSession stompSession = stompClient
 				.connectAsync(wsUrl, headers, new StompSessionHandlerAdapter() {})
 				.get(1, SECONDS);
-		log.info(stompSession.toString());
 		client = WebClient.builder()
 				.stompClient(stompClient)
 				.stompSession(stompSession)
@@ -114,7 +126,8 @@ class ChunkWebSocketTest {
 		RunStopFrameHandler handler = client.getHandler();
 
 		ChunkDTO chunkDTO = ChunkDTO.builder()
-				.id("1")
+				.id("8b10dc9268adfff")
+				//.id("8b10dc058444fff") // wrong chunk id (not in yekaterinburg)
 				.build();
 
 		StompHeaders headers1 = new StompHeaders();
@@ -127,20 +140,36 @@ class ChunkWebSocketTest {
 
 			@Override
 			public void handleFrame(StompHeaders headers, Object payload) {
-				log.info(payload.toString());
 				blockingQueue.offer((ArrayList<ChunkDTO>) payload);
 			}
 		});
 
+		stompSession.subscribe("/user"+WebSocketConfig.QUEUE_ERROR_FOR_USER, new StompFrameHandler() {
+			@Override
+			public Type getPayloadType(StompHeaders headers) {
+				return new TypeReference<ApiError>(){}.getType();
+			}
+
+			@Override
+			public void handleFrame(StompHeaders headers, Object payload) {
+				blockingQueueError.offer((ApiError) payload);
+			}
+		});
+
 		stompSession.send(
-				ChunkWsController.CHUNK_CHANGES_FROM_USER,
+				"/app"+ChunkWsController.CHUNK_CHANGES_FROM_USER,
 				chunkDTO
 		);
 
 		chunkDTO.setTeam_id(1);
 		List<ChunkDTO> exceptedList = new ArrayList<>();
 		exceptedList.add(chunkDTO);
+		//exceptedList.add(ChunkDTO.builder().id("8b10dc934223fff").team_id(1).build())
 		List<ChunkDTO> receivedList = objectMapper.convertValue(blockingQueue.poll(5, SECONDS),new TypeReference<ArrayList<ChunkDTO>>(){});
+		log.info("{}",receivedList.size());
+		log.info("{}",receivedList);
+		ApiError apiError = blockingQueueError.poll(5, SECONDS);
+		log.info("{}",apiError.getMessage());
 
 		Assertions.assertEquals(exceptedList, receivedList);
 
@@ -197,10 +226,11 @@ class ChunkWebSocketTest {
 	private TokenData getTokenData(String email, String password){
 		AuthDTO authDTO = new AuthDTO(email,password);
 		log.info(authDTO.toString());
-		TokenData tokenData = restTemplate.postForEntity(Http+host+port+"/"+AroundConfig.API_V1_LOGIN,authDTO,TokenData.class).getBody();
+		String url = Http+host+port+"/"+AroundConfig.API_V1_LOGIN;
+		log.info(url);
+		TokenData tokenData = restTemplate.postForEntity(url,authDTO,TokenData.class).getBody();
 		log.info(tokenData.toString());
 		return tokenData;
 	}
-
 }
 

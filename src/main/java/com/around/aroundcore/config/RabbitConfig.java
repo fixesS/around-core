@@ -5,6 +5,7 @@ import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,7 +24,7 @@ public class RabbitConfig {
     private String SPRING_RABBITMQ_PASSWORD;
     @Bean
     public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(SPRING_RABBITMQ_HOST,SPRING_RABBITMQ_PORT);
+        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(SPRING_RABBITMQ_HOST,5672);
         cachingConnectionFactory.setUsername(SPRING_RABBITMQ_USERNAME);
         cachingConnectionFactory.setPassword(SPRING_RABBITMQ_PASSWORD);
         return cachingConnectionFactory;
@@ -32,5 +33,9 @@ public class RabbitConfig {
     public AmqpAdmin amqpAdmin() {
         return new RabbitAdmin(connectionFactory());
     }
-
+    @Bean
+    @ConditionalOnProperty(value = "private-message-exchange")
+    DirectExchange directExchange(@Value("${private-message-exchange}") String privateMessageExchange) {
+        return new DirectExchange(privateMessageExchange);
+    }
 }

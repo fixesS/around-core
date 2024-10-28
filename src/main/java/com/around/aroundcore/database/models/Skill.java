@@ -1,19 +1,17 @@
 package com.around.aroundcore.database.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
-@Table(name = "skill")
+@Table(name = "skills")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
 public class Skill implements Serializable {
 
     @Id
@@ -30,9 +28,29 @@ public class Skill implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "upgrade_cost")
-    private Integer upgradeCost;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name="rule_id")
+    private SkillRule rule;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name="cost_id")
+    private SkillCost cost;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(referencedColumnName = "uuid")
+    private Image image;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(referencedColumnName = "uuid")
+    private Image icon;
 
-    @Column(name = "image_name")
-    private String imageName;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Skill skill = (Skill) o;
+        return Objects.equals(id, skill.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

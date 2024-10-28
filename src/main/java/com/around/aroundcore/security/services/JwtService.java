@@ -1,13 +1,13 @@
 package com.around.aroundcore.security.services;
 
-import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.security.models.Token;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderEmptyException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
 import com.around.aroundcore.web.exceptions.jwt.WrongJwtTypeException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -160,7 +160,7 @@ public class JwtService {
                 .expiresIn(expiration)
                 .build();
     }
-    private void validateToken(String token, SecretKey secret, String type) {
+    private void validateToken(String token, SecretKey secret, String type) throws WrongJwtTypeException{
         Claims claims = Jwts.parser()
                 .verifyWith(secret)
                 .build()
@@ -172,16 +172,16 @@ public class JwtService {
             throw new WrongJwtTypeException(errmsg);
         }
     }
-    public void validateRecoveryToken(String verificationToken){
+    public void validateRecoveryToken(String verificationToken) throws WrongJwtTypeException{
         validateToken(verificationToken,recoverySecret,JWT_RECOVERY);
     }
-    public void validateVerificationToken(String verificationToken){
+    public void validateVerificationToken(String verificationToken) throws WrongJwtTypeException{
         validateToken(verificationToken,verificationSecret,JWT_VERIFICATION);
     }
-    public void validateAccessToken(String accessToken) {
+    public void validateAccessToken(String accessToken) throws WrongJwtTypeException{
         validateToken(accessToken,accessSecret,JWT_ACCESS);
     }
-    public void validateRefreshToken(String refreshToken) {
+    public void validateRefreshToken(String refreshToken) throws WrongJwtTypeException{
         validateToken(refreshToken,refreshSecret,JWT_REFRESH);
     }
     public Claims getVerificationClaims( String verificationToken) {
