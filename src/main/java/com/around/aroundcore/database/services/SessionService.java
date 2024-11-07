@@ -3,7 +3,7 @@ package com.around.aroundcore.database.services;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.repositories.SessionRepository;
-import com.around.aroundcore.web.exceptions.entity.SessionNullException;
+import com.around.aroundcore.web.exceptions.api.entity.SessionNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

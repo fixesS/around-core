@@ -3,8 +3,8 @@ package com.around.aroundcore.web.services.apis.oauth;
 import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
 import com.around.aroundcore.web.dtos.oauth.vk.VkUserModel;
 import com.around.aroundcore.web.dtos.oauth.vk.VkUserModelWrapper;
-import com.around.aroundcore.web.exceptions.oauth.OAuthException;
-import com.around.aroundcore.web.exceptions.oauth.VkOAuthException;
+import com.around.aroundcore.web.exceptions.api.oauth.OAuthException;
+import com.around.aroundcore.web.exceptions.api.oauth.VkOAuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,13 +38,11 @@ public class VkOAuthService implements ProviderOAuthService {
         try{
             ResponseEntity<VkUserModelWrapper> response = restTemplate.exchange(checkTokenUrl, HttpMethod.POST, requestEntity, VkUserModelWrapper.class);
             VkUserModel vkUserModel = response.getBody().getUser();
-            log.info(response.toString());
-            log.info(vkUserModel.toString());
             return OAuthResponse.builder()
                     .user_id(vkUserModel.getUser_id())
-                    .first_name(vkUserModel.getFirst_name())
-                    .last_name(vkUserModel.getLast_name())
-                    .email(vkUserModel.getEmail())
+                    .first_name(vkUserModel.getFirst_name().toLowerCase())
+                    .last_name(vkUserModel.getLast_name().toLowerCase())
+                    .email(vkUserModel.getEmail().toLowerCase())
                     .avatar(vkUserModel.getAvatar())
                     .build();
         }catch (HttpClientErrorException e){

@@ -5,7 +5,10 @@ import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.web.dtos.ChunkDTO;
-import com.around.aroundcore.web.exceptions.entity.*;
+import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
+import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;
+import com.around.aroundcore.web.exceptions.api.entity.TeamNullException;
+import com.around.aroundcore.web.exceptions.api.entity.URTNullException;
 import com.around.aroundcore.web.mappers.GameChunkDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -102,7 +105,7 @@ public class GameChunkController {
 
         return ResponseEntity.ok(chunkDTOList);
     }
-    private GameChunk getByIdAndRound(String chunkId, Integer roundId) throws NoActiveRoundException, RoundNullException{
+    private GameChunk getByIdAndRound(String chunkId, Integer roundId) throws NoActiveRoundException, RoundNullException {
         if(roundId == 0 ){
             return gameChunkService.findByIdAndRoundId(chunkId,roundService.getCurrentRound().getId());
         }else{
@@ -110,7 +113,7 @@ public class GameChunkController {
             return gameChunkService.findByIdAndRoundId(chunkId,roundId);
         }
     }
-    private List<GameChunk> getChunksByTeamAndRoundAndCity(Integer teamId, Integer roundId, Integer cityId) throws RoundNullException, NoActiveRoundException,TeamNullException, URTNullException{
+    private List<GameChunk> getChunksByTeamAndRoundAndCity(Integer teamId, Integer roundId, Integer cityId) throws RoundNullException, NoActiveRoundException, TeamNullException, URTNullException {
         if(roundId == 0){
             return gameChunkService.findAllByRoundAndTeamAndCity(roundService.getCurrentRound(), teamService.findById(teamId), cityService.findById(cityId));
         }else{

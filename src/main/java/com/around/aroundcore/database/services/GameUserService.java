@@ -3,9 +3,9 @@ package com.around.aroundcore.database.services;
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.database.repositories.GameUserRepository;
-import com.around.aroundcore.web.exceptions.entity.GameUserEmailNotUnique;
-import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
-import com.around.aroundcore.web.exceptions.entity.GameUserUsernameNotUnique;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserEmailNotUnique;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserNullException;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserUsernameNotUnique;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -95,15 +95,16 @@ public class GameUserService {
     public boolean isOAuthProviderAccountAdded(GameUser user,OAuthProvider provider){
         return  userRepository.existsByUserIdAndProvider(user.getId(), provider.name());
     }
-    public String generateUsername(){
+    public String generateUsername(String name){
         log.info("Creating username");
-        boolean isFree = false;
-        String username = "user@";
-        while(!isFree){
-            username = "user@"+random.nextInt(100000);
-            isFree = !existByUsername(username);
+        String username = name;
+        while(!existByUsername(username)){
+            username = name + getNextId() + random.nextInt(2);
         }
         return username;
+    }
+    public Integer getNextId(){
+        return userRepository.getNextValMySequence().intValue();
     }
     public String generatePassword(){
         log.info("Creating password");

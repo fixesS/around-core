@@ -16,7 +16,7 @@ import com.around.aroundcore.web.enums.EventProvidersEnum;
 import com.around.aroundcore.web.exceptions.api.CoordsNotFoundException;
 import com.around.aroundcore.web.exceptions.api.EventsNotFoundException;
 import com.around.aroundcore.web.exceptions.api.LocationNullException;
-import com.around.aroundcore.web.exceptions.entity.EventProviderNullException;
+import com.around.aroundcore.web.exceptions.api.entity.EventProviderNullException;
 import com.around.aroundcore.web.mappers.CategoryMapper;
 import com.around.aroundcore.web.mappers.GameChunkMapper;
 import com.around.aroundcore.web.mappers.LocationMapper;

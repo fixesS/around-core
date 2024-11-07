@@ -2,7 +2,7 @@ package com.around.aroundcore.web.services.apis.oauth;
 
 import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
 import com.around.aroundcore.web.dtos.oauth.google.GooglePerson;
-import com.around.aroundcore.web.exceptions.oauth.GoogleOAuthException;
+import com.around.aroundcore.web.exceptions.api.oauth.GoogleOAuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,14 +29,14 @@ public class GoogleOAuthService implements ProviderOAuthService{
         headers.set("Authorization","Bearer "+token);
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
         try{
-            log.info(headers.toString());
             ResponseEntity<GooglePerson> response = restTemplate.exchange(getUserUrl, HttpMethod.GET, requestEntity, GooglePerson.class);
             GooglePerson googlePerson = response.getBody();
+            log.info(googlePerson.toString());
             return OAuthResponse.builder()
                     .user_id(googlePerson.getId())
-                    .first_name(googlePerson.getGiven_name())
+                    .first_name(googlePerson.getGiven_name().toLowerCase())
                     .last_name("")
-                    .email("")
+                    .email(googlePerson.getEmail().toLowerCase())
                     .avatar(googlePerson.getPicture())
                     .build();
         }catch (HttpClientErrorException e){

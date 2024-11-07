@@ -75,6 +75,7 @@ public class RestExceptionHandler {
     public ResponseEntity<ApiError> handleApiException(ApiException exception) {
         ApiResponse response = exception.getResponse();
         log.error(exception.getMessage());
+        log.error(exception.getResponse().toString());
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         return new ResponseEntity<>(apiError, response.getStatus());
     }

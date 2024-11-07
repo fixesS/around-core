@@ -13,7 +13,10 @@ import com.around.aroundcore.web.dtos.user.UpdateGameUserDTO;
 import com.around.aroundcore.web.enums.ApiResponse;
 import com.around.aroundcore.web.events.OnEmailVerificationEvent;
 import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.exceptions.entity.*;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserOAuthProviderAlreadyExistsException;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserUsernameNotUnique;
+import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
+import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
 import com.around.aroundcore.web.mappers.SkillDTOWithCurrentLevelMapper;
 import com.around.aroundcore.web.services.EntityPatcher;
@@ -308,7 +311,7 @@ public class GameUserController {
     private List<GameUser> getUserFriendsSortedByCurrentRound(GameUser user){
         try{
             return user.getFriends().stream().sorted(Comparator.comparingLong(friend -> -friend.getCapturedChunks())).toList();
-        }catch (RoundNullException | NoActiveRoundException  e){
+        }catch (RoundNullException | NoActiveRoundException e){
             return user.getFriends();
         }
     }

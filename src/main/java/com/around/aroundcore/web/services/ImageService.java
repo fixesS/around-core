@@ -1,6 +1,6 @@
 package com.around.aroundcore.web.services;
 
-import com.around.aroundcore.web.exceptions.image.*;
+import com.around.aroundcore.web.exceptions.api.image.*;
 import com.around.aroundcore.web.image.ImageType;
 import com.around.aroundcore.web.image.MultipartImage;
 import lombok.extern.slf4j.Slf4j;

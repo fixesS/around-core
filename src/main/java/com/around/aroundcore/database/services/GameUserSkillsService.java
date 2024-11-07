@@ -6,7 +6,7 @@ import com.around.aroundcore.database.models.GameUserSkillEmbedded;
 import com.around.aroundcore.database.models.Skill;
 import com.around.aroundcore.database.repositories.GameUserSkillsRepository;
 import com.around.aroundcore.web.exceptions.api.LevelsLessOrEqualZeroException;
-import com.around.aroundcore.web.exceptions.entity.GameUserSkillNullException;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserSkillNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

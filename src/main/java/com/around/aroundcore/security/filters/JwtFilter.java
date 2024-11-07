@@ -6,7 +6,7 @@ import com.around.aroundcore.security.services.JwtService;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
 import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
-import com.around.aroundcore.web.exceptions.entity.SessionNullException;
+import com.around.aroundcore.web.exceptions.api.entity.SessionNullException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;

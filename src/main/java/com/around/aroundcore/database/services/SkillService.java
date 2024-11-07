@@ -2,7 +2,7 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.Skill;
 import com.around.aroundcore.database.repositories.SkillRepository;
-import com.around.aroundcore.web.exceptions.entity.SkillNullException;
+import com.around.aroundcore.web.exceptions.api.entity.SkillNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

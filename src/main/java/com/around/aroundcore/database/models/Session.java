@@ -1,6 +1,6 @@
 package com.around.aroundcore.database.models;
 
-import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserNullException;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -5,7 +5,7 @@ import com.around.aroundcore.database.models.Skill;
 import com.around.aroundcore.database.models.UserRoundTeamCity;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.chunk.WrongChunkResolution;
-import com.around.aroundcore.web.exceptions.entity.RoundNullException;
+import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;
 import com.around.aroundcore.web.mappers.StringGameChunkDTOMapper;
 import com.uber.h3core.H3Core;
 import lombok.RequiredArgsConstructor;

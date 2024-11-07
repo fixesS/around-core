@@ -1,7 +1,7 @@
 package com.around.aroundcore.database.models;
 
-import com.around.aroundcore.web.exceptions.entity.GameUserTeamCityNullForRound;
-import com.around.aroundcore.web.exceptions.entity.NoActiveRoundException;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserTeamCityNullForRound;
+import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
