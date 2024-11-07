@@ -15,6 +15,10 @@ public class ApiException extends RuntimeException{
         super();
         this.response = response;
     }
+    public ApiException(ApiResponse response, String message) {
+        super(message);
+        this.response = response;
+    }
     private final ApiResponse response;
 
 }
