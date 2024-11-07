@@ -312,7 +312,7 @@ public class GameUserController {
     }
     private void updatePassword(GameUser user, ChangePasswordDTO passwordDTO) {
         if (!passwordEncoder.matches(passwordDTO.getOld_password(), user.getPassword())) {
-            throw new ApiException(ApiResponse.LOG_INCORRECT_PASSWORD_OR_LOGIN);
+            throw new ApiException(ApiResponse.AUTH_INCORRECT_PASSWORD);
         }
         user.setPassword(passwordEncoder.encode(passwordDTO.getNew_password()));
     }

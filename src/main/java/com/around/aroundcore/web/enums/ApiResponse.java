@@ -19,7 +19,7 @@ public enum ApiResponse {
     USER_FOLLOW_ALREADY_EXIST(-2008,"You have already followed this user."),
     USER_NOT_ENOUGH_COINS(-2009,"You do not have enough coins for transaction."),
     USER_ALREADY_HAVE_OAUTH_ACCOUNT(-2010,"You trying to connect oauth account, that already have been connected."),
-    LOG_INCORRECT_PASSWORD_OR_LOGIN(-3001,"Incorrect password or login."),
+    AUTH_INCORRECT_PASSWORD(-3001,"Incorrect password."),
     AUTH_INCORRECT_EMAIL_FORMAT(-3002,"Incorrect format of email."),
     AUTH_INCORRECT_PASSWORD_LENGTH(-3003,"Password length must be at least 8 symbols, one uppercase letter, one lowercase letter, one number and one special character(!,@,#,%,^,&,*,(,),_,+,-,=,:,;,”,<space>,',{,},<,>,?,|,`,~,<comma>,."),
     AUTH_INCORRECT_USERNAME_FORMAT(-3004,"Username cannot be empty."),
