@@ -1,6 +1,6 @@
 package com.around.aroundcore.database.models;
 
-import com.around.aroundcore.web.exceptions.entity.*;
+import com.around.aroundcore.web.exceptions.api.entity.*;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
@@ -123,7 +123,7 @@ public class GameUser implements UserDetails {
         }
         this.oAuths.add(oAuthUser);
     }
-    public void followUser(GameUser user) throws GameUserAlreadyFollowed, GameUserUsernameNotUnique{
+    public void followUser(GameUser user) throws GameUserAlreadyFollowed, GameUserUsernameNotUnique {
         if(Objects.equals(user.getUsername(), getUsername())){
             throw new GameUserUsernameNotUnique();
         }

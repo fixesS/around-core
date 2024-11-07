@@ -9,8 +9,8 @@ import com.around.aroundcore.web.dtos.auth.OAuthDTO;
 import com.around.aroundcore.web.dtos.auth.TokenData;
 import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
 import com.around.aroundcore.web.exceptions.api.entity.GameUserNullException;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserUsernameNotUnique;
 import com.around.aroundcore.web.exceptions.api.oauth.OAuthException;
-import com.around.aroundcore.web.exceptions.api.validation.EmailValidationException;
 import com.around.aroundcore.web.exceptions.api.validation.ValidationException;
 import com.around.aroundcore.web.services.apis.oauth.OAuthProviderRouter;
 import com.around.aroundcore.web.services.apis.oauth.ProviderOAuthService;
@@ -66,7 +66,10 @@ public class OAuthController {
             }
         } catch (ValidationException e) {
             throw new OAuthException("validation exception");
+        } catch (GameUserUsernameNotUnique e){
+            throw new OAuthException("username generation exception");
         }
+
         TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));
 
         return ResponseEntity.ok(tokenData);

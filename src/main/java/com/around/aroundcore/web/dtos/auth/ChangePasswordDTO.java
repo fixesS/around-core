@@ -1,7 +1,7 @@
 package com.around.aroundcore.web.dtos.auth;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.web.exceptions.entity.GameUserPasswordSame;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserPasswordSame;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

@@ -35,6 +35,6 @@ public interface GameUserRepository extends JpaRepository<GameUser, Integer> {
     Optional<GameUser> findByOAuthIdAndProvider(@Param("oauth_id") String oauthId, @Param("provider") String provider);
     @Query(nativeQuery = true, value = " select exists (select * from users_oauth where user_id = :userId and oauth_provider = CAST(:provider as public.oauth_providers_enum) )")
     boolean existsByUserIdAndProvider(@Param("userId") Integer userId, @Param("provider") String provider);
-    @Query(value = "SELECT public.users_id_seq.nextval", nativeQuery = true)
+    @Query(value = "SELECT nextval('users_id_seq') from public.users_id_seq;", nativeQuery = true)
     BigDecimal getNextValMySequence();
 }

@@ -4,9 +4,9 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.UserRoundTeamCity;
 import com.around.aroundcore.web.dtos.user.GameUserDTO;
 import com.around.aroundcore.web.dtos.user.GameUserOAuthProvider;
-import com.around.aroundcore.web.exceptions.entity.GameUserTeamCityNullForRound;
-import com.around.aroundcore.web.exceptions.entity.NoActiveRoundException;
-import com.around.aroundcore.web.exceptions.entity.RoundNullException;
+import com.around.aroundcore.web.exceptions.api.entity.GameUserTeamCityNullForRound;
+import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
+import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

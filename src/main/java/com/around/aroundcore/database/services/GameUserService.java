@@ -101,8 +101,12 @@ public class GameUserService {
     public String generateUsername(String name){
         log.info("Creating username");
         String username = name;
-        while(!existByUsername(username)){
-            username = name + getNextId() + random.nextInt(2);
+        for(int i = 1; i<=50 && existByUsername(username); i++){
+            log.info("loop "+username);
+            username = name +"-"+ i;
+        }
+        if(existByUsername(username)){
+            throw new GameUserUsernameNotUnique();
         }
         return username;
     }
