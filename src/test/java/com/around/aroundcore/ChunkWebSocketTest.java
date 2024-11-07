@@ -82,8 +82,8 @@ class ChunkWebSocketTest {
 
 		RunStopFrameHandler runStopFrameHandler = new RunStopFrameHandler(new CompletableFuture<>());
 
-		String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
-		//String wsUrl = "wss://aroundgame.ru/ws";
+		//String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
+		String wsUrl = "wss://aroundgame.ru/ws";
 		//log.info(wsUrl);
 
 		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());

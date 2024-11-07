@@ -34,10 +34,12 @@ public class Skill implements Serializable {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="cost_id")
     private SkillCost cost;
-    @Column(name = "image_name")
-    private String imageName;
-    @Column(name = "icon")
-    private String icon;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(referencedColumnName = "uuid")
+    private Image image;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(referencedColumnName = "uuid")
+    private Image icon;
 
     @Override
     public boolean equals(Object o) {

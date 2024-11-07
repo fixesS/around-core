@@ -43,6 +43,9 @@ public class UserRoundTeamCity implements Serializable {
     public static Round findCurrentRoundFromURTs(List<UserRoundTeamCity> urts) throws GameUserTeamCityNullForRound {
         return urts.stream().filter(urt1->urt1.getRound().getActive()).findFirst().orElseThrow(GameUserTeamCityNullForRound::new).getRound();
     }
+    public static boolean checkIfExistCurrentURTCFromURTCs(List<UserRoundTeamCity> urts) {
+        return urts.stream().anyMatch(urt1->urt1.getRound().getActive());
+    }
     public static Team findTeamForCurrentRoundAndUser(GameUser user) throws NoActiveRoundException, GameUserTeamCityNullForRound {
         var round = findCurrentRoundFromURTs(user.getUserRoundTeamCities());
         return user.getUserRoundTeamCities().stream().filter(urt -> urt.getUser().equals(user) && urt.getRound().equals(round)).findFirst().orElseThrow(GameUserTeamCityNullForRound::new).getTeam();

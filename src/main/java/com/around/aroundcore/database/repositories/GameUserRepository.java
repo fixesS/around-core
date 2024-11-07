@@ -19,17 +19,8 @@ public interface GameUserRepository extends JpaRepository<GameUser, Integer> {
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
 
-    @Query(nativeQuery = true, value = "SELECT u.id, u.level, u.coins, u.username, u.avatar, u.password, u.role, u.email, u.verified, u.captured_chunks\n" +
-            "FROM users u\n" +
-            "ORDER BY u.captured_chunks DESC\n" +
-            "LIMIT 5;")
-    List<GameUser> getStatTop5();
-    @Query(nativeQuery = true, value = "SELECT u.id, u.level, u.coins, u.username, u.avatar, u.password, u.role, u.email, u.verified, u.captured_chunks\n" +
-            "FROM users u\n" +
-            "ORDER BY u.captured_chunks DESC\n" +
-            "LIMIT 50;"
-            )
-    List<GameUser> getStatTopAll();
+    @Query(nativeQuery = true, value = "SELECT * FROM users u ORDER BY u.captured_chunks DESC LIMIT :range;")
+    List<GameUser> getStatTop(@Param("range") Integer range);
     @Modifying
     @Query(nativeQuery = true, value = "update public.users_rounds_team_city set team_id = :teamId where user_id = :userId and round_id = :roundId")
     void setTeamForRound(@Param("roundId") Integer roundId, @Param("teamId") Integer teamId, @Param("userId") Integer userId);

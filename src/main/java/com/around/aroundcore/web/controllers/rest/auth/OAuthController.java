@@ -3,6 +3,7 @@ package com.around.aroundcore.web.controllers.rest.auth;
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.services.GameUserService;
+import com.around.aroundcore.database.services.ImageService;
 import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.web.dtos.auth.OAuthDTO;
 import com.around.aroundcore.web.dtos.auth.TokenData;
@@ -38,6 +39,7 @@ public class OAuthController {
     private final ValidationService validationService;
     private final AuthService authService;
     private final OAuthProviderRouter oAuthProviderRouter;
+    private final ImageService imageService;
 
     @PostMapping
     @Operation(
@@ -85,6 +87,7 @@ public class OAuthController {
         };
         GameUser user = GameUser.builder()
                 .username(username)
+                .avatar(imageService.getDefaultAvatar())
                 .email(oAuthResponse.getEmail())
                 .password(passwordEncoder.encode(gameUserService.generatePassword()))
                 .role(Role.USER)
@@ -93,6 +96,14 @@ public class OAuthController {
                 .oauthId(oAuthResponse.getUser_id())
                 .oAuthUserEmbedded(new OAuthUserEmbedded(oAuthProvider, user))
                 .build();
+        Image avatar;
+        if(oAuthResponse.getAvatar()!=null && !oAuthResponse.getAvatar().isEmpty()){
+            avatar = Image.builder()
+                    .url(oAuthResponse.getAvatar())
+                    .file(null)
+                    .build();
+            user.setAvatar(avatar);
+        }
         user.addOAuthToUser(oAuthUser);
         gameUserService.create(user);
         return user;

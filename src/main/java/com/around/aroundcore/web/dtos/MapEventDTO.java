@@ -21,6 +21,7 @@ public class MapEventDTO {
     private Long ends;
     private String url;
     private Boolean is_ad;
+    private String image;
     @Schema(description = "chunks where map-event is located")
     private List<ChunkDTO> chunks;
 }

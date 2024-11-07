@@ -5,6 +5,7 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.OAuthUser;
 import com.around.aroundcore.database.models.OAuthUserEmbedded;
 import com.around.aroundcore.database.services.*;
+import com.around.aroundcore.web.dtos.auth.ChangePasswordDTO;
 import com.around.aroundcore.web.dtos.auth.OAuthDTO;
 import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
 import com.around.aroundcore.web.dtos.user.GameUserDTO;
@@ -26,12 +27,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +52,7 @@ import java.util.UUID;
 @SecurityRequirement(name = "JWT")
 public class GameUserController {
     private final SessionService sessionService;
+    private final PasswordEncoder passwordEncoder;
     private final OAuthProviderRouter oAuthProviderRouter;
     private final GameUserService userService;
     private final GameUserDTOMapper gameUserDTOMapper;
@@ -119,34 +122,30 @@ public class GameUserController {
     }
     @PatchMapping("/me")
     @Operation(
-            summary = "Changes some ingo about user by id",
+            summary = "Changes some info about user by id",
             description = "Allows to change some ingo about user by id."
     )
     @Transactional
-    public ResponseEntity<GameUserDTO> patchMe(@RequestBody @Validated UpdateGameUserDTO updateGameUserDTO){
+    public ResponseEntity<String> patchMe(@RequestBody @Validated UpdateGameUserDTO updateGameUserDTO){
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
         if(updateGameUserDTO.getUsername()!=null){
             userService.checkUsername(updateGameUserDTO.getUsername());
         }
-        try {
-            patcher.patch(user,updateGameUserDTO);
-        }  catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-            throw new ApiException(ApiResponse.UNKNOWN_ERROR);
+        patchUser(user,updateGameUserDTO);
+        if(updateGameUserDTO.getPassword()!=null){
+            updateGameUserDTO.getPassword().CheckIsPasswordsDifferent();
+            updatePassword(user,updateGameUserDTO.getPassword());
         }
-        userService.update(user);
-        if(updateGameUserDTO.getTeam_id()!=null){
+        userService.updateAndFlush(user);
+        if(updateGameUserDTO.getTeam_id()!=null && updateGameUserDTO.getCity_id()!=null){
             var team = teamService.findById(updateGameUserDTO.getTeam_id());
-            userService.updateTeamForRound(user,team,roundService.getCurrentRound());
-        }
-        if(updateGameUserDTO.getCity_id()!=null){
             var city = cityService.findById(updateGameUserDTO.getCity_id());
-            userService.updateCityForRound(user,city,roundService.getCurrentRound());
+            userService.createTeamCityForRound(user,team,city,roundService.getCurrentRound());
         }
-        GameUserDTO gameUserDTO = gameUserDTOMapper.apply(user);
 
-        return ResponseEntity.ok(gameUserDTO);
+        return ResponseEntity.ok("");
     }
     @GetMapping("/{id}")
     @Operation(
@@ -301,13 +300,25 @@ public class GameUserController {
                     .oAuthUserEmbedded(new OAuthUserEmbedded(oAuthDTO.getProvider(), user))
                     .build();
             user.addOAuthToUser(oAuthUser);
-            userService.create(user);
+            userService.update(user);
         }else{
          throw new GameUserOAuthProviderAlreadyExistsException();
         }
         return ResponseEntity.ok("");
     }
-
+    private void patchUser(GameUser user, UpdateGameUserDTO updateGameUserDTO) {
+        try {
+            patcher.patch(user, updateGameUserDTO);
+        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
+            throw new ApiException(ApiResponse.UNKNOWN_ERROR);
+        }
+    }
+    private void updatePassword(GameUser user, ChangePasswordDTO passwordDTO) {
+        if (!passwordEncoder.matches(passwordDTO.getOld_password(), user.getPassword())) {
+            throw new ApiException(ApiResponse.AUTH_INCORRECT_PASSWORD);
+        }
+        user.setPassword(passwordEncoder.encode(passwordDTO.getNew_password()));
+    }
     private List<GameUser> getUserFriendsSortedByCurrentRound(GameUser user){
         try{
             return user.getFriends().stream().sorted(Comparator.comparingLong(friend -> -friend.getCapturedChunks())).toList();

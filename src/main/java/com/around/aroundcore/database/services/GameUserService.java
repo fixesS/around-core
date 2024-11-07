@@ -42,6 +42,9 @@ public class GameUserService {
     public void update(GameUser user) {
         userRepository.save(user);
     }
+    public void updateAndFlush(GameUser user) {
+        userRepository.saveAndFlush(user);
+    }
     public GameUser findById(Integer id) throws GameUserNullException {
         return userRepository.findById(id).orElseThrow(GameUserNullException::new);
     }
@@ -75,10 +78,10 @@ public class GameUserService {
         }
     }
     public List<GameUser> getTop5(){
-        return userRepository.getStatTop5();
+        return userRepository.getStatTop(5);
     }
     public List<GameUser> getTopAll(){
-        return userRepository.getStatTopAll();
+        return userRepository.getStatTop(50);
     }
     public void updateTeamForRound(GameUser user, Team team, Round round){
         userRepository.setTeamForRound(round.getId(), team.getId(), user.getId());

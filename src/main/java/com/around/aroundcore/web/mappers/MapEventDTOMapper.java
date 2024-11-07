@@ -23,6 +23,7 @@ public class MapEventDTOMapper implements Function<MapEvent, MapEventDTO> {
                 .url(event.getUrl())
                 .provider(event.getProvider().getName())
                 .is_ad(event.isAd())
+                .image(event.getImage().getUrl())
                 .starts(timestampToEpoch(event.getStarts()))
                 .ends(timestampToEpoch(event.getEnds()))
                 .chunks(event.getChunks().stream().map(gameChunk -> ChunkDTO.builder().id(gameChunk.getId()).build()).toList())
