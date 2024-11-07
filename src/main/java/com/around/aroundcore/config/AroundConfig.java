@@ -55,8 +55,8 @@ public class AroundConfig {
     public static final String URL_ICON = "/"+AroundConfig.API_V1_IMAGE+"/icon/";
     public static final String URL_IMAGE = "/"+AroundConfig.API_V1_IMAGE+"/";
     public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.])[a-zA-Z\\d!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.]{8,100}$";
-    public static final String EMAIL_REGEX = "^[\\w-]+@([\\w-]+\\.)+[\\w-]+";
-    public static final String USERNAME_REGEX = "[a-zA-Z0-9]+";
+    public static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,6}$";
+    public static final String USERNAME_REGEX = "[a-zA-Z0-9]{2,40}";
     @Value("${around.coordsapi}")
     private String coordsAPIType;
     @Value("${geotree.api.key}")
