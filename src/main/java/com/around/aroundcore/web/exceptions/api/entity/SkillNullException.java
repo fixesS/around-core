@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.exceptions.entity;
+package com.around.aroundcore.web.exceptions.api.entity;
 
 import com.around.aroundcore.web.enums.ApiResponse;
 
