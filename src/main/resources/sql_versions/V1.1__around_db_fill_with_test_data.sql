@@ -19,8 +19,8 @@ INSERT INTO public.images(is_default,uuid,url,file)
 values (true,'2da609a9-f54a-4c64-bf8d-88e38cdbc541'::uuid,'https://aroundgame.ru/api/v1/image/width_skill_image.jpg','width_skill_image.jpg');
 INSERT INTO public.images(is_default,uuid,url,file)
 values (true,'aba1bbbe-af69-4da6-83ce-572546e2f37e'::uuid,'https://aroundgame.ru/api/v1/image/icon/width_skill_icon.svg','width_skill_icon.svg');
-INSERT INTO public.images(uuid,url,file)
-values ('aad50520-1509-4a34-925e-72bc182189e2'::uuid,'https://aroundgame.ru/api/v1/image/event.jpg','event.jpg');
+INSERT INTO images(UUID, URL, FILE)
+values ('f443a6e6-d81b-4eb6-9af4-bcecda7093f8'::uuid,'https://ucare.timepad.ru/55ad9c96-d442-413d-902b-d953ed5f5d36/-/format/jpeg/-/quality/smart/-/preview/1360x765/',null);
 
 INSERT INTO public.cities(chunks)
 Values('[
@@ -95,11 +95,11 @@ INSERT INTO public.event_providers
 (id, name, url)
 VALUES (1,'timepad','dev.timepad.ru');
 
--- INSERT INTO chunks(id, round_id,city_id, owner)
--- values (1,1,1,1);
---
--- INSERT INTO map_events(id,provider_id,"name",starts_at,ends_at,url,verified,ad)
--- values (1,1,'Тестовое событие','2024-09-11 00:00:00'::TIMESTAMP,'2024-12-14 23:59:59'::TIMESTAMP,'',false, false);
---
--- INSERT INTO map_events_chunks(event_id, round_id, city_id, chunk_id)
--- VALUES (1,1,1,1);
+INSERT INTO chunks(id, round_id,city_id, owner)
+values ('8b10c229952afff',1,1,1);
+
+INSERT INTO map_events(id,provider_id,"name",starts_at,ends_at,url,verified,ad, image_uuid, reward)
+values (1,1,'Снежная королева','2024-10-15 18:00:00'::TIMESTAMP,'2024-12-16 22:00:00'::TIMESTAMP,'https://afisha.timepad.ru/event/2999125',true, false,'f443a6e6-d81b-4eb6-9af4-bcecda7093f8',1);
+
+INSERT INTO map_events_chunks(event_id, round_id, city_id, chunk_id)
+VALUES (1,1,1,'8b10c229952afff');

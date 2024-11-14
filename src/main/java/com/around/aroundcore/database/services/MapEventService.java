@@ -63,6 +63,9 @@ public class MapEventService {
     public List<MapEvent> findAllVerifiedInCity(Integer cityId) {
         return mapEventRepository.findAllByVerifiedAndActiveAndCityId(true,true, cityId);
     }
+    public List<MapEvent> findVerifiedActiveByChunksAndNotVisitedByUser(List<String> chunkIds,Integer userId) {
+        return mapEventRepository.findVerifiedActiveByChunksAndNotVisitedByUser(chunkIds, userId);
+    }
     public boolean existByUrl(String url){
         return mapEventRepository.existsByUrl(url);
     }

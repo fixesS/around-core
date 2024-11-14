@@ -5,6 +5,7 @@ import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.OAuthUser;
 import com.around.aroundcore.database.models.OAuthUserEmbedded;
 import com.around.aroundcore.database.services.*;
+import com.around.aroundcore.web.dtos.MapEventDTO;
 import com.around.aroundcore.web.dtos.auth.ChangePasswordDTO;
 import com.around.aroundcore.web.dtos.auth.OAuthDTO;
 import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
@@ -19,6 +20,7 @@ import com.around.aroundcore.web.exceptions.api.entity.GameUserUsernameNotUnique
 import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
 import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
+import com.around.aroundcore.web.mappers.MapEventDTOMapper;
 import com.around.aroundcore.web.mappers.SkillDTOWithCurrentLevelMapper;
 import com.around.aroundcore.web.services.EntityPatcher;
 import com.around.aroundcore.web.services.apis.oauth.OAuthProviderRouter;
@@ -62,6 +64,7 @@ public class GameUserController {
     private final ApplicationEventPublisher eventPublisher;
     private final RoundService roundService;
     private final CityService cityService;
+    private final MapEventDTOMapper mapEventDTOMapper;
 
     @GetMapping("/me")
     @Operation(
@@ -119,6 +122,20 @@ public class GameUserController {
         List<SkillDTO> skillDTOS = user.getUserSkills().stream().map(skillDTOMapper).toList();
 
         return ResponseEntity.ok(skillDTOS);
+    }
+    @GetMapping("/me/events")
+    @Operation(
+            summary = "Gives visited events by user",
+            description = "Allows get info about visited events by user."
+    )
+    @Transactional
+    public ResponseEntity<List<MapEventDTO>> getMyVisitedEvents() {
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        List<MapEventDTO> mapEventDTOS = user.getVisitedEvents().stream().map(mapEventDTOMapper).toList();
+
+        return ResponseEntity.ok(mapEventDTOS);
     }
     @PatchMapping("/me")
     @Operation(

@@ -21,7 +21,6 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,21 +88,12 @@ public class ChunkWsController {
         user.addCapturedChunks(chunksDTOList.size()); // increase captured chunks value
         chunksDTOList.forEach(chunkDTO1 -> chunkDTO1.setRound_id(round.getId()));
 
-        //getting user visited events from verified events on map
-        List<MapEvent> visitedEvents = getVisitedByUserAndChunk(user, gameChunkService.findByIdAndRoundId(chunkDTO.getId(), round.getId()), city);
+        //getting visited events (NOW) for user (in DB they are not visited yet)
+        List<MapEvent> visitedEvents = mapEventService.findVerifiedActiveByChunksAndNotVisitedByUser(List.of(chunkDTO.getId()),user.getId());
         user.addVisitedEvents(visitedEvents);
+        user.addCoins(visitedEvents.stream().mapToInt(MapEvent::getReward).sum());//sum of rewards
         userService.update(user);
 
         chunkQueueService.addToQueue(chunksDTOList);
-    }
-    private List<MapEvent> getVisitedByUserAndChunk(GameUser user, GameChunk gameChunk, City city){
-        List<MapEvent> visitedEvents = new ArrayList<>();
-        List<MapEvent> eventsOnMap = mapEventService.findAllVerifiedInCity(city.getId());
-        eventsOnMap.forEach(event -> {
-            if (!user.getVisitedEvents().contains(event) && event.getChunks().contains(gameChunk)){
-                visitedEvents.add(event);
-            }
-        });
-        return visitedEvents;
     }
 }

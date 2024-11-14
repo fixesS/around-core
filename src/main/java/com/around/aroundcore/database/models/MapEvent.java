@@ -41,15 +41,17 @@ public class MapEvent implements Serializable {
     private boolean active;
     @Column(name = "ad")
     private boolean isAd;
+    @Column
+    private Integer reward;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "map_events_chunks",
             joinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "chunk_id", referencedColumnName = "id")
     )
     private List<GameChunk> chunks;
-    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "map_events_categories",
             joinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id"),

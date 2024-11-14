@@ -181,6 +181,7 @@ CREATE TABLE public.map_events (
     active bool NOT NULL DEFAULT false,
     image_uuid uuid not null DEFAULT 'aad50520-1509-4a34-925e-72bc182189e2'::uuid,
     ad bool NOT NULL DEFAULT false,
+    reward int4 not null default 0,
     CONSTRAINT map_events_pk PRIMARY KEY (id),
     CONSTRAINT map_events_images_fkey FOREIGN KEY (image_uuid) references public.images(uuid),
     CONSTRAINT map_events_provider_fk FOREIGN KEY (provider_id) REFERENCES public.event_providers(id),
