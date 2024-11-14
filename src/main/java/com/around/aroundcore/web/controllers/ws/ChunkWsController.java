@@ -76,22 +76,26 @@ public class ChunkWsController {
             return;
         }
 
-        if(!city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(),city.getChunksResolution()))){// if chunk is not in user city
+        if(!city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(),city.getChunksResolution()))){// if chunk is out of the user city
             ApiError apiError = ApiResponse.getApiError(ApiResponse.CHUNK_DOES_NOT_CORRELATES_WITH_USER_CITY);
             messagingTemplate.convertAndSendToUser(user.getUsername(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
             return;
         }
 
-        List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill); // getting neighbours for width userskill level
-        chunksDTOList = chunksDTOList.stream().filter(chunk -> city.containsChunkDTO(h3ChunkService.getParentId(chunk.getId(),city.getChunksResolution()))).toList(); // filtering for chunks by city
+        // getting neighbours for width userskill level
+        List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill);
+        // filtering for chunks by city (remove chunks that out of the city)
+        chunksDTOList = chunksDTOList.stream().filter(chunk -> city.containsChunkDTO(h3ChunkService.getParentId(chunk.getId(),city.getChunksResolution()))).toList();
         gameChunkService.saveListOfChunkDTOs(chunksDTOList, user, round, city);// adding chunks
         user.addCapturedChunks(chunksDTOList.size()); // increase captured chunks value
-        chunksDTOList.forEach(chunkDTO1 -> chunkDTO1.setRound_id(round.getId()));
+        // todo think about rewarding for only one captured chunk on next meeting
+        user.addCoins(chunksDTOList.size()*round.getGameSettings().getChunkReward());//add reward for each chunk to coins
+        chunksDTOList.forEach(chunkDTO1 -> chunkDTO1.setRound_id(round.getId()));// setting round for correct output from chunk queue
 
         //getting visited events (NOW) for user (in DB they are not visited yet)
         List<MapEvent> visitedEvents = mapEventService.findVerifiedActiveByChunksAndNotVisitedByUser(List.of(chunkDTO.getId()),user.getId());
         user.addVisitedEvents(visitedEvents);
-        user.addCoins(visitedEvents.stream().mapToInt(MapEvent::getReward).sum());//sum of rewards
+        user.addCoins(visitedEvents.stream().mapToInt(MapEvent::getReward).sum());//add sum of rewards to coins
         userService.update(user);
 
         chunkQueueService.addToQueue(chunksDTOList);

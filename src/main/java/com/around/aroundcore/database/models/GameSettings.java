@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "game", schema = "settings")
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameSettings {
