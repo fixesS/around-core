@@ -14,7 +14,7 @@ import java.util.*;
 
 @Slf4j
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "public")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -95,7 +95,7 @@ public class GameUser implements UserDetails {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
-            name="map_events_users",
+            name="events_users", schema = "map_events",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
     )

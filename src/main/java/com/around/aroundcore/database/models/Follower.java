@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Getter
 @Entity
-@Table(name = "users_followers")
+@Table(name = "users_followers", schema = "public")
 public class Follower {
     @Id
     @Column(name = "user_id")

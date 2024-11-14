@@ -6,7 +6,7 @@ import lombok.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "chunks")
+@Table(name = "chunks", schema = "public")
 @IdClass(GameChunkEmbedded.class)
 @Builder
 @AllArgsConstructor

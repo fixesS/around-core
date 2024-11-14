@@ -9,7 +9,7 @@ import lombok.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "event_categories")
+@Table(name = "categories", schema = "map_events")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

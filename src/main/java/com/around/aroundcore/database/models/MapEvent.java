@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "map_events")
+@Table(name = "events", schema = "map_events")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,14 +46,14 @@ public class MapEvent implements Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "map_events_chunks",
+            name = "events_chunks", schema = "map_events",
             joinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "chunk_id", referencedColumnName = "id")
     )
     private List<GameChunk> chunks;
     @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "map_events_categories",
+            name = "events_categories", schema = "map_events",
             joinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "id")
     )

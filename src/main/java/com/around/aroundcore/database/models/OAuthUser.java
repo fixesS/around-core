@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "users_oauth")
+@Table(name = "users_oauth", schema = "public")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

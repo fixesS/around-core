@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "rounds")
+@Table(name = "rounds", schema = "public")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,6 +43,10 @@ public class Round implements Serializable {
 
     @Column
     private Boolean active;
+
+    @ManyToOne
+    @JoinColumn(name = "game_settings_id", referencedColumnName = "id")
+    private GameSettings gameSettings;
 
     @Override
     public boolean equals(Object o) {

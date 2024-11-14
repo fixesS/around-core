@@ -15,7 +15,7 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name = "users_skills")
+@Table(name = "users_skills", schema = "public")
 @Getter
 @Setter
 @Data

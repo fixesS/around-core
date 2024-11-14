@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Entity
-@Table(name = "users_rounds_team_city")
+@Table(name = "users_rounds_team_city", schema = "public")
 @ToString
 @Getter
 @IdClass(UserRoundTeamCityEmbedded.class)

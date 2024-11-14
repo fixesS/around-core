@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "skills")
+@Table(name = "skills", schema = "public")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

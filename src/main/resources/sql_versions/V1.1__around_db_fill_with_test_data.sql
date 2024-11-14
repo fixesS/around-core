@@ -10,8 +10,11 @@ VALUES('PURPLE');
 INSERT INTO public.teams(color)
 VALUES('DARK_PURPLE');
 
-INSERT INTO public.rounds(starts, ends,active)
-Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, true );
+INSERT INTO settings.game(id,chunk_reward)
+values (1,1);
+
+INSERT INTO public.rounds(starts, ends,active, game_settings_id)
+Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, true , 1);
 
 INSERT INTO public.images(is_default,uuid,url,file)
 values (true,'b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid,'https://aroundgame.ru/api/v1/image/avatar/guest.jpg','guest.jpg');
@@ -46,7 +49,7 @@ INSERT INTO public.users ("level", coins, username, "password", "role", email, v
 VALUES(1, 0, 'username', '$2a$10$yatZBPQE4uvwPoRSwN/8ZuyJXpBY8HTOGlknkfB4dTbfNlREA4UsS',
        'USER', 'mikefixeloqq@gmail.com', true);
 
-INSERT INTO public.costs
+INSERT INTO settings.costs
 (id, cost_value)
 VALUES(0, '[
   0,
@@ -63,7 +66,7 @@ VALUES(0, '[
   10880
 ]');
 
-INSERT INTO public.rules
+INSERT INTO settings.rules
 (id, rule_value)
 VALUES(0, '[
   1,
@@ -87,19 +90,23 @@ INSERT INTO public.skills
 ("name", max_level, description, rule_id, cost_id)
 VALUES('width', 11, ''::character varying, 0, 0);
 
-INSERT INTO public.users_skills
-(user_id, skill_id, current_level)
+INSERT INTO public.users_skills(user_id, skill_id, current_level)
 VALUES(1, 1, 0);
 
-INSERT INTO public.event_providers
-(id, name, url)
+INSERT INTO map_events.providers(id, name, url)
 VALUES (1,'timepad','dev.timepad.ru');
 
 INSERT INTO chunks(id, round_id,city_id, owner)
 values ('8b10c229952afff',1,1,1);
 
-INSERT INTO map_events(id,provider_id,"name",starts_at,ends_at,url,verified,ad, image_uuid, reward)
+INSERT INTO map_events.categories(id,"name")
+values (1,'Вечеринки');
+
+INSERT INTO map_events.events(id,provider_id,"name",starts_at,ends_at,url,verified,ad, image_uuid, reward)
 values (1,1,'Снежная королева','2024-10-15 18:00:00'::TIMESTAMP,'2024-12-16 22:00:00'::TIMESTAMP,'https://afisha.timepad.ru/event/2999125',true, false,'f443a6e6-d81b-4eb6-9af4-bcecda7093f8',1);
 
-INSERT INTO map_events_chunks(event_id, round_id, city_id, chunk_id)
+INSERT INTO map_events.events_categories(event_id, category_id)
+values (1,1);
+
+INSERT INTO map_events.events_chunks(event_id, round_id, city_id, chunk_id)
 VALUES (1,1,1,'8b10c229952afff');

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Slf4j
 @Entity
-@Table(name = "teams")
+@Table(name = "teams", schema = "public")
 @Getter
 public class Team implements Serializable {
 

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @ToString
 @Entity
-@Table(name = "images")
+@Table(name = "images", schema = "public")
 @Builder
 @Getter
 @NoArgsConstructor

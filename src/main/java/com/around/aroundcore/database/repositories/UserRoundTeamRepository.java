@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface UserRoundTeamRepository extends JpaRepository<UserRoundTeamCity, UserRoundTeamCityEmbedded> {
-    @Query(nativeQuery = true, value = "select * from user_round_team where user_round_team.team_id = :teamId and user_round_team.round_id = :roundId ;")
+    @Query(nativeQuery = true, value = "select urtc from public.users_rounds_team_city urtc where urtc.team_id = :teamId and urtc.round_id = :roundId ;")
     List<UserRoundTeamCity> findByRoundIdAndTeamId(@Param("roundId") Integer roundId, @Param("teamId") Integer teamId);
 }

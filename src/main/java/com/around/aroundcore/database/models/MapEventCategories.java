@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Getter
 @Entity
-@Table(name = "map_events_categories")
+@Table(name = "events_categories", schema = "map_events")
 public class MapEventCategories {
 
     @Id
