@@ -23,6 +23,8 @@ public class MapEvent implements Serializable {
     private Integer id;
     @Column
     private String name;
+    @Column
+    private String description;
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "provider_id", referencedColumnName = "id")
     private EventProvider provider;
