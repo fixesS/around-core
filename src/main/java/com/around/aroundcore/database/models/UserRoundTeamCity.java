@@ -5,6 +5,8 @@ import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.function.Predicate;
 
 @Entity
 @Table(name = "users_rounds_team_city", schema = "public")
+@FilterDef(name = "activeRoundFilter",parameters = @ParamDef(name = "active", type = Boolean.class), defaultCondition="round_id IN (SELECT r.id FROM rounds r WHERE r.active = :active)")
 @ToString
 @Getter
 @IdClass(UserRoundTeamCityEmbedded.class)

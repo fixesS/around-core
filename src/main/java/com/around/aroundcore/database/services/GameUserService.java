@@ -1,11 +1,13 @@
 package com.around.aroundcore.database.services;
 
+import com.around.aroundcore.database.EntityFilters;
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.database.repositories.GameUserRepository;
 import com.around.aroundcore.web.exceptions.api.entity.GameUserEmailNotUnique;
 import com.around.aroundcore.web.exceptions.api.entity.GameUserNullException;
 import com.around.aroundcore.web.exceptions.api.entity.GameUserUsernameNotUnique;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import java.util.Random;
 public class GameUserService {
     private final GameUserRepository userRepository;
     private final SkillService skillService;
+    private final EntityManager entityManager;
     private final Random random = new Random();
 
     @Transactional
@@ -45,17 +48,33 @@ public class GameUserService {
     public void updateAndFlush(GameUser user) {
         userRepository.saveAndFlush(user);
     }
+    @Transactional
     public GameUser findById(Integer id) throws GameUserNullException {
-        return userRepository.findById(id).orElseThrow(GameUserNullException::new);
+        org.hibernate.Session hibernateSession = entityManager.unwrap(org.hibernate.Session.class);
+        hibernateSession.enableFilter(EntityFilters.ACTIVE_ROUND.getName()).setParameter(EntityFilters.ACTIVE_ROUND.getParameter(),true);
+        GameUser user = userRepository.findOneById(id).orElseThrow(GameUserNullException::new);
+        hibernateSession.disableFilter(EntityFilters.ACTIVE_ROUND.getName());
+        return user;
+
     }
+    @Transactional
     public GameUser findByEmail(String email) throws GameUserNullException {
-        return userRepository.findByEmail(email).orElseThrow(GameUserNullException::new);
+        org.hibernate.Session hibernateSession = entityManager.unwrap(org.hibernate.Session.class);
+        hibernateSession.enableFilter(EntityFilters.ACTIVE_ROUND.getName()).setParameter(EntityFilters.ACTIVE_ROUND.getParameter(),true);
+        GameUser user =  userRepository.findByEmail(email).orElseThrow(GameUserNullException::new);
+        hibernateSession.disableFilter(EntityFilters.ACTIVE_ROUND.getName());
+        return user;
     }
+    @Transactional
     public GameUser findByUsername(String username) throws GameUserNullException {
-        return userRepository.findByUsername(username).orElseThrow(GameUserNullException::new);
+        org.hibernate.Session hibernateSession = entityManager.unwrap(org.hibernate.Session.class);
+        hibernateSession.enableFilter(EntityFilters.ACTIVE_ROUND.getName()).setParameter(EntityFilters.ACTIVE_ROUND.getParameter(),true);
+        GameUser user =  userRepository.findByUsername(username).orElseThrow(GameUserNullException::new);
+        hibernateSession.disableFilter(EntityFilters.ACTIVE_ROUND.getName());
+        return user;
     }
     public List<GameUser> findByUsernameContaining(String username) {
-        return userRepository.findByUsernameContaining(username);
+        return  userRepository.findByUsernameContaining(username);
     }
     public List<GameUser> findAll() {
         return userRepository.findAll();

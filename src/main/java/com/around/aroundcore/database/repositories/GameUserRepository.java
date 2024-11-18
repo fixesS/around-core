@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface GameUserRepository extends JpaRepository<GameUser, Integer> {
+    Optional<GameUser> findOneById(Integer id);
     Optional<GameUser> findByEmail(String email);
     Optional<GameUser> findByUsername(String username);
     List<GameUser> findByUsernameContaining(String username);

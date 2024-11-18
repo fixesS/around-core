@@ -96,7 +96,8 @@ public enum ApiResponse {
         apiError.setMessage(message);
 
         return apiError;
-    }    @Override
+    }
+    @Override
     public String toString(){
         return this.statusCode.toString();
     }

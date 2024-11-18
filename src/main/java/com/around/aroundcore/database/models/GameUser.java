@@ -6,6 +6,9 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Filter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -66,6 +69,7 @@ public class GameUser implements UserDetails {
     private List<OAuthUser> oAuths;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     @Getter
     @JoinTable(
             name = "users_rounds_team_city",
@@ -75,6 +79,7 @@ public class GameUser implements UserDetails {
                     @JoinColumn(name = "round_id", referencedColumnName = "round_id",insertable=false, updatable=false),
                     @JoinColumn(name = "city_id", referencedColumnName = "city_id",insertable=false, updatable=false)}
     )
+    @Filter(name = "activeRoundFilter")
     private List<UserRoundTeamCity> userRoundTeamCities;
     @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter

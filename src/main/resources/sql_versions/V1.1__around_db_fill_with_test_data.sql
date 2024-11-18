@@ -15,6 +15,8 @@ values (1,1);
 
 INSERT INTO public.rounds(starts, ends,active, game_settings_id)
 Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, true , 1);
+INSERT INTO public.rounds(starts, ends,active, game_settings_id)
+Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, false , 1);
 
 INSERT INTO public.images(is_default,uuid,url,file)
 values (true,'b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid,'https://aroundgame.ru/api/v1/image/avatar/guest.jpg','guest.jpg');
@@ -85,6 +87,8 @@ VALUES(0, '[
 
 INSERT INTO public.users_rounds_team_city(user_id, round_id, city_id, team_id)
 VALUES (1,1,1, 1);
+INSERT INTO public.users_rounds_team_city(user_id, round_id, city_id, team_id)
+VALUES (1,2,1, 2);
 
 INSERT INTO public.skills
 ("name", max_level, description, rule_id, cost_id)
