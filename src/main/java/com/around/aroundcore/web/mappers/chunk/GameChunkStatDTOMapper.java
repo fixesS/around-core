@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.mappers;
+package com.around.aroundcore.web.mappers.chunk;
 
 import com.around.aroundcore.database.models.GameChunk;
 import com.around.aroundcore.web.dtos.stat.ChunkStatDTO;

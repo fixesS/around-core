@@ -45,8 +45,8 @@ public class JwtAuthenticationToken implements Authentication {
     }
 
     @Override
-    public String getName() {
-        return user.getUsername();
+    public String getName() {// IT IS USER IN WEBSOCKETS (MESSAGING TEMPLATE -> SEND TO USER)
+        return user.getId().toString();
     }
 
     public JwtAuthenticationToken(

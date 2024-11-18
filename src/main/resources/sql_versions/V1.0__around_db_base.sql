@@ -62,7 +62,6 @@ CREATE TABLE public.users(
     "role" varchar NOT NULL,
     email varchar NOT NULL,
     verified bool NOT NULL DEFAULT false,
-    captured_chunks int8 not null DEFAULT 0,
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT users_images_fkey FOREIGN KEY (avatar_uuid) references public.images(uuid),
     UNIQUE (email, username)
@@ -79,6 +78,7 @@ CREATE TABLE public.users_rounds_team_city(
     round_id int8 NOT NULL,
     team_id int8 NOT NULL,
     city_id int8 NOT NULL,
+    captured_chunks int8 not null DEFAULT 0,
     CONSTRAINT users_rounds_team_pk PRIMARY KEY (user_id,round_id,city_id),
     CONSTRAINT urt_city_id_fkey FOREIGN KEY (city_id) REFERENCES public.cities (id),
     CONSTRAINT urt_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.teams (id),

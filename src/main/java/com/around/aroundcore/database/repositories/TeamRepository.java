@@ -13,6 +13,8 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
     boolean existsById(Integer id);
 
     @Query(value = "select t from public.teams t where t.id in (select urt.team_id from public.users_rounds_team_city urt where user_id = :userId and round_id in (select r.id from public.rounds r where active = true))", nativeQuery = true)
-    Optional<Team> findTeamByCurrentRoundForUser(@Param("userId") Integer user_id );
+    Optional<Team> findTeamByCurrentRoundForUser(@Param("userId") Integer userId );
+
+    @Query(nativeQuery = true, value = "select t from public.teams t order by random() limit 1;")
+    Team getRandomTeam();
 }
-;

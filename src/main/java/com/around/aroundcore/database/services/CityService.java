@@ -25,6 +25,9 @@ public class CityService {
             throw new CityNullException();
         }
     }
+    public List<City> findByUserAndRound(Integer userId, Integer round){
+        return cityRepository.findCitiesByUserAndRound(userId, round);
+    }
     public List<City> findAll(){
         return cityRepository.findAll();
     }

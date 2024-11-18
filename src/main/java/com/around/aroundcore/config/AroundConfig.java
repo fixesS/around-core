@@ -1,7 +1,7 @@
 package com.around.aroundcore.config;
 
 import com.around.aroundcore.web.enums.CoordsAPIType;
-import com.around.aroundcore.web.mappers.StringGameChunkDTOMapper;
+import com.around.aroundcore.web.mappers.chunk.StringGameChunkDTOMapper;
 import com.around.aroundcore.web.services.H3ChunkService;
 import com.around.aroundcore.web.services.apis.coords.CoordsAPI;
 import com.around.aroundcore.web.services.apis.coords.DadataAPIService;

@@ -54,11 +54,6 @@ public class GameUser implements UserDetails {
     @Setter
     @Getter
     private Boolean verified = false;
-    @Column(name = "captured_chunks",nullable = false, columnDefinition = "int8 default 0")
-    @Builder.Default
-    @Getter
-    private Long capturedChunks = 0L;
-
     @Column
     @Getter
     @Enumerated(EnumType.STRING)
@@ -181,10 +176,6 @@ public class GameUser implements UserDetails {
     }
     public List<GameUserSkill> getUserSkills() {
         return Collections.unmodifiableList(userSkills);
-    }
-
-    public void addCapturedChunks(Integer value){
-        this.capturedChunks += value;
     }
     @Override
     public String getPassword() {

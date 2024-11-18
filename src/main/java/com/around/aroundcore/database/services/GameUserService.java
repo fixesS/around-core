@@ -2,6 +2,7 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.EntityFilters;
 import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
 import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.database.repositories.GameUserRepository;
 import com.around.aroundcore.web.exceptions.api.entity.GameUserEmailNotUnique;
@@ -25,6 +26,7 @@ public class GameUserService {
     private final SkillService skillService;
     private final EntityManager entityManager;
     private final Random random = new Random();
+    private final UserRoundTeamRepository userRoundTeamRepository;
 
     @Transactional
     public void create(GameUser user) {
@@ -72,6 +74,11 @@ public class GameUserService {
         GameUser user =  userRepository.findByUsername(username).orElseThrow(GameUserNullException::new);
         hibernateSession.disableFilter(EntityFilters.ACTIVE_ROUND.getName());
         return user;
+    }
+    public void increaseCapturedChunksToUserInRoundInCity(GameUser user, Round round, City city, Integer amount){
+        if(amount>=0){
+            userRoundTeamRepository.increaseCapturedChunks(user.getId(), round.getId(),city.getId(),amount);
+        }
     }
     public List<GameUser> findByUsernameContaining(String username) {
         return  userRepository.findByUsernameContaining(username);

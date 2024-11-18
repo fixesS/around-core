@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.mappers;
+package com.around.aroundcore.web.mappers.chunk;
 
 import com.around.aroundcore.web.dtos.ChunkDTO;
 

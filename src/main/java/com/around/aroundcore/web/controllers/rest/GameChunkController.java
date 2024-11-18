@@ -9,7 +9,7 @@ import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
 import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;
 import com.around.aroundcore.web.exceptions.api.entity.TeamNullException;
 import com.around.aroundcore.web.exceptions.api.entity.URTNullException;
-import com.around.aroundcore.web.mappers.GameChunkDTOMapper;
+import com.around.aroundcore.web.mappers.chunk.GameChunkDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;

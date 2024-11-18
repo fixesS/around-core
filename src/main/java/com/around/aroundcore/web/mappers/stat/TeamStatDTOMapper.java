@@ -1,4 +1,4 @@
-package com.around.aroundcore.web.mappers;
+package com.around.aroundcore.web.mappers.stat;
 
 import com.around.aroundcore.database.models.City;
 import com.around.aroundcore.database.models.Team;
@@ -8,6 +8,7 @@ import com.around.aroundcore.database.services.GameChunkService;
 import com.around.aroundcore.web.dtos.stat.CityStatDTO;
 import com.around.aroundcore.web.dtos.stat.RoundStatDTO;
 import com.around.aroundcore.web.dtos.stat.TeamStatDTO;
+import com.around.aroundcore.web.mappers.chunk.GameChunkStatDTOMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,30 +30,26 @@ public class TeamStatDTOMapper implements Function<Team, TeamStatDTO> {
         return TeamStatDTO.builder()
                 .color(team.getColor())
                 .id(team.getId())
-                .cities(getCityStatDTO(team))
+                .cities(getRoundStatDTOS(team))
                 .build();
     }
-    public List<CityStatDTO> getCityStatDTO(Team team){
-        List<CityStatDTO> cityStatDTOs = new ArrayList<>();
-        List<UserRoundTeamCity> URTs = UserRoundTeamCity.getURTsDistinctByRound(team.getUserRoundTeamCity());
-        List<City> cities = cityService.findAll();
-        cities.forEach(city -> {
-            List<RoundStatDTO> roundStatDTOs = new ArrayList<>();
-            URTs.forEach(urt -> {
+    public List<RoundStatDTO> getRoundStatDTOS(Team team){
+        List<RoundStatDTO> rounds = new ArrayList<>();
+        List<UserRoundTeamCity> teamURTCsByRound = UserRoundTeamCity.getURTsDistinctByRound(team.getUserRoundTeamCity());
+        List<City> allCities = cityService.findAll();
+        teamURTCsByRound.forEach(urt -> {
+            List<CityStatDTO> cities = new ArrayList<>();
+            allCities.forEach(city -> {
                 var chunks = gameChunkService.findAllByRoundAndTeamAndCity(urt.getRound(), team, city);
-                roundStatDTOs.add(RoundStatDTO.builder()
-                        .round_id(urt.getRound().getId())
-                        .number_of_chunks(chunks.size())
+                cities.add(CityStatDTO.builder()
+                        .team_id(team.getId())
+                        .name(city.getName())
+                        .chunks_now(chunks.size())
                         .chunks(chunks.stream().map(chunkDTOMapper).toList())
                         .build());
-                });
-
-            cityStatDTOs.add(CityStatDTO.builder()
-                    .city_id(city.getId())
-                    .name(city.getName())
-                    .rounds(roundStatDTOs)
-                    .build());
+            });
+            rounds.add(RoundStatDTO.builder().round_id(urt.getRound().getId()).cities(cities).build());
         });
-        return cityStatDTOs;
+        return rounds;
     }
 }

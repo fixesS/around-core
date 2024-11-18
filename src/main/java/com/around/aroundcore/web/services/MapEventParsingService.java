@@ -18,7 +18,7 @@ import com.around.aroundcore.web.exceptions.api.EventsNotFoundException;
 import com.around.aroundcore.web.exceptions.api.LocationNullException;
 import com.around.aroundcore.web.exceptions.api.entity.EventProviderNullException;
 import com.around.aroundcore.web.mappers.CategoryMapper;
-import com.around.aroundcore.web.mappers.GameChunkMapper;
+import com.around.aroundcore.web.mappers.chunk.GameChunkMapper;
 import com.around.aroundcore.web.mappers.LocationMapper;
 import com.around.aroundcore.web.services.apis.coords.CoordsAPI;
 import com.around.aroundcore.web.services.apis.events.TimepadAPIService;

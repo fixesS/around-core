@@ -14,7 +14,6 @@ import java.util.List;
 @Transactional
 public class TeamService {
     private TeamRepository teamRepository;
-
     public Team findById(Integer id) throws TeamNullException {
         return teamRepository.findById(id).orElseThrow(TeamNullException::new);
     }
@@ -29,5 +28,7 @@ public class TeamService {
             throw new TeamNullException();
         }
     }
-
+    public Team getRandomTeam(){
+        return teamRepository.getRandomTeam();
+    }
 }

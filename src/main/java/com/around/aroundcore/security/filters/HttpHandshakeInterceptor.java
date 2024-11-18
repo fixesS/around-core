@@ -32,7 +32,7 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
 
         try{
             log.debug("Getting team from user in current round");
-            UserRoundTeamCity.findTeamForCurrentRoundAndUser(user);
+            UserRoundTeamCity.findTeamByAnyCityForUser(user);
             return true;
         }catch (GameUserTeamCityNullForRound | NoActiveRoundException e){
             log.debug("User has no team in current round");

@@ -32,7 +32,7 @@ public class UpgradeHttpToWebSocketHandshakeHandler extends DefaultHandshakeHand
         JwtAuthenticationToken authentication = new JwtAuthenticationToken(session);
         authentication.setAuthenticated(true);
         try{
-            UserRoundTeamCity.findTeamForCurrentRoundAndUser(user);
+            UserRoundTeamCity.findTeamByAnyCityForUser(user);
             authentication.setAuthenticated(true);
         }catch (NoActiveRoundException | GameUserTeamCityNullForRound e){
             authentication.setAuthenticated(false);

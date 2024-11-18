@@ -3,6 +3,7 @@ package com.around.aroundcore.database.models;
 import com.around.aroundcore.web.exceptions.api.entity.GameUserTeamCityNullForRound;
 import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.hibernate.annotations.FilterDef;
@@ -42,23 +43,24 @@ public class UserRoundTeamCity implements Serializable {
     @JoinColumn(name = "team_id", referencedColumnName = "id")
     private Team team;
 
+    @Column(name = "captured_chunks",nullable = false)
+    @Getter
+    private Long capturedChunks = 0L;
 
-    public static Round findCurrentRoundFromURTs(List<UserRoundTeamCity> urts) throws GameUserTeamCityNullForRound {
-        return urts.stream().filter(urt1->urt1.getRound().getActive()).findFirst().orElseThrow(GameUserTeamCityNullForRound::new).getRound();
+    public static Team findTeamByAnyCityForUser(GameUser user) throws NoActiveRoundException, GameUserTeamCityNullForRound {
+        return user.getUserRoundTeamCities().stream().findFirst().orElseThrow(GameUserTeamCityNullForRound::new).getTeam();
     }
-    public static boolean checkIfExistCurrentURTCFromURTCs(List<UserRoundTeamCity> urts) {
-        return urts.stream().anyMatch(urt1->urt1.getRound().getActive());
+    public static Team findTeamByCityForUser(GameUser user, City city) throws NoActiveRoundException, GameUserTeamCityNullForRound {
+        return user.getUserRoundTeamCities().stream().filter(urtc ->  urtc.getCity().equals(city)).findFirst().orElseThrow(GameUserTeamCityNullForRound::new).getTeam();
     }
-    public static Team findTeamForCurrentRoundAndUser(GameUser user) throws NoActiveRoundException, GameUserTeamCityNullForRound {
-        var round = findCurrentRoundFromURTs(user.getUserRoundTeamCities());
-        return user.getUserRoundTeamCities().stream().filter(urt -> urt.getUser().equals(user) && urt.getRound().equals(round)).findFirst().orElseThrow(GameUserTeamCityNullForRound::new).getTeam();
-    }
-    public static City findCityForCurrentRoundAndUser(GameUser user) throws NoActiveRoundException, GameUserTeamCityNullForRound {
-        var round = findCurrentRoundFromURTs(user.getUserRoundTeamCities());
-        return user.getUserRoundTeamCities().stream().filter(urt -> urt.getUser().equals(user) && urt.getRound().equals(round)).findFirst().orElseThrow(GameUserTeamCityNullForRound::new).getCity();
+    public static List<City> findCitiesForUser(GameUser user) throws NoActiveRoundException, GameUserTeamCityNullForRound {
+        return user.getUserRoundTeamCities().stream().filter(urt -> urt.getUser().equals(user)).map(UserRoundTeamCity::getCity).toList();
     }
     public static List<UserRoundTeamCity> getURTsDistinctByUser(List<UserRoundTeamCity> urts){
         return urts.stream().filter(distinctByKey(UserRoundTeamCity::getUser)).toList();
+    }
+    public static List<UserRoundTeamCity> getURTsDistinctByCity(List<UserRoundTeamCity> urts){
+        return urts.stream().filter(distinctByKey(UserRoundTeamCity::getCity)).toList();
     }
     public static List<UserRoundTeamCity> getURTsDistinctByRound(List<UserRoundTeamCity> urts){
         return urts.stream().filter(distinctByKey(UserRoundTeamCity::getRound)).toList();

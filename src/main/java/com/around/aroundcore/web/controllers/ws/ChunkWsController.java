@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -37,6 +38,7 @@ public class ChunkWsController {
     private final SimpMessagingTemplate messagingTemplate;
     public static final String CHUNK_CHANGES_FROM_USER = "/chunk.changes";
     public static final String CHUNK_CHANGES_EVENT = "/topic/chunk.event";
+    private final RoundService roundService;
 
     @SubscribeMapping(CHUNK_CHANGES_EVENT)
     public void fetchChunkChangesEvent(Principal principal){
@@ -57,38 +59,47 @@ public class ChunkWsController {
         Session session;
         GameUserSkill userWidthSkill;
         Round round;
-        City city;
+        List<City> cities;
 
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
         var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
         try {
+            roundService.getCurrentRound();//check if game is active
             session = sessionService.findByUuid(sessionUuid);
             user = session.getUser();
             userWidthSkill = user.getUserSkillBySkillId(Skills.WIDTH.getId());
-            round = UserRoundTeamCity.findCurrentRoundFromURTs(user.getUserRoundTeamCities());
-            city = UserRoundTeamCity.findCityForCurrentRoundAndUser(user);
+            round = user.getUserRoundTeamCities().get(0).getRound();
+            cities = UserRoundTeamCity.findCitiesForUser(user);
         }catch (ApiException e){
             log.error(e.getMessage());
             if(user != null){
                 ApiError apiError = ApiResponse.getApiError(e.getResponse());
-                messagingTemplate.convertAndSendToUser(user.getUsername(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
+                messagingTemplate.convertAndSendToUser(user.getId().toString(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
             }
             return;
         }
 
-        if(!city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(),city.getChunksResolution()))){// if chunk is out of the user city
-            ApiError apiError = ApiResponse.getApiError(ApiResponse.CHUNK_DOES_NOT_CORRELATES_WITH_USER_CITY);
-            messagingTemplate.convertAndSendToUser(user.getUsername(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
+        //find city by chunk
+        Optional<City> cityOptional = cities.stream()
+                .filter(city -> city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(), city.getChunksResolution())))
+                .findFirst();
+        if (cityOptional.isEmpty()) {
+            ApiError apiError = ApiResponse.getApiError(ApiResponse.CHUNK_DOES_NOT_CORRELATE_WITH_USER_CITY);
+            messagingTemplate.convertAndSendToUser(user.getId().toString(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
             return;
         }
+        City city = cityOptional.get();
+
 
         // getting neighbours for width userskill level
         List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill);
         // filtering for chunks by city (remove chunks that out of the city)
-        chunksDTOList = chunksDTOList.stream().filter(chunk -> city.containsChunkDTO(h3ChunkService.getParentId(chunk.getId(),city.getChunksResolution()))).toList();
+
+        chunksDTOList = chunksDTOList.stream()
+                .filter(chunk -> city.containsChunkDTO(h3ChunkService.getParentId(chunk.getId(),city.getChunksResolution())))
+                .toList();
         gameChunkService.saveListOfChunkDTOs(chunksDTOList, user, round, city);// adding chunks
-        user.addCapturedChunks(chunksDTOList.size()); // increase captured chunks value
-        // todo think about rewarding for only one captured chunk on next meeting
+        userService.increaseCapturedChunksToUserInRoundInCity(user,round,city,chunksDTOList.size());
         user.addCoins(chunksDTOList.size()*round.getGameSettings().getChunkReward());//add reward for each chunk to coins
         chunksDTOList.forEach(chunkDTO1 -> chunkDTO1.setRound_id(round.getId()));// setting round for correct output from chunk queue
 

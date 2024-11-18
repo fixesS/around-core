@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -35,6 +37,12 @@ public class RoundService {
         teamService.checkById(teamId);
         Round round = roundRepository.findFirstByActiveIsTrue().orElseThrow(NoActiveRoundException::new);
         return userRoundTeamRepository.findByRoundIdAndTeamId(round.getId(), teamId).stream().findFirst().orElseThrow(URTNullException::new);
+    }
+    public List<UserRoundTeamCity> getURTCByUserDistinctOnRoundAndCity(Integer userId){
+        return userRoundTeamRepository.findByUserDistinctOnRoundAndCity(userId);
+    }
+    public List<Round> getUserRounds(Integer userId){
+        return roundRepository.findByUser(userId);
     }
     public UserRoundTeamCity getUserRoundTeamByTeamInRound(Integer teamId, Integer roundId) throws RoundNullException, TeamNullException, URTNullException{
         if(!roundRepository.existsById(roundId)){
