@@ -79,12 +79,12 @@ CREATE TABLE public.users_rounds_team_city(
     round_id int8 NOT NULL,
     team_id int8 NOT NULL,
     city_id int8 NOT NULL,
-    CONSTRAINT users_rounds_team_pk PRIMARY KEY (user_id,round_id),
+    CONSTRAINT users_rounds_team_pk PRIMARY KEY (user_id,round_id,city_id),
     CONSTRAINT urt_city_id_fkey FOREIGN KEY (city_id) REFERENCES public.cities (id),
     CONSTRAINT urt_team_id_fkey FOREIGN KEY (team_id) REFERENCES public.teams (id),
     CONSTRAINT urt_round_id_fkey FOREIGN KEY (round_id) REFERENCES public.rounds (id),
     CONSTRAINT urt_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users (id),
-    UNIQUE (user_id,round_id)
+    UNIQUE (user_id,round_id,city_id)
 );
 CREATE TABLE public.chunks
 (

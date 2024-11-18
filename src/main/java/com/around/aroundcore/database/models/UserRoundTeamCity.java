@@ -30,14 +30,14 @@ public class UserRoundTeamCity implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private GameUser user;
 
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "city_id", referencedColumnName = "id")
+    private City city;
 
     @ManyToOne
     @JoinColumn(name = "team_id", referencedColumnName = "id")
     private Team team;
-
-    @ManyToOne
-    @JoinColumn(name = "city_id", referencedColumnName = "id")
-    private City city;
 
 
     public static Round findCurrentRoundFromURTs(List<UserRoundTeamCity> urts) throws GameUserTeamCityNullForRound {

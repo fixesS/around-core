@@ -83,7 +83,7 @@ VALUES(0, '[
   12
 ]');
 
-INSERT INTO public.users_rounds_team_city(user_id, round_id, team_id, city_id)
+INSERT INTO public.users_rounds_team_city(user_id, round_id, city_id, team_id)
 VALUES (1,1,1, 1);
 
 INSERT INTO public.skills
