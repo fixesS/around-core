@@ -4,6 +4,7 @@ import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameUser;
 import com.around.aroundcore.database.models.OAuthUser;
 import com.around.aroundcore.database.models.OAuthUserEmbedded;
+import com.around.aroundcore.database.models.Round;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.web.dtos.MapEventDTO;
 import com.around.aroundcore.web.dtos.auth.ChangePasswordDTO;
@@ -91,7 +92,9 @@ public class GameUserController {
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
-        List<GameUserDTO> friends = getUserFriendsSortedByCurrentRound(user).stream().map(gameUserDTOMapper).toList();
+        List<GameUserDTO> friends = getUserFriendsSortedByCapturedChunks(
+                List.of(roundService.getCurrentRound()),user.getFriends(),50)
+                .stream().map(gameUserDTOMapper).toList();
 
         return ResponseEntity.ok(friends);
     }
@@ -184,7 +187,9 @@ public class GameUserController {
     @Transactional
     public ResponseEntity<List<GameUserDTO>> getUserFriendsById(@PathVariable Integer id) {
         var user = userService.findById(id);
-        List<GameUserDTO> friends = user.getFriends().stream().map(gameUserDTOMapper).toList();
+        List<GameUserDTO> friends = getUserFriendsSortedByCapturedChunks(
+                List.of(roundService.getCurrentRound()),user.getFriends(),50)
+                .stream().map(gameUserDTOMapper).toList();
         return ResponseEntity.ok(friends);
     }
     @GetMapping("/{id}/followers")
@@ -222,7 +227,9 @@ public class GameUserController {
 
         if(username != null && !username.isEmpty()){
             List<GameUser> suggestionUsers = userService.findByUsernameContaining(username);
-            gameUserDTOS = sortSuggestionUsersByCurrentRound(suggestionUsers).stream().map(gameUserDTOMapper).toList();
+            gameUserDTOS = sortSuggestionUsersByCurrentRound(
+                    List.of(roundService.getCurrentRound()),suggestionUsers,100)
+                    .stream().map(gameUserDTOMapper).toList();
         }
 
         return ResponseEntity.ok(gameUserDTOS);
@@ -336,18 +343,16 @@ public class GameUserController {
         }
         user.setPassword(passwordEncoder.encode(passwordDTO.getNew_password()));
     }
-    private List<GameUser> getUserFriendsSortedByCurrentRound(GameUser user){
-        try{
-            return user.getFriends().stream().sorted(Comparator.comparingLong(friend -> -friend.getCapturedChunks())).toList();
-        }catch (RoundNullException | NoActiveRoundException e){
-            return user.getFriends();
+    private List<GameUser> getUserFriendsSortedByCapturedChunks(List<Round> rounds, List<GameUser> friends, Integer limit){
+        if(friends.isEmpty()){
+            return friends;
         }
+        return userService.getTopUsersChunksAll(rounds,friends,limit);
     }
-    private List<GameUser> sortSuggestionUsersByCurrentRound(List<GameUser> suggestions){
-        try{
-            return suggestions.stream().sorted(Comparator.comparingLong(user -> -user.getCapturedChunks())).toList();
-        }catch (RoundNullException e ){
+    private List<GameUser> sortSuggestionUsersByCurrentRound(List<Round> rounds, List<GameUser> suggestions, Integer limit){
+        if(suggestions.isEmpty()){
             return suggestions;
         }
+        return userService.getTopUsersChunksAll(rounds,suggestions,limit);
     }
 }

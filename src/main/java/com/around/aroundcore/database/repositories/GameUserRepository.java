@@ -20,8 +20,10 @@ public interface GameUserRepository extends JpaRepository<GameUser, Integer> {
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
 
-    @Query(nativeQuery = true, value = "SELECT u FROM public.users u ORDER BY u.captured_chunks DESC LIMIT :range;")
-    List<GameUser> getStatTop(@Param("range") Integer range);
+    @Query(nativeQuery = true,value = "SELECT u FROM public.users u left join public.users_rounds_team_city urtc on u.id = urtc.user_id  where ((:roundids) is null or urtc.round_id in (:roundids)) and u.id in (:userids is null or u.id in (:userids)) group by u.id order by sum(urtc.captured_chunks) desc limit :limit;")
+    List<GameUser> getUsersStatTopForRoundsForChunksAll(@Param("roundIds") List<Integer> roundIds,@Param("userIds") List<Integer> userIds,@Param("limit") Integer limit);
+    @Query(nativeQuery = true,value = "select u from public.users u join public.users_rounds_team_city urtc on u.id = urtc.user_id join public.chunks c on c.round_id = urtc.round_id and c.city_id = urtc.city_id and c.owner = u.id where ((:roundids) is null or urtc.round_id in (:roundids))  and u.id in ((:userids) is null or u.id in (:userids)) group by u.id, u.username order by count(c.id) desc limit :limit;")
+    List<GameUser> getUsersStatTopForRoundsForChunksNow(@Param("roundIds") List<Integer> roundIds,@Param("userIds") List<Integer> userIds,@Param("limit") Integer limit);
     @Modifying
     @Query(nativeQuery = true, value = "update public.users_rounds_team_city set team_id = :teamId where user_id = :userId and round_id = :roundId")
     void setTeamForRound(@Param("roundId") Integer roundId, @Param("teamId") Integer teamId, @Param("userId") Integer userId);

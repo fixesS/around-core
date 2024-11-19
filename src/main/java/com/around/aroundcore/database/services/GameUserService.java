@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -103,11 +104,18 @@ public class GameUserService {
             throw new GameUserUsernameNotUnique();
         }
     }
-    public List<GameUser> getTop5(){
-        return userRepository.getStatTop(5);
-    }
-    public List<GameUser> getTopAll(){
-        return userRepository.getStatTop(50);
+    public List<GameUser> getTopUsersChunksAll(List<Round> rounds, List<GameUser> users, Integer limit){
+        List<Integer> roundIds = rounds.stream().map(Round::getId).collect(
+                Collectors.collectingAndThen(Collectors.toList(),list ->list.isEmpty()? null : list));
+        List<Integer> userIds = users.stream().map(GameUser::getId).collect(
+                Collectors.collectingAndThen(Collectors.toList(),list ->list.isEmpty()? null : list));
+        if(limit>100){
+            limit = 100;
+        }
+        if(limit<1){
+            limit = 1;
+        }
+        return userRepository.getUsersStatTopForRoundsForChunksAll(roundIds,userIds,limit);
     }
     public void updateTeamForRound(GameUser user, Team team, Round round){
         userRepository.setTeamForRound(round.getId(), team.getId(), user.getId());
