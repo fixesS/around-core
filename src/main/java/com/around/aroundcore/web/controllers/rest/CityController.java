@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @AllArgsConstructor
@@ -31,8 +33,19 @@ public class CityController {
     )
     @Transactional
     public ResponseEntity<CityDTO> getCityById(@PathVariable Integer id) {
-        CityDTO cityDTO = cityDTOMapper.apply(cityService.findById(id));
+        CityDTO city = cityDTOMapper.apply(cityService.findById(id));
 
-        return ResponseEntity.ok(cityDTO);
+        return ResponseEntity.ok(city);
+    }
+    @GetMapping("/all")
+    @Operation(
+            summary = "Gives all allowed cities",
+            description = "Allows to get all allowed cities"
+    )
+    @Transactional
+    public ResponseEntity<List<CityDTO>> getCityById() {
+        List<CityDTO> cities = cityService.findAll().stream().map(cityDTOMapper).toList();
+
+        return ResponseEntity.ok(cities);
     }
 }
