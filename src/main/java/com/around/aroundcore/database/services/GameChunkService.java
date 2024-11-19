@@ -2,6 +2,7 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
+import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.api.entity.CityNullException;
 import com.around.aroundcore.web.exceptions.api.entity.GameChunkNullException;
@@ -11,12 +12,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 @Transactional
 public class GameChunkService {
     private GameChunkRepository gameChunkRepository;
+    private UserRoundTeamRepository userRoundTeamRepository;
     private RoundService roundService;
     private CityService cityService;
 
@@ -52,6 +55,11 @@ public class GameChunkService {
     }
     public List<GameChunk> findAllByRoundAndTeamAndCity(Round round, Team team, City city) {
         return gameChunkRepository.findAllByTeamIdAndRoundIdAndCityId(round.getId(), team.getId(), city.getId());
+    }
+    public Team getTeamOfChunkOwnerInCurrentRound(GameChunk gameChunk){
+        Optional<UserRoundTeamCity> urtc = userRoundTeamRepository.findByUserIdAndRoundIdAndCityId(gameChunk.getOwner().getId(),
+                gameChunk.getRound().getId(), gameChunk.getCity().getId());
+        return urtc.map(UserRoundTeamCity::getTeam).orElse(null);
     }
     public void saveListOfChunkDTOs(List<ChunkDTO> chunkDTOList, GameUser user, Round round, City city){
         List<GameChunk> gameChunkList = chunkDTOList.stream().map(chunk ->

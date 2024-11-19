@@ -9,11 +9,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRoundTeamRepository extends JpaRepository<UserRoundTeamCity, UserRoundTeamCityEmbedded> {
     @Query(nativeQuery = true, value = "select urtc from public.users_rounds_team_city urtc where urtc.team_id = :teamId and urtc.round_id = :roundId ;")
     List<UserRoundTeamCity> findByRoundIdAndTeamId(@Param("roundId") Integer roundId, @Param("teamId") Integer teamId);
+    @Query(nativeQuery = true, value = "select urtc from public.users_rounds_team_city urtc where urtc.user_id = :userId and urtc.round_id = :roundId and urtc.city_id = :cityId")
+    Optional<UserRoundTeamCity> findByUserIdAndRoundIdAndCityId(@Param("userId") Integer userId,@Param("roundId") Integer roundId, @Param("cityId") Integer cityId);
     @Query(nativeQuery = true, value = "select distinct on (urtc.round_id,urtc.city_id) urtc from public.users_rounds_team_city urtc where urtc.user_id = :userId;")
     List<UserRoundTeamCity> findByUserDistinctOnRoundAndCity(@Param("userId") Integer userId);
     @Modifying
