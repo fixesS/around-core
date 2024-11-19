@@ -10,8 +10,8 @@ VALUES('PURPLE');
 INSERT INTO public.teams(color)
 VALUES('DARK_PURPLE');
 
-INSERT INTO settings.game(id,chunk_reward)
-values (1,1);
+INSERT INTO settings.game(id)
+values (1);
 
 INSERT INTO public.rounds(starts, ends,active, game_settings_id)
 Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, true , 1);

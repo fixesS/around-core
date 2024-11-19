@@ -104,7 +104,7 @@ public class GameUserService {
             throw new GameUserUsernameNotUnique();
         }
     }
-    public List<GameUser> getTopUsersChunksAll(List<Round> rounds, List<GameUser> users, Integer limit){
+    public List<GameUser> getTopUsersByChunks(List<Round> rounds, List<GameUser> users, Integer limit, Boolean sortingByChunksAll){
         List<Integer> roundIds = rounds.stream().map(Round::getId).collect(
                 Collectors.collectingAndThen(Collectors.toList(),list ->list.isEmpty()? null : list));
         List<Integer> userIds = users.stream().map(GameUser::getId).collect(
@@ -115,16 +115,14 @@ public class GameUserService {
         if(limit<1){
             limit = 1;
         }
-        return userRepository.getUsersStatTopForRoundsForChunksAll(roundIds,userIds,limit);
+        if(Boolean.TRUE.equals(sortingByChunksAll)){
+            return userRepository.getUsersStatTopForRoundsForChunksAll(roundIds,userIds,limit);
+        }
+        return userRepository.getUsersStatTopForRoundsForChunksNow(roundIds,userIds,limit);
     }
-    public void updateTeamForRound(GameUser user, Team team, Round round){
-        userRepository.setTeamForRound(round.getId(), team.getId(), user.getId());
-    }
-    public void updateCityForRound(GameUser user, City city, Round round){
-        userRepository.setCityForRound(round.getId(), city.getId(), user.getId());
-    }
-    public void createTeamCityForRound(GameUser user, Team team, City city, Round round){
-        userRepository.createTeamAndCityForRound(round.getId(), team.getId(), city.getId(), user.getId());
+
+    public void setTeamForRoundAndCity(GameUser user, Round round, City city, Team team){
+        userRepository.setTeamForRoundAndCity(user.getId(), round.getId(), city.getId(), team.getId());
     }
     public GameUser findByOAuthIdAndProvider(String oauthId, OAuthProvider provider){
         return userRepository.findByOAuthIdAndProvider(oauthId,provider.name()).orElseThrow(GameUserNullException::new);

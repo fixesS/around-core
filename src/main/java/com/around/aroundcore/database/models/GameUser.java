@@ -102,11 +102,6 @@ public class GameUser implements UserDetails {
     private List<MapEvent> visitedEvents;
     @OneToMany(mappedBy = "gameUserSkillEmbedded.gameUser", cascade={CascadeType.ALL})
     private List<GameUserSkill> userSkills;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
     public void addSkillToUserSkillList(GameUserSkill gameUserSkill){
         userSkills.add(gameUserSkill);
     }
@@ -164,8 +159,8 @@ public class GameUser implements UserDetails {
             throw new GameUserNotEnoughCoins();
         }
     }
-    public Team getTeam(Round round){
-        UserRoundTeamCity urt = userRoundTeamCities.stream().filter(urt1 -> urt1.getRound() == round)
+    public Team getTeam(City city){
+        UserRoundTeamCity urt = userRoundTeamCities.stream().filter(urt1 -> urt1.getCity() == city)
                 .findFirst().orElseThrow(TeamNullException::new);
         return urt.getTeam();
     }
@@ -187,6 +182,7 @@ public class GameUser implements UserDetails {
         }
         this.password = newPassword;
     }
+
     @Override
     public String getUsername() {
         return username;
@@ -207,7 +203,10 @@ public class GameUser implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

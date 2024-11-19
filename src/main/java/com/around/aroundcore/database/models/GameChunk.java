@@ -40,8 +40,4 @@ public class GameChunk implements Serializable {
     public String toString(){
         return String.format("chunk_id: %s ",this.id);
     }
-
-    public Team getTeam(){
-        return this.owner.getTeam(this.round);
-    }
 }

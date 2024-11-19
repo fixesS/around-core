@@ -81,7 +81,7 @@ public class UserLocationController {
         }
         if (cityOptionalUser.isEmpty()) {// todo make algorithm for balancing teams, instead of full random team
             City newCityForUser = cityOptional.get();
-            userService.createTeamCityForRound(user,teamService.getRandomTeam(),newCityForUser,round);
+            userService.setTeamForRoundAndCity(user,round,newCityForUser, teamService.getRandomTeam());
         }
 
         GameUserDTO gameUserDTO = gameUserDTOMapper.apply(user);

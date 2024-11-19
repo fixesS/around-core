@@ -59,4 +59,7 @@ public class GameChunkService {
         ).toList();
         gameChunkRepository.saveAll(gameChunkList);
     }
+    public void deleteChunks(GameUser user, Round round, City city){
+        gameChunkRepository.deleteChunks(user.getId(), round.getId(), city.getId());
+    }
 }

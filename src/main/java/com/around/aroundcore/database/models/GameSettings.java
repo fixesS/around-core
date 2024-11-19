@@ -24,6 +24,8 @@ public class GameSettings {
     private Integer id;
     @Column(name = "chunk_reward")
     private Integer chunkReward;
+    @Column(name = "team_change_cost")
+    private Integer teamChangeCost;
 
     @Override
     public boolean equals(Object o) {

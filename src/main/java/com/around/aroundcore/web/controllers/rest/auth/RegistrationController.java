@@ -64,7 +64,7 @@ public class RegistrationController {
         if(registrationDTO.getTeam_id() != null && registrationDTO.getCity_id() != null){
             var team = teamService.findById(registrationDTO.getTeam_id());
             var city = cityService.findById(registrationDTO.getCity_id());
-            userService.createTeamCityForRound(user,team,city,roundService.getCurrentRound());
+            userService.setTeamForRoundAndCity(user,roundService.getCurrentRound(),city,team);
         }
 
         TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));
