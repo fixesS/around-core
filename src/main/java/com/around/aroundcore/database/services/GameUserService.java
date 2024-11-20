@@ -2,6 +2,11 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.EntityFilters;
 import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.round.Round;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.user.GameUserSkill;
+import com.around.aroundcore.database.models.user.GameUserSkillEmbedded;
+import com.around.aroundcore.database.models.oauth.OAuthProvider;
 import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
 import com.around.aroundcore.web.enums.Skills;
 import com.around.aroundcore.database.repositories.GameUserRepository;
@@ -12,6 +17,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -116,9 +122,9 @@ public class GameUserService {
             limit = 1;
         }
         if(Boolean.TRUE.equals(sortingByChunksAll)){
-            return userRepository.getUsersStatTopForRoundsForChunksAll(roundIds,userIds,limit);
+            return userRepository.getUsersStatTopForRoundsForChunksAll(roundIds,userIds,PageRequest.of(0, limit));
         }
-        return userRepository.getUsersStatTopForRoundsForChunksNow(roundIds,userIds,limit);
+        return userRepository.getUsersStatTopForRoundsForChunksNow(roundIds,userIds, PageRequest.of(0, limit));
     }
 
     public void setTeamForRoundAndCity(GameUser user, Round round, City city, Team team){

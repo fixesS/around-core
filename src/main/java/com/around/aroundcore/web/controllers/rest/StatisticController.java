@@ -1,16 +1,11 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.Round;
-import com.around.aroundcore.database.models.Team;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.services.*;
-import com.around.aroundcore.web.dtos.stat.TeamStatDTO;
 import com.around.aroundcore.web.dtos.stat.GameUserStatDTO;
-import com.around.aroundcore.web.mappers.stat.TeamStatDTOMapper;
 import com.around.aroundcore.web.mappers.stat.UserStatDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,11 +13,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -43,10 +36,10 @@ public class StatisticController {
     )
     @Transactional
     public ResponseEntity<List<GameUserStatDTO>> getTopUsersStat(
-            @RequestParam("rounds") List<Integer> rounds,
-            @RequestParam("users") List<Integer> users,
+            @RequestParam(value = "rounds",required = false,defaultValue = "") List<Integer> rounds,
+            @RequestParam(value = "users",required = false,defaultValue = "") List<Integer> users,
             @RequestParam("limit") @Schema(description = "min 0, max 100") Integer limit,
-            @RequestParam("sorting_by_chunks_all") Boolean sortingByChunksAll) {
+            @RequestParam(value = "sorting_by_chunks_all",required = false) Boolean sortingByChunksAll) {
 
         List<GameUser> topUsers = userService.getTopUsersByChunks(
                 // find for all by ids to exclude cases of missing entities in runtime

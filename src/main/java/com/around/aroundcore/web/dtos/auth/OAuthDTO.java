@@ -1,6 +1,6 @@
 package com.around.aroundcore.web.dtos.auth;
 
-import com.around.aroundcore.database.models.OAuthProvider;
+import com.around.aroundcore.database.models.oauth.OAuthProvider;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

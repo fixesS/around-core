@@ -1,7 +1,9 @@
 package com.around.aroundcore.web.controllers.rest.auth;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.token.VerificationToken;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.user.Role;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.web.dtos.auth.RegistrationDTO;

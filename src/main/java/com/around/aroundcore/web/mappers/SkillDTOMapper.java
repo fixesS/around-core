@@ -1,6 +1,6 @@
 package com.around.aroundcore.web.mappers;
 
-import com.around.aroundcore.database.models.Skill;
+import com.around.aroundcore.database.models.skill.Skill;
 import com.around.aroundcore.web.dtos.SkillDTO;
 import org.springframework.stereotype.Service;
 

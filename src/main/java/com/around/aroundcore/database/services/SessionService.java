@@ -1,14 +1,13 @@
 package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.EntityFilters;
-import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.repositories.SessionRepository;
 import com.around.aroundcore.web.exceptions.api.entity.SessionNullException;
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

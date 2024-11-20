@@ -1,7 +1,7 @@
 package com.around.aroundcore.database.services;
 
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.VerificationToken;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.token.VerificationToken;
 import com.around.aroundcore.database.repositories.VerificationTokenRepository;
 import com.around.aroundcore.security.models.Token;
 import com.around.aroundcore.security.services.JwtService;

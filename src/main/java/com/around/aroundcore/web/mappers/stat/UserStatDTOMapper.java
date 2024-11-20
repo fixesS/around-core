@@ -1,25 +1,21 @@
 package com.around.aroundcore.web.mappers.stat;
 
-import com.around.aroundcore.database.models.*;
-import com.around.aroundcore.database.services.CityService;
+import com.around.aroundcore.database.models.round.Round;
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.services.GameChunkService;
-import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.RoundService;
 import com.around.aroundcore.web.dtos.stat.CityStatDTO;
 import com.around.aroundcore.web.dtos.stat.RoundStatDTO;
 import com.around.aroundcore.web.dtos.stat.GameUserStatDTO;
 import com.around.aroundcore.web.mappers.chunk.GameChunkStatDTOMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserStatDTOMapper implements Function<GameUser, GameUserStatDTO> {
@@ -50,6 +46,7 @@ public class UserStatDTOMapper implements Function<GameUser, GameUserStatDTO> {
                     cities.add(CityStatDTO.builder()
                             .team_id(urtc.getTeam().getId())
                             .city_id(urtc.getCity().getId())
+                            .name(urtc.getCity().getName())
                             .chunks(chunks.stream().map(gameChunkStatDTOMapper).toList())
                             .chunks_now(chunks.size())
                             .chunks_all(urtc.getCapturedChunks())

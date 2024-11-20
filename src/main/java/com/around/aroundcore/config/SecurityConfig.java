@@ -1,6 +1,6 @@
 package com.around.aroundcore.config;
 
-import com.around.aroundcore.database.models.Role;
+import com.around.aroundcore.database.models.user.Role;
 import com.around.aroundcore.security.filters.JwtFilter;
 import com.around.aroundcore.security.filters.LoginPasscodeFilter;
 import org.springframework.beans.factory.annotation.Autowired;

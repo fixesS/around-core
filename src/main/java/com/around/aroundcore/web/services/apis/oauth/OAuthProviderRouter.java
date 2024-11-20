@@ -1,6 +1,6 @@
 package com.around.aroundcore.web.services.apis.oauth;
 
-import com.around.aroundcore.database.models.OAuthProvider;
+import com.around.aroundcore.database.models.oauth.OAuthProvider;
 import com.around.aroundcore.web.exceptions.api.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

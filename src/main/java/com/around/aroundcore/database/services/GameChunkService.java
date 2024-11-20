@@ -1,6 +1,10 @@
 package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.chunk.GameChunk;
+import com.around.aroundcore.database.models.round.Round;
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
 import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
 import com.around.aroundcore.web.dtos.ChunkDTO;
@@ -9,12 +13,14 @@ import com.around.aroundcore.web.exceptions.api.entity.GameChunkNullException;
 import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 @Transactional
 public class GameChunkService {

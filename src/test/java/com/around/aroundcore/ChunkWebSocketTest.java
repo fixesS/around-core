@@ -82,8 +82,8 @@ class ChunkWebSocketTest {
 
 		RunStopFrameHandler runStopFrameHandler = new RunStopFrameHandler(new CompletableFuture<>());
 
-		//String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
-		String wsUrl = "wss://aroundgame.ru/ws";
+		String wsUrl = ws+ home+ WebSocketConfig.REGISTRY;
+		//String wsUrl = "wss://aroundgame.ru/ws";
 		//log.info(wsUrl);
 
 		WebSocketStompClient stompClient = new WebSocketStompClient(new StandardWebSocketClient());
@@ -130,6 +130,18 @@ class ChunkWebSocketTest {
 				//.id("8b10dc058444fff") // wrong chunk id (not in yekaterinburg)
 				.build();
 
+		stompSession.subscribe("/user"+WebSocketConfig.QUEUE_ERROR_FOR_USER, new StompFrameHandler() {
+			@Override
+			public Type getPayloadType(StompHeaders headers) {
+				return new TypeReference<ApiError>(){}.getType();
+			}
+
+			@Override
+			public void handleFrame(StompHeaders headers, Object payload) {
+				blockingQueueError.offer((ApiError) payload);
+			}
+		});
+
 		StompHeaders headers1 = new StompHeaders();
 		headers1.setDestination(ChunkWsController.CHUNK_CHANGES_EVENT);
 		stompSession.subscribe(headers1, new StompFrameHandler() {
@@ -141,18 +153,6 @@ class ChunkWebSocketTest {
 			@Override
 			public void handleFrame(StompHeaders headers, Object payload) {
 				blockingQueue.offer((ArrayList<ChunkDTO>) payload);
-			}
-		});
-
-		stompSession.subscribe("/user"+WebSocketConfig.QUEUE_ERROR_FOR_USER, new StompFrameHandler() {
-			@Override
-			public Type getPayloadType(StompHeaders headers) {
-				return new TypeReference<ApiError>(){}.getType();
-			}
-
-			@Override
-			public void handleFrame(StompHeaders headers, Object payload) {
-				blockingQueueError.offer((ApiError) payload);
 			}
 		});
 

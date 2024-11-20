@@ -1,8 +1,8 @@
 package com.around.aroundcore.web.services;
 
-import com.around.aroundcore.database.models.GameUserSkill;
-import com.around.aroundcore.database.models.Skill;
-import com.around.aroundcore.database.models.UserRoundTeamCity;
+import com.around.aroundcore.database.models.user.GameUserSkill;
+import com.around.aroundcore.database.models.skill.Skill;
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.exceptions.chunk.WrongChunkResolution;
 import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;

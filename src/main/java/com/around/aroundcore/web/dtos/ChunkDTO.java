@@ -1,6 +1,7 @@
 package com.around.aroundcore.web.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +17,10 @@ import java.util.Objects;
 public class ChunkDTO {
     @Schema(description = "Chunk id")
     private String id;
+    @Nullable // in MapEventDTO
     @Schema(description = "Chunk owner team id")
     private Integer team_id;
+    @Nullable // in MapEventDTO
     @Schema(description = "Round where team owned chunk")
     private Integer round_id;
 

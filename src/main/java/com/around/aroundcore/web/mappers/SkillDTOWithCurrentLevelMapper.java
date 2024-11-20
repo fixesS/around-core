@@ -1,6 +1,6 @@
 package com.around.aroundcore.web.mappers;
 
-import com.around.aroundcore.database.models.GameUserSkill;
+import com.around.aroundcore.database.models.user.GameUserSkill;
 import com.around.aroundcore.web.dtos.SkillDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

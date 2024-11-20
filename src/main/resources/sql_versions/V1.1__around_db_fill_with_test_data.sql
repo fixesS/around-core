@@ -106,8 +106,8 @@ values ('8b10c229952afff',1,1,1);
 INSERT INTO map_events.categories(id,"name")
 values (1,'Вечеринки');
 
-INSERT INTO map_events.events(id,provider_id,"name",starts_at,ends_at,url,verified,ad, image_uuid, reward)
-values (1,1,'Снежная королева','2024-10-15 18:00:00'::TIMESTAMP,'2024-12-16 22:00:00'::TIMESTAMP,'https://afisha.timepad.ru/event/2999125',true, false,'f443a6e6-d81b-4eb6-9af4-bcecda7093f8',1);
+INSERT INTO map_events.events(id,provider_id,"name",starts_at,ends_at,url,verified,active,ad, image_uuid, reward)
+values (1,1,'Снежная королева','2024-10-15 18:00:00'::TIMESTAMP,'2024-12-16 22:00:00'::TIMESTAMP,'https://afisha.timepad.ru/event/2999125',true,true, false,'f443a6e6-d81b-4eb6-9af4-bcecda7093f8',1);
 
 INSERT INTO map_events.events_categories(event_id, category_id)
 values (1,1);

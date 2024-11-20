@@ -1,6 +1,6 @@
 package com.around.aroundcore.database.services;
 
-import com.around.aroundcore.database.models.EventProvider;
+import com.around.aroundcore.database.models.event.EventProvider;
 import com.around.aroundcore.database.repositories.EventProviderRepository;
 import com.around.aroundcore.web.exceptions.api.entity.EventProviderNullException;
 import jakarta.transaction.Transactional;

@@ -2,6 +2,10 @@ package com.around.aroundcore.web.controllers.rest.auth;
 
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.user.*;
+import com.around.aroundcore.database.models.oauth.OAuthProvider;
+import com.around.aroundcore.database.models.oauth.OAuthUser;
+import com.around.aroundcore.database.models.oauth.OAuthUserEmbedded;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.ImageService;
 import com.around.aroundcore.security.services.AuthService;

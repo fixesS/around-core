@@ -1,6 +1,11 @@
 package com.around.aroundcore.web.services;
 
 import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.chunk.GameChunk;
+import com.around.aroundcore.database.models.event.Category;
+import com.around.aroundcore.database.models.event.EventProvider;
+import com.around.aroundcore.database.models.event.MapEvent;
+import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.repositories.CategoryRepository;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
 import com.around.aroundcore.database.services.CityService;
@@ -17,7 +22,7 @@ import com.around.aroundcore.web.exceptions.api.CoordsNotFoundException;
 import com.around.aroundcore.web.exceptions.api.EventsNotFoundException;
 import com.around.aroundcore.web.exceptions.api.LocationNullException;
 import com.around.aroundcore.web.exceptions.api.entity.EventProviderNullException;
-import com.around.aroundcore.web.mappers.CategoryMapper;
+import com.around.aroundcore.web.mappers.event.CategoryMapper;
 import com.around.aroundcore.web.mappers.chunk.GameChunkMapper;
 import com.around.aroundcore.web.mappers.LocationMapper;
 import com.around.aroundcore.web.services.apis.coords.CoordsAPI;

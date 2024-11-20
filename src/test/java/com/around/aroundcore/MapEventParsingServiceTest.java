@@ -1,6 +1,6 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.database.models.MapEvent;
+import com.around.aroundcore.database.models.event.MapEvent;
 import com.around.aroundcore.web.exceptions.api.EventsNotFoundException;
 import com.around.aroundcore.web.services.MapEventParsingService;
 import lombok.extern.slf4j.Slf4j;

@@ -9,6 +9,7 @@ services:
       - "61613:61613"
   around_db:
     image: postgres:16
+    command: "-c logging_collector=on"
     env_file:
       - .env
     ports:

@@ -22,7 +22,7 @@ public class SendLocationsTask {
     public void sendChunks() {
         if(!queueService.isEmpty()){
             List<GameUserLocationDTO> locations = queueService.getAllFromQueue();
-            locations.forEach(location -> messagingTemplate.convertAndSendToUser(location.getName(),
+            locations.forEach(location -> messagingTemplate.convertAndSendToUser(location.getFriendId().toString(),
                     WebSocketConfig.QUEUE_LOCATIONS_FOR_USER, location));
             log.debug("Locations have been sent");
         }

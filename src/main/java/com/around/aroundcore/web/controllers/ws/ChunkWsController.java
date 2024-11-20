@@ -2,6 +2,11 @@ package com.around.aroundcore.web.controllers.ws;
 
 import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.event.MapEvent;
+import com.around.aroundcore.database.models.round.Round;
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.user.GameUserSkill;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.dtos.ApiError;
@@ -16,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
@@ -40,17 +46,27 @@ public class ChunkWsController {
     public static final String CHUNK_CHANGES_EVENT = "/topic/chunk.event";
     private final RoundService roundService;
 
-    @SubscribeMapping(CHUNK_CHANGES_EVENT)
-    public void fetchChunkChangesEvent(Principal principal){
-        try {
-            JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
-            var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            log.debug("Got subscription from: {}",session.getUser().getEmail());
-        }catch (Exception e){
-            log.error(e.getMessage());
-        }
-    }
+//    deleted because spring did not call this due /topic (only if /topic sat as application prefix in config)
+//    todo decide what to do with this method
+//    @SubscribeMapping(CHUNK_CHANGES_EVENT)
+//    public void fetchChunkChangesEvent(Principal principal){
+//        GameUser user = null;
+//        try {
+//            JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+//            var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
+//            var session = sessionService.findByUuid(sessionUuid);
+//            user = session.getUser();
+//            log.info("Fetching chunk changes");
+//            log.error(String.valueOf(user));
+//            user.checkTeamForCurrentRoundAndAnyCity();
+//        }catch (ApiException e){
+//            log.error(e.getClass().getName());
+//            if(user != null){
+//                ApiError apiError = ApiResponse.getApiError(e.getResponse());
+//                messagingTemplate.convertAndSendToUser(user.getId().toString(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
+//            }
+//        }
+//    }
 
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
     @Transactional
@@ -68,10 +84,11 @@ public class ChunkWsController {
             session = sessionService.findByUuid(sessionUuid);
             user = session.getUser();
             userWidthSkill = user.getUserSkillBySkillId(Skills.WIDTH.getId());
+            user.checkTeamForCurrentRoundAndAnyCity();
             round = user.getUserRoundTeamCities().get(0).getRound();
             cities = UserRoundTeamCity.findCitiesForUser(user);
         }catch (ApiException e){
-            log.error(e.getMessage());
+            log.error(e.getClass().getName());
             if(user != null){
                 ApiError apiError = ApiResponse.getApiError(e.getResponse());
                 messagingTemplate.convertAndSendToUser(user.getId().toString(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);

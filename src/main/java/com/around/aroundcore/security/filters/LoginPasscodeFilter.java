@@ -1,6 +1,6 @@
 package com.around.aroundcore.security.filters;
 
-import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.security.services.LoginPasscodeService;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;

@@ -1,9 +1,9 @@
 package com.around.aroundcore.web.listeners;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.RecoveryToken;
-import com.around.aroundcore.database.models.VerificationToken;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.token.RecoveryToken;
+import com.around.aroundcore.database.models.token.VerificationToken;
 import com.around.aroundcore.database.services.RecoveryTokenService;
 import com.around.aroundcore.database.services.VerificationTokenService;
 import com.around.aroundcore.web.events.OnEmailVerificationEvent;
@@ -35,7 +35,6 @@ public class GameUserEventsListener {
         String subject = "Confirm your email address.";
         String link  = HOME+AroundConfig.API_V1_REGISTRATION + "/confirm?token=" + token.getToken();
 
-        //log.info(link);
         Context context = new Context();
         context.setVariable("link",link);
 

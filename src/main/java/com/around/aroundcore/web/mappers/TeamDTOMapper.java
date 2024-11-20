@@ -1,8 +1,8 @@
 package com.around.aroundcore.web.mappers;
 
-import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.Team;
-import com.around.aroundcore.database.models.UserRoundTeamCity;
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import com.around.aroundcore.web.dtos.TeamDTO;
 import org.springframework.stereotype.Service;
 

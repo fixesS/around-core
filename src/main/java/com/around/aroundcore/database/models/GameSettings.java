@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Slf4j
@@ -19,7 +20,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GameSettings {
+public class GameSettings implements Serializable {
     @Id
     private Integer id;
     @Column(name = "chunk_reward")

@@ -37,13 +37,13 @@ public class ImageController {
         return ResponseEntity.ok(image);
     }
 
-    @GetMapping( value = "avatar/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping( value = "avatars/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getAvatarImage(@PathVariable String filename) {
         byte[] image = imageService.loadImage(filename, ImageType.AVATAR);
         return ResponseEntity.ok(image);
     }
 
-    @GetMapping( value = "icon/{filename}")
+    @GetMapping( value = "icons/{filename}")
     public ResponseEntity<byte[]> getIconImage(@PathVariable String filename) {
         byte[] image = imageService.loadImage(filename, ImageType.ICON);
         HttpHeaders header = new HttpHeaders();

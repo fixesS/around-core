@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum EntityFilters {
-    ACTIVE_ROUND("activeRound","active", Boolean.class);
+    ACTIVE_ROUND("activeRoundFilter","active", Boolean.class);
 
     private final String name;
     private final String parameter;

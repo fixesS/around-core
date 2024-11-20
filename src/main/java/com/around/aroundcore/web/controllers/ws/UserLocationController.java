@@ -2,6 +2,9 @@ package com.around.aroundcore.web.controllers.ws;
 
 import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.round.Round;
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.dtos.ApiError;
@@ -68,9 +71,7 @@ public class UserLocationController {
             }
             return;
         }
-        Optional<City> cityOptionalUser = cities.stream()
-                .filter(city -> city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(), city.getChunksResolution())))
-                .findFirst();
+
         Optional<City> cityOptional = cityService.findAll().stream()
                 .filter(city -> city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(), city.getChunksResolution())))
                 .findFirst();
@@ -79,6 +80,10 @@ public class UserLocationController {
             messagingTemplate.convertAndSendToUser(user.getId().toString(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
             return;
         }
+
+        Optional<City> cityOptionalUser = cities.stream()
+                .filter(city -> city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(), city.getChunksResolution())))
+                .findFirst();
         if (cityOptionalUser.isEmpty()) {// todo make algorithm for balancing teams, instead of full random team
             City newCityForUser = cityOptional.get();
             userService.setTeamForRoundAndCity(user,round,newCityForUser, teamService.getRandomTeam());
@@ -87,7 +92,7 @@ public class UserLocationController {
         GameUserDTO gameUserDTO = gameUserDTOMapper.apply(user);
         user.getFriends().forEach(friend ->
             locationQueueService.addToQueue(GameUserLocationDTO.builder()
-                .name(friend.getUsername())
+                .friendId(friend.getId())
                 .longitude(gameUserLocationDTO.getLongitude())
                 .latitude(gameUserLocationDTO.getLatitude())
                 .gameUserDTO(gameUserDTO)

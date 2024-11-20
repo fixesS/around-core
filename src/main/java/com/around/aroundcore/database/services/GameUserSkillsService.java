@@ -1,9 +1,9 @@
 package com.around.aroundcore.database.services;
 
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.GameUserSkill;
-import com.around.aroundcore.database.models.GameUserSkillEmbedded;
-import com.around.aroundcore.database.models.Skill;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.user.GameUserSkill;
+import com.around.aroundcore.database.models.user.GameUserSkillEmbedded;
+import com.around.aroundcore.database.models.skill.Skill;
 import com.around.aroundcore.database.repositories.GameUserSkillsRepository;
 import com.around.aroundcore.web.exceptions.api.LevelsLessOrEqualZeroException;
 import com.around.aroundcore.web.exceptions.api.entity.GameUserSkillNullException;

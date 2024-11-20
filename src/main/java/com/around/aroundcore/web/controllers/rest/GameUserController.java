@@ -1,12 +1,12 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.OAuthUser;
-import com.around.aroundcore.database.models.OAuthUserEmbedded;
-import com.around.aroundcore.database.models.Round;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.oauth.OAuthUser;
+import com.around.aroundcore.database.models.oauth.OAuthUserEmbedded;
+import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.services.*;
-import com.around.aroundcore.web.dtos.MapEventDTO;
+import com.around.aroundcore.web.dtos.events.MapEventDTO;
 import com.around.aroundcore.web.dtos.auth.ChangePasswordDTO;
 import com.around.aroundcore.web.dtos.auth.OAuthDTO;
 import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
@@ -19,7 +19,7 @@ import com.around.aroundcore.web.exceptions.api.ApiException;
 import com.around.aroundcore.web.exceptions.api.entity.GameUserOAuthProviderAlreadyExistsException;
 import com.around.aroundcore.web.exceptions.api.entity.GameUserUsernameNotUnique;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
-import com.around.aroundcore.web.mappers.MapEventDTOMapper;
+import com.around.aroundcore.web.mappers.event.MapEventDTOMapper;
 import com.around.aroundcore.web.mappers.SkillDTOWithCurrentLevelMapper;
 import com.around.aroundcore.web.services.EntityPatcher;
 import com.around.aroundcore.web.services.apis.oauth.OAuthProviderRouter;
@@ -277,7 +277,7 @@ public class GameUserController {
             description = "Allows to unfollow user by it's username. Does nothing if user and you are friends. Unfollow you from user, if you was it's follower."
     )
     @Transactional
-    public ResponseEntity<String> deleteMyFollower(@RequestParam("follower_id") @Schema(description = "follower id") Integer followerId){
+    public ResponseEntity<String> deleteMyFollower(@RequestParam("followee_id") @Schema(description = "followee id") Integer followerId){
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();

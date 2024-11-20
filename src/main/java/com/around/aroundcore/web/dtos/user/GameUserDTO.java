@@ -19,7 +19,6 @@ public class GameUserDTO {
     private String email;
     private List<UserCityDTO> cities;
     @Schema(description = "User team id")
-    private Integer team_id;
     private Integer level;
     private Integer coins;
     @Schema(description = "Is user email verified")

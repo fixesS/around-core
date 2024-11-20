@@ -1,8 +1,8 @@
 package com.around.aroundcore.web.controllers.rest.auth;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.RecoveryToken;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.token.RecoveryToken;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.RecoveryTokenService;
 import com.around.aroundcore.database.services.SessionService;

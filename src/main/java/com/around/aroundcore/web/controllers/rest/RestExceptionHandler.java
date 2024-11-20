@@ -20,6 +20,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
@@ -42,7 +43,10 @@ public class RestExceptionHandler {
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         return new ResponseEntity<>(apiError, response.getStatus());
     }
-
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ApiError> handleNoHandlerFoundException(NoHandlerFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiError> handleMethodNotAllowedException(HttpRequestMethodNotSupportedException exception) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(null);

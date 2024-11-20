@@ -1,8 +1,7 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameChunk;
-import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.chunk.GameChunk;
 import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.web.dtos.ChunkDTO;
@@ -10,8 +9,6 @@ import com.around.aroundcore.web.dtos.stat.GameUserStatDTO;
 import com.around.aroundcore.web.dtos.stat.TeamStatDTO;
 import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
 import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;
-import com.around.aroundcore.web.exceptions.api.entity.TeamNullException;
-import com.around.aroundcore.web.exceptions.api.entity.URTNullException;
 import com.around.aroundcore.web.mappers.chunk.GameChunkDTOMapper;
 import com.around.aroundcore.web.mappers.stat.TeamStatDTOMapper;
 import com.around.aroundcore.web.mappers.stat.UserStatDTOMapper;
@@ -20,11 +17,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,7 +31,6 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 @RequestMapping(AroundConfig.API_V1_CHUNKS)
-@Transactional
 @Tag(name="Game Chunk  Controller", description="Controller to get info about controllers")
 @SecurityRequirement(name = "JWT")
 public class GameChunkController {
@@ -53,6 +49,7 @@ public class GameChunkController {
             summary = "Gives chunk info by chunk id",
             description = "Allows to get chunk info by chunk id."
     )
+    @Transactional
     public ResponseEntity<ChunkDTO> getChunkByIdAndRound(
             @PathVariable @Parameter(description = "Chunk id", example = "123fff") String id,
             @RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId){
@@ -65,6 +62,7 @@ public class GameChunkController {
             summary = "Gives all captured chunks in specific round and city",
             description = "Allows to get all captured chunks by users. Chunk not in list => chunk does not exist or has not been captured by any user."
     )
+    @Transactional
     public ResponseEntity<List<ChunkDTO>> getAllByRound(
             @RequestParam("round_id") @Schema(description = "round id (0 - active)") Integer roundId,
             @RequestParam("city_id") Integer cityId ){
@@ -73,11 +71,12 @@ public class GameChunkController {
 
         return ResponseEntity.ok(chunkDTOList);
     }
-    @GetMapping("/stats/user/me")
+    @GetMapping("/users/me")
     @Operation(
             summary = "Gives all captured chunks by user in specific round",
-            description = "Allows to get all captured chunks in game field by user."
+            description = "MIGHT BE A LONG TIME TO RESPONSE! Allows to get all captured chunks in game field by user. "
     )
+    @Transactional
     public ResponseEntity<GameUserStatDTO> getMyChunksStat(){
         UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
@@ -86,11 +85,12 @@ public class GameChunkController {
 
         return ResponseEntity.ok(gameUserStatDTO);
     }
-    @GetMapping("/stats/user/me/friends")
+    @GetMapping("/users/me/friends")
     @Operation(
             summary = "Gives all stat of my friends.",
-            description = "Allows to get stat of my friends."
+            description = "MIGHT BE A LONG TIME TO RESPONSE! Allows to get stat of my friends."
     )
+    @Transactional
     public ResponseEntity<List<GameUserStatDTO>> getMyFriendsChunksStat(){
         UUID sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
@@ -99,54 +99,46 @@ public class GameChunkController {
 
         return ResponseEntity.ok(gameUserStatDTOS);
     }
-    @GetMapping("stats/user/{id}")
+    @GetMapping("/users/{id}")
     @Operation(
             summary = "Gives all captured chunks by certain user in specific round",
-            description = "Allows to get all captured chunks in game field by certain user."
+            description = "MIGHT BE A LONG TIME TO RESPONSE! Allows to get all captured chunks in game field by certain user."
     )
+    @Transactional
     public ResponseEntity<GameUserStatDTO> getUserChunksStatById(@PathVariable Integer id) {
         GameUserStatDTO gameUserStatDTO = userStatDTOMapper.apply(userService.findById(id));
 
         return ResponseEntity.ok(gameUserStatDTO);
-    }@GetMapping("/stats/user/{id}/friends")
+    }@GetMapping("/users/{id}/friends")
     @Operation(
             summary = "Gives all stat of my friends.",
-            description = "Allows to get stat of my friends."
+            description = "MIGHT BE A LONG TIME TO RESPONSE! Allows to get stat of my friends."
     )
+    @Transactional
     public ResponseEntity<List<GameUserStatDTO>> getMyFriendsChunksStat(@PathVariable Integer id){
         var user = userService.findById(id);
         List<GameUserStatDTO> gameUserStatDTOS = user.getFriends().stream().map(userStatDTOMapper).toList();
 
         return ResponseEntity.ok(gameUserStatDTOS);
     }
-    @GetMapping("/stats/team/{id}")
-    @Operation(
-            summary = "Gives all captured chunks by team",
-            description = "Allows to get all captured chunks in game field by team."
-    )
-    public ResponseEntity<TeamStatDTO> getTeamChunksByRound(@PathVariable Integer id) {
-        Team team = teamService.findById(id);
-        TeamStatDTO teamStatDTO = teamStatDTOMapper.apply(team);
-
-        return ResponseEntity.ok(teamStatDTO);
-    }
-    @GetMapping("/stats/team/{id}")
+    @GetMapping("/teams/{id}")
     @Operation(
             summary = "Gives stat of team by id.",
             description = "Allows to get stat of team by id."
     )
-    public ResponseEntity<TeamStatDTO> getTeamStatById(@PathVariable @Parameter(description = "team id", example = "1") Integer id) {
+    @Transactional
+    public ResponseEntity<TeamStatDTO> getTeamChunkStatById(@PathVariable @Parameter(description = "team id", example = "1") Integer id) {
         Team team = teamService.findById(id);
         TeamStatDTO teamStatDTO = teamStatDTOMapper.apply(team);
 
         return ResponseEntity.ok(teamStatDTO);
-    }@GetMapping("/stats/team/all")
+    }@GetMapping("/teams/all")
     @Operation(
             summary = "Gives all stat of all teams for every round.",
             description = "Allows to get stat of all teams."
     )
+    @Transactional
     public ResponseEntity<List<TeamStatDTO>> getTeamsStat() {
-
         List<Team> teams = teamService.findAll();
         List<TeamStatDTO> teamStatDTOS = teams.stream().map(teamStatDTOMapper).toList();
 

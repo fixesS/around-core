@@ -1,6 +1,6 @@
 package com.around.aroundcore.security.tokens;
 
-import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.Session;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
