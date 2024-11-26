@@ -37,9 +37,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(WHITE_LIST).permitAll()
-                        .requestMatchers("/api/**").hasAuthority(Role.USER.name())
-                        .requestMatchers("/ws/**").hasAuthority(Role.USER.name())
-                        .requestMatchers("/actuator/health").hasAuthority(Role.USER.name())
+                        .requestMatchers("/api/**").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
+                        .requestMatchers("/api/**/admin/**").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers("/ws/**").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
+                        .requestMatchers("/actuator/health").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

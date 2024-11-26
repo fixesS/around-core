@@ -4,7 +4,7 @@ import com.around.aroundcore.database.EntityFilters;
 import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.repositories.SessionRepository;
-import com.around.aroundcore.web.exceptions.api.entity.SessionNullException;
+import com.around.aroundcore.core.exceptions.api.entity.SessionNullException;
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

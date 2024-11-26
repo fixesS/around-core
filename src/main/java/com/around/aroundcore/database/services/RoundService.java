@@ -5,11 +5,12 @@ import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import com.around.aroundcore.database.repositories.RoundRepository;
 import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
-import com.around.aroundcore.web.exceptions.api.entity.NoActiveRoundException;
-import com.around.aroundcore.web.exceptions.api.entity.RoundNullException;
+import com.around.aroundcore.core.exceptions.api.entity.NoActiveRoundException;
+import com.around.aroundcore.core.exceptions.api.entity.RoundNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class RoundService {
     private final UserRoundTeamRepository userRoundTeamRepository;
 
     @Cacheable("currentRound")
+    @Transactional(dontRollbackOn = {NoActiveRoundException.class})
     public Round getCurrentRound() throws NoActiveRoundException{
         return roundRepository.findFirstByActiveIsTrue().orElseThrow(NoActiveRoundException::new);
     }
@@ -51,5 +53,8 @@ public class RoundService {
             throw new RoundNullException();
         }
     }
-
+    @CacheEvict(value = {"checkRound","currentRound","getRoundById"}, allEntries = true)
+    public void save(Round round){
+        roundRepository.saveAndFlush(round);
+    }
 }

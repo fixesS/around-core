@@ -1,11 +1,11 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.web.dtos.ApiError;
-import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
-import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
-import com.around.aroundcore.web.exceptions.auth.AuthSessionNullException;
+import com.around.aroundcore.core.enums.ApiResponse;
+import com.around.aroundcore.core.exceptions.api.ApiException;
+import com.around.aroundcore.core.exceptions.auth.AuthHeaderException;
+import com.around.aroundcore.core.exceptions.auth.AuthHeaderNullException;
+import com.around.aroundcore.core.exceptions.auth.AuthSessionNullException;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
@@ -79,7 +79,6 @@ public class RestExceptionHandler {
     public ResponseEntity<ApiError> handleApiException(ApiException exception) {
         ApiResponse response = exception.getResponse();
         log.error(exception.getMessage());
-        log.error(exception.getResponse().toString());
         ApiError apiError = ApiResponse.getApiError(response.getStatusCode(),response.getMessage());
         return new ResponseEntity<>(apiError, response.getStatus());
     }

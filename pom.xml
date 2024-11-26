@@ -72,6 +72,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+		<!-- STATEMACHINE -->
+		<dependency>
+			<groupId>org.springframework.statemachine</groupId>
+			<artifactId>spring-statemachine-core</artifactId>
+			<version>4.0.0</version>
+		</dependency>
 		<!--POSTGRESQL-->
 		<dependency>
 			<groupId>org.postgresql</groupId>

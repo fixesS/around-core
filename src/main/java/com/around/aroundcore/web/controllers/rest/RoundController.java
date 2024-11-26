@@ -2,7 +2,7 @@ package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.services.RoundService;
-import com.around.aroundcore.web.dtos.RoundDTO;
+import com.around.aroundcore.web.dtos.round.RoundDTO;
 import com.around.aroundcore.web.mappers.RoundDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

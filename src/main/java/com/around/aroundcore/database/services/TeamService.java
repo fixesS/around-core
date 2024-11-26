@@ -2,7 +2,7 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.repositories.TeamRepository;
-import com.around.aroundcore.web.exceptions.api.entity.TeamNullException;
+import com.around.aroundcore.core.exceptions.api.entity.TeamNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

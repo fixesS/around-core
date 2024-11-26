@@ -13,17 +13,17 @@ import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
 import com.around.aroundcore.web.dtos.user.GameUserDTO;
 import com.around.aroundcore.web.dtos.SkillDTO;
 import com.around.aroundcore.web.dtos.user.UpdateGameUserDTO;
-import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.events.OnEmailVerificationEvent;
-import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.exceptions.api.entity.GameUserOAuthProviderAlreadyExistsException;
-import com.around.aroundcore.web.exceptions.api.entity.GameUserUsernameNotUnique;
+import com.around.aroundcore.core.enums.ApiResponse;
+import com.around.aroundcore.core.events.OnEmailVerificationEvent;
+import com.around.aroundcore.core.exceptions.api.ApiException;
+import com.around.aroundcore.core.exceptions.api.entity.GameUserOAuthProviderAlreadyExistsException;
+import com.around.aroundcore.core.exceptions.api.entity.GameUserUsernameNotUnique;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
 import com.around.aroundcore.web.mappers.event.MapEventDTOMapper;
 import com.around.aroundcore.web.mappers.SkillDTOWithCurrentLevelMapper;
-import com.around.aroundcore.web.services.EntityPatcher;
-import com.around.aroundcore.web.services.apis.oauth.OAuthProviderRouter;
-import com.around.aroundcore.web.services.apis.oauth.ProviderOAuthService;
+import com.around.aroundcore.core.services.EntityPatcher;
+import com.around.aroundcore.core.services.apis.oauth.OAuthProviderRouter;
+import com.around.aroundcore.core.services.apis.oauth.ProviderOAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -152,7 +152,7 @@ public class GameUserController {
         }
         patchUser(user,updateGameUserDTO);
         if(updateGameUserDTO.getPassword()!=null){
-            updateGameUserDTO.getPassword().CheckIsPasswordsDifferent();
+            updateGameUserDTO.getPassword().checkIsPasswordsDifferent();
             updatePassword(user,updateGameUserDTO.getPassword());
         }
         userService.updateAndFlush(user);

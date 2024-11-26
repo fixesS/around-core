@@ -1,11 +1,13 @@
 package com.around.aroundcore.config;
 
-import com.around.aroundcore.web.enums.CoordsAPIType;
+import com.around.aroundcore.core.statemachine.GameStates;
+import com.around.aroundcore.core.statemachine.RoundEvents;
+import com.around.aroundcore.core.enums.CoordsAPIType;
 import com.around.aroundcore.web.mappers.chunk.StringGameChunkDTOMapper;
-import com.around.aroundcore.web.services.H3ChunkService;
-import com.around.aroundcore.web.services.apis.coords.CoordsAPI;
-import com.around.aroundcore.web.services.apis.coords.DadataAPIService;
-import com.around.aroundcore.web.services.apis.coords.GeotreeAPIService;
+import com.around.aroundcore.core.services.H3ChunkService;
+import com.around.aroundcore.core.services.apis.coords.CoordsAPI;
+import com.around.aroundcore.core.services.apis.coords.DadataAPIService;
+import com.around.aroundcore.core.services.apis.coords.GeotreeAPIService;
 import com.kuliginstepan.dadata.client.DadataClient;
 import com.uber.h3core.H3Core;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -51,6 +54,7 @@ public class AroundConfig {
     public static final String API_V1_SKILLS = API_V1+"/skills";
     public static final String API_V1_IMAGE = API_V1+"/images";
     public static final String API_V1_CITY = API_V1+"/cities";
+    public static final String API_V1_ADMIN = API_V1+"/admin";
     public static final String URL_AVATAR = "/"+AroundConfig.API_V1_IMAGE+"/avatars/";
     public static final String URL_ICON = "/"+AroundConfig.API_V1_IMAGE+"/icons/";
     public static final String URL_IMAGE = "/"+AroundConfig.API_V1_IMAGE+"/";
@@ -65,15 +69,6 @@ public class AroundConfig {
     private String geotreeMainUrl;
     @Value("${around.chunks.resolution}")
     private Integer chunksResolution;
-    @Bean
-    public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
-        ThreadPoolTaskScheduler threadPoolTaskScheduler
-                = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(5);
-        threadPoolTaskScheduler.setThreadNamePrefix(
-                "ThreadPoolTaskScheduler");
-        return threadPoolTaskScheduler;
-    }
     @Bean
     public H3Core h3Core() throws IOException {
         return H3Core.newInstance();
@@ -110,5 +105,11 @@ public class AroundConfig {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager("defaultAvatar","currentRound", "verifiedAndActiveEventsByCity","checkRound","getRoundById","checkCity","findCityById");
+    }
+    @Bean
+    public StateMachine<GameStates, RoundEvents> stateMachine(StateMachineFactory<GameStates, RoundEvents> factory){
+        StateMachine<GameStates, RoundEvents> stateMachine =  factory.getStateMachine();
+        stateMachine.startReactively().subscribe();
+        return stateMachine;
     }
 }

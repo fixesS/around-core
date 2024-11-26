@@ -1,31 +1,25 @@
 INSERT INTO public.teams(color)
-VALUES('BLUE');
-
-INSERT INTO public.teams(color)
-VALUES('YELLOW');
-
-INSERT INTO public.teams(color)
-VALUES('PURPLE');
-
-INSERT INTO public.teams(color)
-VALUES('DARK_PURPLE');
+VALUES('BLUE'),('YELLOW'),('PURPLE'),('DARK_PURPLE');
 
 INSERT INTO settings.game(id)
 values (1);
 
-INSERT INTO public.rounds(starts, ends,active, game_settings_id)
-Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, true , 1);
-INSERT INTO public.rounds(starts, ends,active, game_settings_id)
-Values('2024-09-11 00:00:00'::TIMESTAMP , '2024-12-14 23:59:59'::TIMESTAMP, false , 1);
+INSERT INTO public.rounds(name,starts, ends, active, game_settings_id,previous_round_id,next_round_id)
+values
+    ('Раунд 1','2024-09-01 00:00:00'::TIMESTAMP , '2024-12-15 23:59:59'::TIMESTAMP, true , 1,null,2),
+    ('Раунд 2','2024-12-16 00:00:00'::TIMESTAMP , '2024-12-17 23:59:59'::TIMESTAMP, false , 1,1,3),
+    ('Раунд 3','2024-12-18 00:00:00'::TIMESTAMP , '2024-12-19 23:59:59'::TIMESTAMP, false , 1,2,4),
+    ('Раунд 4','2024-12-20 00:00:00'::TIMESTAMP , '2024-12-21 23:59:59'::TIMESTAMP, false , 1,3,5),
+    ('Раунд 5','2024-12-22 00:00:00'::TIMESTAMP , '2024-12-23 23:59:59'::TIMESTAMP, false , 1,4,6),
+    ('Раунд 6','2024-12-24 00:00:00'::TIMESTAMP , '2024-12-31 23:59:59'::TIMESTAMP, false , 1,5,7),
+    ('Раунд 7','2025-01-01 00:00:00'::TIMESTAMP , '2025-03-19 23:59:59'::TIMESTAMP, false , 1,6,null);
 
 INSERT INTO public.images(is_default,uuid,url,file)
-values (true,'b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid,'https://aroundgame.ru/api/v1/image/avatar/guest.jpg','guest.jpg');
-INSERT INTO public.images(is_default,uuid,url,file)
-values (true,'2da609a9-f54a-4c64-bf8d-88e38cdbc541'::uuid,'https://aroundgame.ru/api/v1/image/width_skill_image.jpg','width_skill_image.jpg');
-INSERT INTO public.images(is_default,uuid,url,file)
-values (true,'aba1bbbe-af69-4da6-83ce-572546e2f37e'::uuid,'https://aroundgame.ru/api/v1/image/icon/width_skill_icon.svg','width_skill_icon.svg');
-INSERT INTO images(UUID, URL, FILE)
-values ('f443a6e6-d81b-4eb6-9af4-bcecda7093f8'::uuid,'https://ucare.timepad.ru/55ad9c96-d442-413d-902b-d953ed5f5d36/-/format/jpeg/-/quality/smart/-/preview/1360x765/',null);
+values
+    (true,'b3feae74-7915-4ed8-9965-419b9a0a6283'::uuid,'https://aroundgame.ru/api/v1/image/avatar/guest.jpg','guest.jpg'),
+    (true,'2da609a9-f54a-4c64-bf8d-88e38cdbc541'::uuid,'https://aroundgame.ru/api/v1/image/width_skill_image.jpg','width_skill_image.jpg'),
+    (true,'aba1bbbe-af69-4da6-83ce-572546e2f37e'::uuid,'https://aroundgame.ru/api/v1/image/icon/width_skill_icon.svg','width_skill_icon.svg'),
+    (false,'f443a6e6-d81b-4eb6-9af4-bcecda7093f8'::uuid,'https://ucare.timepad.ru/55ad9c96-d442-413d-902b-d953ed5f5d36/-/format/jpeg/-/quality/smart/-/preview/1360x765/',null);
 
 INSERT INTO public.cities(chunks)
 Values('[
@@ -48,8 +42,8 @@ Values('[
 ]' );
 
 INSERT INTO public.users ("level", coins, username, "password", "role", email, verified)
-VALUES(1, 0, 'username', '$2a$10$yatZBPQE4uvwPoRSwN/8ZuyJXpBY8HTOGlknkfB4dTbfNlREA4UsS',
-       'USER', 'mikefixeloqq@gmail.com', true);
+VALUES(1, 0, 'eduard', '$2a$10$yatZBPQE4uvwPoRSwN/8ZuyJXpBY8HTOGlknkfB4dTbfNlREA4UsS',
+       'ADMIN', 'eduard.gorshkov.2020@gmail.com', true);
 
 INSERT INTO settings.costs
 (id, cost_value)
@@ -86,9 +80,8 @@ VALUES(0, '[
 ]');
 
 INSERT INTO public.users_rounds_team_city(user_id, round_id, city_id, team_id)
-VALUES (1,1,1, 1);
-INSERT INTO public.users_rounds_team_city(user_id, round_id, city_id, team_id)
-VALUES (1,2,1, 2);
+VALUES (1,1,1, 1),
+       (1,2,1, 2);
 
 INSERT INTO public.skills
 ("name", max_level, description, rule_id, cost_id)

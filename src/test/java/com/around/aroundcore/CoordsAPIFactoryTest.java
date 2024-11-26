@@ -1,7 +1,7 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.web.services.apis.coords.CoordsAPI;
-import com.around.aroundcore.web.enums.CoordsAPIType;
+import com.around.aroundcore.core.services.apis.coords.CoordsAPI;
+import com.around.aroundcore.core.enums.CoordsAPIType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

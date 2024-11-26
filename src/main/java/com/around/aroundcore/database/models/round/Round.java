@@ -22,6 +22,15 @@ public class Round implements Serializable {
     @Column(name = "id")
     private Integer id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="previous_round_id")
+    private Round previousRound;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @Setter
+    @JoinColumn(name="next_round_id")
+    private Round nextRound;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_rounds_team_city",
@@ -43,7 +52,9 @@ public class Round implements Serializable {
     private LocalDateTime ends;
 
     @Column
-    private Boolean active;
+    @Builder.Default
+    @Setter
+    private Boolean active = false;
 
     @ManyToOne
     @JoinColumn(name = "game_settings_id", referencedColumnName = "id")

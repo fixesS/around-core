@@ -1,10 +1,10 @@
 package com.around.aroundcore.database.models.user;
 
+import com.around.aroundcore.core.exceptions.api.entity.*;
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.models.event.MapEvent;
 import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import com.around.aroundcore.database.models.oauth.OAuthUser;
-import com.around.aroundcore.web.exceptions.api.entity.*;
 import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
@@ -58,6 +58,10 @@ public class GameUser implements UserDetails {
     @Setter
     @Getter
     private Boolean verified = false;
+    @Builder.Default
+    @Setter
+    @Getter
+    private Boolean active = true;
     @Column
     @Getter
     @Enumerated(EnumType.STRING)
@@ -163,7 +167,7 @@ public class GameUser implements UserDetails {
             throw new GameUserNotEnoughCoins();
         }
     }
-    public void checkTeamForCurrentRoundAndAnyCity() throws GameUserTeamNullForRoundAndAneCity{
+    public void checkTeamForCurrentRoundAndAnyCity() throws GameUserTeamNullForRoundAndAneCity {
         if(userRoundTeamCities == null || userRoundTeamCities.isEmpty()){
             throw new GameUserTeamNullForRoundAndAneCity();
         }
@@ -210,7 +214,7 @@ public class GameUser implements UserDetails {
     }
     @Override
     public boolean isEnabled() {
-        return true;
+        return active;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

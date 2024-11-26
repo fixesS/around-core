@@ -1,8 +1,8 @@
 package com.around.aroundcore;
 
 import com.around.aroundcore.database.models.event.MapEvent;
-import com.around.aroundcore.web.exceptions.api.EventsNotFoundException;
-import com.around.aroundcore.web.services.MapEventParsingService;
+import com.around.aroundcore.core.exceptions.api.EventsNotFoundException;
+import com.around.aroundcore.core.services.MapEventParsingService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

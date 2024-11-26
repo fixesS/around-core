@@ -5,7 +5,7 @@ import com.around.aroundcore.database.models.token.VerificationToken;
 import com.around.aroundcore.database.repositories.VerificationTokenRepository;
 import com.around.aroundcore.security.models.Token;
 import com.around.aroundcore.security.services.JwtService;
-import com.around.aroundcore.web.exceptions.api.entity.VerificationTokenNullException;
+import com.around.aroundcore.core.exceptions.api.entity.VerificationTokenNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

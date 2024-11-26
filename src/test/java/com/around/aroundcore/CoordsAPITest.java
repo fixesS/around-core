@@ -1,8 +1,8 @@
 package com.around.aroundcore;
 
 import com.around.aroundcore.web.dtos.coords.Location;
-import com.around.aroundcore.web.exceptions.api.CoordsNotFoundException;
-import com.around.aroundcore.web.services.apis.coords.CoordsAPI;
+import com.around.aroundcore.core.exceptions.api.CoordsNotFoundException;
+import com.around.aroundcore.core.services.apis.coords.CoordsAPI;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

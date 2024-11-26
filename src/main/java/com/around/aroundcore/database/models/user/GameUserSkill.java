@@ -1,7 +1,7 @@
 package com.around.aroundcore.database.models.user;
 
-import com.around.aroundcore.web.exceptions.api.entity.GameUserSkillAlreadyMaxLevel;
-import com.around.aroundcore.web.exceptions.api.entity.GameUserSkillUnreachableLevel;
+import com.around.aroundcore.core.exceptions.api.entity.GameUserSkillAlreadyMaxLevel;
+import com.around.aroundcore.core.exceptions.api.entity.GameUserSkillUnreachableLevel;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;

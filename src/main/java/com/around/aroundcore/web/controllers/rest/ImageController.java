@@ -4,7 +4,7 @@ import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.Image;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.web.image.ImageType;
+import com.around.aroundcore.core.image.ImageType;
 import com.around.aroundcore.database.services.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;

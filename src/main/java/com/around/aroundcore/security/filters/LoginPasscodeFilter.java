@@ -4,7 +4,7 @@ import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.security.services.LoginPasscodeService;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
-import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
+import com.around.aroundcore.core.exceptions.auth.AuthHeaderNullException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

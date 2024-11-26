@@ -1,9 +1,8 @@
 package com.around.aroundcore;
 
 import com.around.aroundcore.web.dtos.ChunkDTO;
-import com.around.aroundcore.web.services.H3ChunkService;
+import com.around.aroundcore.core.services.H3ChunkService;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.util.diff.Chunk;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
