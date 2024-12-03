@@ -36,4 +36,6 @@ public interface GameUserRepository extends JpaRepository<GameUser, Integer> {
     boolean existsByUserIdAndProvider(@Param("userId") Integer userId, @Param("provider") String provider);
     @Query(nativeQuery = true, value = "SELECT nextval('users_id_seq') from public.users_id_seq;")
     BigDecimal getNextValMySequence();
+    @Query(nativeQuery = true, value = "select u.* from public.users_rounds_team_city as urtc join public.users as u on urtc.user_id = u.id where urtc.team_id = :teamId and urtc.round_id = :roundId; ")
+    List<GameUser> getTeamMembersForRound(@Param("teamId") Integer teamId,@Param("roundId") Integer roundId);
 }

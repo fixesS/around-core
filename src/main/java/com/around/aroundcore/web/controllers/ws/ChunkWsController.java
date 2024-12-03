@@ -39,10 +39,10 @@ public class ChunkWsController {
     private final MapEventService mapEventService;
     private final GameUserService userService;
     private final H3ChunkService h3ChunkService;
+    private final RoundService roundService;
     private final SimpMessagingTemplate messagingTemplate;
     public static final String CHUNK_CHANGES_FROM_USER = "/chunk.changes";
     public static final String CHUNK_CHANGES_EVENT = "/topic/chunk.event";
-    private final RoundService roundService;
 
 //    deleted because spring did not call this due /topic (only if /topic sat as application prefix in config)
 //    todo decide what to do with this method
@@ -115,7 +115,7 @@ public class ChunkWsController {
                 .toList();
         gameChunkService.saveListOfChunkDTOs(chunksDTOList, user, round, city);// adding chunks
         userService.increaseCapturedChunksToUserInRoundInCity(user,round,city,chunksDTOList.size());
-        user.addCoins(chunksDTOList.size()*round.getGameSettings().getChunkReward());//add reward for each chunk to coins
+        user.addCoins(chunksDTOList.size()*round.getGameSettings().getUserChunkReward());//add reward for each chunk to coins
         chunksDTOList.forEach(chunkDTO1 -> chunkDTO1.setRound_id(round.getId()));// setting round for correct output from chunk queue
 
         //getting visited events (NOW) for user (in DB they are not visited yet)

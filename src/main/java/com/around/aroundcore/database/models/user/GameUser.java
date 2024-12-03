@@ -32,6 +32,10 @@ public class GameUser implements UserDetails {
     @Column(name = "id")
     @Getter
     private Integer id;
+    @Column(name = "experience")
+    @Builder.Default
+    @Getter
+    private Integer experience = 0;
     @Column(name = "level",nullable = false,columnDefinition = "int8 default 0")
     @Builder.Default
     @Getter
@@ -156,6 +160,30 @@ public class GameUser implements UserDetails {
     }
     public void addVisitedEvents(List<MapEvent> events){
         visitedEvents.addAll(events);
+    }
+    public void addExperience(Integer value, List<Integer> levelUpRule){
+        experience=experience+value;
+        level = findClosestIndexBelow(levelUpRule, experience);
+    }
+    public Integer findClosestIndexBelow(List<Integer> list, int target) {
+        int low = 0;
+        int high = list.size() - 1;
+        int closestIndex = 0;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            int midValue = list.get(mid);
+
+            if (midValue == target) {
+                return mid;
+            } else if (midValue < target) {
+                closestIndex = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return closestIndex;
     }
     public void addCoins(Integer value){
         coins+=value;

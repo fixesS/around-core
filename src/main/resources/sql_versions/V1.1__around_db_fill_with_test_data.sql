@@ -1,8 +1,22 @@
 INSERT INTO public.teams(color)
 VALUES('BLUE'),('YELLOW'),('PURPLE'),('DARK_PURPLE');
 
-INSERT INTO settings.game(id)
-values (1);
+INSERT INTO settings.game(id,user_level_exp_cost_rule)
+values (1,'[
+  0,
+  10,
+  20,
+  40,
+  80,
+  160,
+  320,
+  680,
+  1360,
+  2720,
+  5440,
+  10880
+]');
+
 
 INSERT INTO public.rounds(name,starts, ends, active, game_settings_id,previous_round_id,next_round_id)
 values

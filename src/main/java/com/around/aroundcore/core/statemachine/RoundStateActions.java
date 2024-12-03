@@ -1,11 +1,15 @@
 package com.around.aroundcore.core.statemachine;
 
+import com.around.aroundcore.core.exceptions.NoVictoryContenders;
+import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.services.RoundService;
+import com.around.aroundcore.database.services.TeamService;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateContext;
@@ -16,6 +20,8 @@ import org.springframework.statemachine.annotation.WithStateMachine;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
 @WithStateMachine
 @Slf4j
@@ -25,6 +31,8 @@ public class RoundStateActions {
     @Resource
     private final StateMachine<GameStates, RoundEvents> stateMachine;
     private final RoundService roundService;
+    @Autowired
+    private TeamService teamService;
 
     @OnStateChanged(source = {"ENDED","PAUSED"}, target = "ACTIVE")
     public void activateRound(Message<RoundEvents> message) {
@@ -43,6 +51,17 @@ public class RoundStateActions {
         Round round = (Round) message.getHeaders().get("round");
         round.setActive(false);
         roundService.save(round);
+
+        //reward winner team
+        try{
+            log.debug("Finding victory contenders...");
+            List<Team> teams = teamService.getVictoryContendersForRound(round);
+            log.debug("Rewarding victory contenders...");
+
+            teamService.rewardTeamsForRound(teams, round);
+        }catch (NoVictoryContenders ignored){
+
+        }
 
         if(round.getNextRound() != null) {
             log.debug("Next round exist");

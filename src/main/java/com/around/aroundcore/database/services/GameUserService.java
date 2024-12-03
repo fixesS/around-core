@@ -54,6 +54,9 @@ public class GameUserService {
     public void update(GameUser user) {
         userRepository.save(user);
     }
+    public void updateAll(List<GameUser> users) {
+        userRepository.saveAll(users);
+    }
     public void updateAndFlush(GameUser user) {
         userRepository.saveAndFlush(user);
     }
@@ -126,7 +129,9 @@ public class GameUserService {
         }
         return userRepository.getUsersStatTopForRoundsForChunksNow(roundIds,userIds, PageRequest.of(0, limit));
     }
-
+    public List<GameUser> getTeamMembersForRound(Team team, Round round){
+        return userRepository.getTeamMembersForRound(team.getId(),round.getId());
+    }
     public void setTeamForRoundAndCity(GameUser user, Round round, City city, Team team){
         userRepository.setTeamForRoundAndCity(user.getId(), round.getId(), city.getId(), team.getId());
     }
