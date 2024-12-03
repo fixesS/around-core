@@ -20,13 +20,13 @@ values (1,'[
 
 INSERT INTO public.rounds(name,starts, ends, active, game_settings_id,previous_round_id,next_round_id)
 values
-    ('Раунд 1','2024-09-01 00:00:00'::TIMESTAMP , '2024-12-15 23:59:59'::TIMESTAMP, true , 1,null,2),
-    ('Раунд 2','2024-12-16 00:00:00'::TIMESTAMP , '2024-12-17 23:59:59'::TIMESTAMP, false , 1,1,3),
-    ('Раунд 3','2024-12-18 00:00:00'::TIMESTAMP , '2024-12-19 23:59:59'::TIMESTAMP, false , 1,2,4),
-    ('Раунд 4','2024-12-20 00:00:00'::TIMESTAMP , '2024-12-21 23:59:59'::TIMESTAMP, false , 1,3,5),
-    ('Раунд 5','2024-12-22 00:00:00'::TIMESTAMP , '2024-12-23 23:59:59'::TIMESTAMP, false , 1,4,6),
-    ('Раунд 6','2024-12-24 00:00:00'::TIMESTAMP , '2024-12-31 23:59:59'::TIMESTAMP, false , 1,5,7),
-    ('Раунд 7','2025-01-01 00:00:00'::TIMESTAMP , '2025-03-19 23:59:59'::TIMESTAMP, false , 1,6,null);
+    ('Раунд 1','2024-09-01 00:00:00'::TIMESTAMP , '2024-12-31 23:59:59'::TIMESTAMP, true , 1,null,2),
+    ('Раунд 2','2025-01-01 00:00:00'::TIMESTAMP , '2025-01-15 23:59:59'::TIMESTAMP, false , 1,1,3),
+    ('Раунд 3','2025-01-16 00:00:00'::TIMESTAMP , '2025-01-31 23:59:59'::TIMESTAMP, false , 1,2,4),
+    ('Раунд 4','2025-02-01 00:00:00'::TIMESTAMP , '2025-02-15 23:59:59'::TIMESTAMP, false , 1,3,5),
+    ('Раунд 5','2025-02-16 00:00:00'::TIMESTAMP , '2025-02-28 23:59:59'::TIMESTAMP, false , 1,4,6),
+    ('Раунд 6','2025-03-01 00:00:00'::TIMESTAMP , '2025-03-13 23:59:59'::TIMESTAMP, false , 1,5,7),
+    ('Раунд 7','2025-03-14 00:00:00'::TIMESTAMP , '2025-03-31 23:59:59'::TIMESTAMP, false , 1,6,null);
 
 INSERT INTO public.images(is_default,uuid,url,file)
 values

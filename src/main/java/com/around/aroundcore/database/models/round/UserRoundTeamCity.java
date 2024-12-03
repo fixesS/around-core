@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 public class UserRoundTeamCity implements Serializable {
 
     @Id
-    @ManyToOne
+    @ManyToOne()
     @Getter
     @JoinColumn(name = "round_id")
     private Round round;

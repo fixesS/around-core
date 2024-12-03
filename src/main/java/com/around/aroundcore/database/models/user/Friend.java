@@ -20,14 +20,6 @@ public class Friend {
     private int friend_id;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Friend friend = (Friend) o;
-        return user_id == friend.user_id && friend_id == friend.friend_id;
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(user_id, friend_id);
     }

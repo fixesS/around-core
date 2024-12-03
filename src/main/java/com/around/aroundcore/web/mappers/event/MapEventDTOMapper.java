@@ -31,7 +31,7 @@ public class MapEventDTOMapper implements Function<MapEvent, MapEventDTO> {
                 .description(event.getDescription())
                 .starts(timestampToEpoch(event.getStarts()))
                 .ends(timestampToEpoch(event.getEnds()))
-                .chunks(event.getChunks().stream().map(gameChunk -> ChunkDTO.builder().id(gameChunk.getId()).build()).toList())
+                .chunks(event.getChunks().stream().map(gameChunk -> ChunkDTO.builder().id(gameChunk.getId()).build()).distinct().toList())
                 .build();
     }
     private Long timestampToEpoch(LocalDateTime timestamp) {

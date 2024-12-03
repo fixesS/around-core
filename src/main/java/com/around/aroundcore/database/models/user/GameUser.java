@@ -88,7 +88,7 @@ public class GameUser implements UserDetails {
     )
     @Filter(name = "activeRoundFilter")
     private List<UserRoundTeamCity> userRoundTeamCities = new ArrayList<>();
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)// do not remove eager (then add follower/friend brokes)
+    @ManyToMany( cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
             name = "users_friends",
@@ -96,7 +96,7 @@ public class GameUser implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "friend_id", referencedColumnName = "id")
     )
     private List<GameUser> friends = new ArrayList<>();
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)// do not remove eager (then add follower/friend brokes)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @Getter
     @JoinTable(
             name = "users_followers",
@@ -248,14 +248,6 @@ public class GameUser implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GameUser gameUser = (GameUser) o;
-        return Objects.equals(id, gameUser.id);
-    }
-
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
