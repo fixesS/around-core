@@ -1,13 +1,13 @@
 package com.around.aroundcore.web.controllers.rest.auth;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.web.dtos.auth.AuthDTO;
 import com.around.aroundcore.web.dtos.auth.TokenData;
-import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.api.ApiException;
+import com.around.aroundcore.core.enums.ApiResponse;
+import com.around.aroundcore.core.exceptions.api.ApiException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

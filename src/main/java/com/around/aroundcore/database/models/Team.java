@@ -1,15 +1,18 @@
 package com.around.aroundcore.database.models;
 
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Slf4j
 @Entity
-@Table(name = "teams")
+@Table(name = "teams", schema = "public")
 @Getter
 public class Team implements Serializable {
 
@@ -21,7 +24,8 @@ public class Team implements Serializable {
     @Column(name = "color")
     private String color;
 
-    @OneToMany
+    @ManyToMany(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "users_rounds_team_city",
             joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "id"),

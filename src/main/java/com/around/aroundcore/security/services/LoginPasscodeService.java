@@ -1,9 +1,9 @@
 package com.around.aroundcore.security.services;
 
-import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
+import com.around.aroundcore.core.exceptions.auth.AuthHeaderNullException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

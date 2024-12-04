@@ -1,11 +1,11 @@
 package com.around.aroundcore.security.services;
 
 import com.around.aroundcore.security.models.Token;
-import com.around.aroundcore.web.exceptions.auth.AuthHeaderEmptyException;
-import com.around.aroundcore.web.exceptions.auth.AuthHeaderException;
-import com.around.aroundcore.web.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
-import com.around.aroundcore.web.exceptions.auth.AuthHeaderNullException;
-import com.around.aroundcore.web.exceptions.jwt.WrongJwtTypeException;
+import com.around.aroundcore.core.exceptions.auth.AuthHeaderEmptyException;
+import com.around.aroundcore.core.exceptions.auth.AuthHeaderException;
+import com.around.aroundcore.core.exceptions.auth.AuthHeaderNotStartsWithPrefixException;
+import com.around.aroundcore.core.exceptions.auth.AuthHeaderNullException;
+import com.around.aroundcore.core.exceptions.jwt.WrongJwtTypeException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

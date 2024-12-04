@@ -1,10 +1,10 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.MapEvent;
+import com.around.aroundcore.database.models.event.MapEvent;
 import com.around.aroundcore.database.services.MapEventService;
-import com.around.aroundcore.web.dtos.MapEventDTO;
-import com.around.aroundcore.web.mappers.MapEventDTOMapper;
+import com.around.aroundcore.web.dtos.events.MapEventDTO;
+import com.around.aroundcore.web.mappers.event.MapEventDTOMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

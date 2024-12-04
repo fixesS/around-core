@@ -1,6 +1,6 @@
 package com.around.aroundcore.config;
 
-import com.around.aroundcore.database.models.Role;
+import com.around.aroundcore.database.models.user.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessageType;

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @ToString
 @Entity
-@Table(name = "images")
+@Table(name = "images", schema = "public")
 @Builder
 @Getter
 @NoArgsConstructor
@@ -29,14 +29,6 @@ public class Image implements Serializable {
     @Column
     @Builder.Default
     private Boolean is_default = false;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Image image = (Image) o;
-        return Objects.equals(uuid, image.uuid);
-    }
 
     @Override
     public int hashCode() {

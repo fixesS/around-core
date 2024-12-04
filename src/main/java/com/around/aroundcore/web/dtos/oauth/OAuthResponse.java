@@ -15,4 +15,8 @@ public class OAuthResponse {
     private String last_name;
     private String avatar;
     private String email;
+
+    public String getEmailWithoutDomain() {
+        return email.split("@")[0];
+    }
 }

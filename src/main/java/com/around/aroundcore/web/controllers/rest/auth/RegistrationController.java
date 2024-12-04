@@ -1,13 +1,15 @@
 package com.around.aroundcore.web.controllers.rest.auth;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.token.VerificationToken;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.user.Role;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.web.dtos.auth.RegistrationDTO;
 import com.around.aroundcore.web.dtos.auth.TokenData;
-import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.exceptions.api.ApiException;
+import com.around.aroundcore.core.enums.ApiResponse;
+import com.around.aroundcore.core.exceptions.api.ApiException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,7 +66,7 @@ public class RegistrationController {
         if(registrationDTO.getTeam_id() != null && registrationDTO.getCity_id() != null){
             var team = teamService.findById(registrationDTO.getTeam_id());
             var city = cityService.findById(registrationDTO.getCity_id());
-            userService.createTeamCityForRound(user,team,city,roundService.getCurrentRound());
+            userService.setTeamForRoundAndCity(user,roundService.getCurrentRound(),city,team);
         }
 
         TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));

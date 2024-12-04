@@ -4,7 +4,7 @@ import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.Image;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.SessionService;
-import com.around.aroundcore.web.image.ImageType;
+import com.around.aroundcore.core.image.ImageType;
 import com.around.aroundcore.database.services.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
@@ -37,13 +37,13 @@ public class ImageController {
         return ResponseEntity.ok(image);
     }
 
-    @GetMapping( value = "avatar/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping( value = "avatars/{filename}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getAvatarImage(@PathVariable String filename) {
         byte[] image = imageService.loadImage(filename, ImageType.AVATAR);
         return ResponseEntity.ok(image);
     }
 
-    @GetMapping( value = "icon/{filename}")
+    @GetMapping( value = "icons/{filename}")
     public ResponseEntity<byte[]> getIconImage(@PathVariable String filename) {
         byte[] image = imageService.loadImage(filename, ImageType.ICON);
         HttpHeaders header = new HttpHeaders();

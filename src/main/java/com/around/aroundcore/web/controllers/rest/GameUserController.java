@@ -1,25 +1,29 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.OAuthUser;
-import com.around.aroundcore.database.models.OAuthUserEmbedded;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.oauth.OAuthUser;
+import com.around.aroundcore.database.models.oauth.OAuthUserEmbedded;
+import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.services.*;
+import com.around.aroundcore.web.dtos.events.MapEventDTO;
 import com.around.aroundcore.web.dtos.auth.ChangePasswordDTO;
 import com.around.aroundcore.web.dtos.auth.OAuthDTO;
 import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
 import com.around.aroundcore.web.dtos.user.GameUserDTO;
 import com.around.aroundcore.web.dtos.SkillDTO;
 import com.around.aroundcore.web.dtos.user.UpdateGameUserDTO;
-import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.events.OnEmailVerificationEvent;
-import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.exceptions.entity.*;
+import com.around.aroundcore.core.enums.ApiResponse;
+import com.around.aroundcore.core.events.OnEmailVerificationEvent;
+import com.around.aroundcore.core.exceptions.api.ApiException;
+import com.around.aroundcore.core.exceptions.api.entity.GameUserOAuthProviderAlreadyExistsException;
+import com.around.aroundcore.core.exceptions.api.entity.GameUserUsernameNotUnique;
 import com.around.aroundcore.web.mappers.GameUserDTOMapper;
+import com.around.aroundcore.web.mappers.event.MapEventDTOMapper;
 import com.around.aroundcore.web.mappers.SkillDTOWithCurrentLevelMapper;
-import com.around.aroundcore.web.services.EntityPatcher;
-import com.around.aroundcore.web.services.apis.oauth.OAuthProviderRouter;
-import com.around.aroundcore.web.services.apis.oauth.ProviderOAuthService;
+import com.around.aroundcore.core.services.EntityPatcher;
+import com.around.aroundcore.core.services.apis.oauth.OAuthProviderRouter;
+import com.around.aroundcore.core.services.apis.oauth.ProviderOAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -37,7 +41,6 @@ import org.springframework.web.bind.annotation.*;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,6 +62,8 @@ public class GameUserController {
     private final ApplicationEventPublisher eventPublisher;
     private final RoundService roundService;
     private final CityService cityService;
+    private final MapEventDTOMapper mapEventDTOMapper;
+    private final GameChunkService gameChunkService;
 
     @GetMapping("/me")
     @Operation(
@@ -77,16 +82,17 @@ public class GameUserController {
   
     @GetMapping("/me/friends")
     @Operation(
-            summary = "Gives friends of user",
-            description = "Allows get info about all friends of user."
+            summary = "Gives friends of user sorted by chunks",
+            description = "sorting_by_chunks_all - sorting by chunks all (captured chunks in current round for all cities) if true; sorting ny chunks that owned by users right now if false."
     )
     @Transactional
-    public ResponseEntity<List<GameUserDTO>> getMyFriends() {
+    public ResponseEntity<List<GameUserDTO>> getMyFriends(@RequestParam("sorting_by_chunks_all") Boolean sortingByChunksAll) {
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
-        List<GameUserDTO> friends = getUserFriendsSortedByCurrentRound(user).stream().map(gameUserDTOMapper).toList();
-
+        List<GameUserDTO> friends = getSortedUsersByChunks(
+                List.of(roundService.getCurrentRound()),user.getFriends(),50, sortingByChunksAll)
+                .stream().map(gameUserDTOMapper).toList();
         return ResponseEntity.ok(friends);
     }
     @GetMapping("/me/followers")
@@ -117,10 +123,24 @@ public class GameUserController {
 
         return ResponseEntity.ok(skillDTOS);
     }
+    @GetMapping("/me/events")
+    @Operation(
+            summary = "Gives visited events by user",
+            description = "Allows get info about visited events by user."
+    )
+    @Transactional
+    public ResponseEntity<List<MapEventDTO>> getMyVisitedEvents() {
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        List<MapEventDTO> mapEventDTOS = user.getVisitedEvents().stream().map(mapEventDTOMapper).toList();
+
+        return ResponseEntity.ok(mapEventDTOS);
+    }
     @PatchMapping("/me")
     @Operation(
-            summary = "Changes some info about user by id",
-            description = "Allows to change some ingo about user by id."
+            summary = "Changes some info about user",
+            description = "Allows to change some ingo about user"
     )
     @Transactional
     public ResponseEntity<String> patchMe(@RequestBody @Validated UpdateGameUserDTO updateGameUserDTO){
@@ -132,16 +152,33 @@ public class GameUserController {
         }
         patchUser(user,updateGameUserDTO);
         if(updateGameUserDTO.getPassword()!=null){
-            updateGameUserDTO.getPassword().CheckIsPasswordsDifferent();
+            updateGameUserDTO.getPassword().checkIsPasswordsDifferent();
             updatePassword(user,updateGameUserDTO.getPassword());
         }
         userService.updateAndFlush(user);
         if(updateGameUserDTO.getTeam_id()!=null && updateGameUserDTO.getCity_id()!=null){
             var team = teamService.findById(updateGameUserDTO.getTeam_id());
             var city = cityService.findById(updateGameUserDTO.getCity_id());
-            userService.createTeamCityForRound(user,team,city,roundService.getCurrentRound());
+            userService.setTeamForRoundAndCity(user,roundService.getCurrentRound(),city,team);
         }
-
+        return ResponseEntity.ok("");
+    }
+    @PatchMapping("/me/team")
+    @Operation( summary = "Changes user team in current round for city.",
+            description = "Team id and city id in request parameters")
+    @Transactional
+    public ResponseEntity<String> patchMeTeam(@RequestParam("team_id") Integer teamId, @RequestParam("city_id") Integer cityId){
+        var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var session = sessionService.findByUuid(sessionUuid);
+        var user = session.getUser();
+        var team = teamService.findById(teamId);
+        var city = cityService.findById(cityId);
+        if(!user.getTeam(city).equals(team)){
+            var round = roundService.getCurrentRound();
+            user.reduceCoins(round.getGameSettings().getTeamChangeCost());
+            userService.setTeamForRoundAndCity(user,roundService.getCurrentRound(),city,team);
+            gameChunkService.deleteChunks(user,round,city);
+        }
         return ResponseEntity.ok("");
     }
     @GetMapping("/{id}")
@@ -158,13 +195,15 @@ public class GameUserController {
     }
     @GetMapping("{id}/friends")
     @Operation(
-            summary = "Gives friends of user by id",
-            description = "Allows get info about all friends of user by id."
+            summary = "Gives friends of user by id sorted by chunks",
+            description = "sorting_by_chunks_all - sorting by chunks all (captured chunks in current round for all cities) if true; sorting ny chunks that owned by users right now if false."
     )
     @Transactional
-    public ResponseEntity<List<GameUserDTO>> getUserFriendsById(@PathVariable Integer id) {
+    public ResponseEntity<List<GameUserDTO>> getUserFriendsById(@PathVariable Integer id, @RequestParam("sorting_by_chunks_all") Boolean sortingByChunksAll) {
         var user = userService.findById(id);
-        List<GameUserDTO> friends = user.getFriends().stream().map(gameUserDTOMapper).toList();
+        List<GameUserDTO> friends = getSortedUsersByChunks(
+                List.of(roundService.getCurrentRound()),user.getFriends(),50, sortingByChunksAll)
+                .stream().map(gameUserDTOMapper).toList();
         return ResponseEntity.ok(friends);
     }
     @GetMapping("/{id}/followers")
@@ -193,16 +232,18 @@ public class GameUserController {
     }
     @PostMapping("/find")
     @Operation(
-            summary = "Gives all info about user by uid",
-            description = "Allows to get all info about user by id."
+            summary = "Gives sorted suggested users by chunks",
+            description = "sorting_by_chunks_all - sorting by chunks all (captured chunks in current round for all cities) if true; sorting ny chunks that owned by users right now if false."
     )
     @Transactional
-    public ResponseEntity<List<GameUserDTO>> getUserByUsername(@RequestParam("username") String username){
+    public ResponseEntity<List<GameUserDTO>> getUserByUsername(@RequestParam("username") String username,@RequestParam("sorting_by_chunks_all") Boolean sortingByChunksAll){
         List<GameUserDTO> gameUserDTOS = new ArrayList<>();
 
-        if(username != null && !username.isEmpty()){
+        if(!username.isEmpty()){
             List<GameUser> suggestionUsers = userService.findByUsernameContaining(username);
-            gameUserDTOS = sortSuggestionUsersByCurrentRound(suggestionUsers).stream().map(gameUserDTOMapper).toList();
+            gameUserDTOS = getSortedUsersByChunks(
+                    List.of(roundService.getCurrentRound()),suggestionUsers,50, sortingByChunksAll)
+                    .stream().map(gameUserDTOMapper).toList();
         }
 
         return ResponseEntity.ok(gameUserDTOS);
@@ -236,7 +277,7 @@ public class GameUserController {
             description = "Allows to unfollow user by it's username. Does nothing if user and you are friends. Unfollow you from user, if you was it's follower."
     )
     @Transactional
-    public ResponseEntity<String> deleteMyFollower(@RequestParam("follower_id") @Schema(description = "follower id") Integer followerId){
+    public ResponseEntity<String> deleteMyFollower(@RequestParam("followee_id") @Schema(description = "followee id") Integer followerId){
         var sessionUuid = (UUID) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var session = sessionService.findByUuid(sessionUuid);
         var user = session.getUser();
@@ -312,22 +353,14 @@ public class GameUserController {
     }
     private void updatePassword(GameUser user, ChangePasswordDTO passwordDTO) {
         if (!passwordEncoder.matches(passwordDTO.getOld_password(), user.getPassword())) {
-            throw new ApiException(ApiResponse.LOG_INCORRECT_PASSWORD_OR_LOGIN);
+            throw new ApiException(ApiResponse.AUTH_INCORRECT_PASSWORD);
         }
         user.setPassword(passwordEncoder.encode(passwordDTO.getNew_password()));
     }
-    private List<GameUser> getUserFriendsSortedByCurrentRound(GameUser user){
-        try{
-            return user.getFriends().stream().sorted(Comparator.comparingLong(friend -> -friend.getCapturedChunks())).toList();
-        }catch (RoundNullException | NoActiveRoundException  e){
-            return user.getFriends();
+    private List<GameUser> getSortedUsersByChunks(List<Round> rounds, List<GameUser> users, Integer limit, Boolean sortingByChunksAll){
+        if(users.isEmpty()){
+            return users;
         }
-    }
-    private List<GameUser> sortSuggestionUsersByCurrentRound(List<GameUser> suggestions){
-        try{
-            return suggestions.stream().sorted(Comparator.comparingLong(user -> -user.getCapturedChunks())).toList();
-        }catch (RoundNullException e ){
-            return suggestions;
-        }
+        return userService.getTopUsersByChunks(rounds,users,limit,sortingByChunksAll);
     }
 }

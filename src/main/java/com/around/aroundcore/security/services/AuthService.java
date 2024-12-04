@@ -1,6 +1,6 @@
 package com.around.aroundcore.security.services;
 
-import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.Session;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.models.Token;

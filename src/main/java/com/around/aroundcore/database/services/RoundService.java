@@ -1,18 +1,21 @@
 package com.around.aroundcore.database.services;
 
-import com.around.aroundcore.database.models.Round;
-import com.around.aroundcore.database.models.UserRoundTeamCity;
+import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.round.Round;
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import com.around.aroundcore.database.repositories.RoundRepository;
 import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
-import com.around.aroundcore.web.exceptions.entity.NoActiveRoundException;
-import com.around.aroundcore.web.exceptions.entity.RoundNullException;
-import com.around.aroundcore.web.exceptions.entity.TeamNullException;
-import com.around.aroundcore.web.exceptions.entity.URTNullException;
+import com.around.aroundcore.core.exceptions.api.entity.NoActiveRoundException;
+import com.around.aroundcore.core.exceptions.api.entity.RoundNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +27,7 @@ public class RoundService {
     private final UserRoundTeamRepository userRoundTeamRepository;
 
     @Cacheable("currentRound")
+    @Transactional(dontRollbackOn = {NoActiveRoundException.class})
     public Round getCurrentRound() throws NoActiveRoundException{
         return roundRepository.findFirstByActiveIsTrue().orElseThrow(NoActiveRoundException::new);
     }
@@ -31,17 +35,17 @@ public class RoundService {
     public Round getRoundById(Integer id) throws RoundNullException{
         return roundRepository.findById(id).orElseThrow(RoundNullException::new);
     }
-    public UserRoundTeamCity getUserRoundTeamByTeamInCurrentRound(Integer teamId) throws NoActiveRoundException, TeamNullException, URTNullException {
-        teamService.checkById(teamId);
-        Round round = roundRepository.findFirstByActiveIsTrue().orElseThrow(NoActiveRoundException::new);
-        return userRoundTeamRepository.findByRoundIdAndTeamId(round.getId(), teamId).stream().findFirst().orElseThrow(URTNullException::new);
+    public List<UserRoundTeamCity> getURTCByUserDistinctOnRoundAndCity(Integer userId){
+        return userRoundTeamRepository.findByUserDistinctOnRoundAndCity(userId);
     }
-    public UserRoundTeamCity getUserRoundTeamByTeamInRound(Integer teamId, Integer roundId) throws RoundNullException, TeamNullException, URTNullException{
-        if(!roundRepository.existsById(roundId)){
-            throw new RoundNullException();
-        }
-        teamService.checkById(teamId);
-        return userRoundTeamRepository.findByRoundIdAndTeamId(roundId, teamId).stream().findFirst().orElseThrow(URTNullException::new);
+    public Long getSumOfChunksAllByRoundsAndCitiesAndTeams(List<Round> rounds, List<City> cities, List<Team> teams){
+        List<Integer> roundIds = rounds.stream().map(Round::getId).collect(
+                Collectors.collectingAndThen(Collectors.toList(), list ->list.isEmpty()? null : list));
+        List<Integer> cityIds = cities.stream().map(City::getId).collect(
+                Collectors.collectingAndThen(Collectors.toList(),list ->list.isEmpty()? null : list));
+        List<Integer> teamIds = teams.stream().map(Team::getId).collect(
+                Collectors.collectingAndThen(Collectors.toList(),list ->list.isEmpty()? null : list));
+        return userRoundTeamRepository.getSumOfChunksAllByRoundIdsAndCityIdsAndTeamIds(roundIds,cityIds,teamIds);
     }
     @Cacheable(value = "checkRound", key = "#roundId")
     public void checkById(Integer roundId){
@@ -49,5 +53,8 @@ public class RoundService {
             throw new RoundNullException();
         }
     }
-
+    @CacheEvict(value = {"checkRound","currentRound","getRoundById"}, allEntries = true)
+    public void save(Round round){
+        roundRepository.saveAndFlush(round);
+    }
 }

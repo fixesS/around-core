@@ -1,11 +1,13 @@
 package com.around.aroundcore.config;
 
-import com.around.aroundcore.web.enums.CoordsAPIType;
-import com.around.aroundcore.web.mappers.StringGameChunkDTOMapper;
-import com.around.aroundcore.web.services.H3ChunkService;
-import com.around.aroundcore.web.services.apis.coords.CoordsAPI;
-import com.around.aroundcore.web.services.apis.coords.DadataAPIService;
-import com.around.aroundcore.web.services.apis.coords.GeotreeAPIService;
+import com.around.aroundcore.core.statemachine.GameStates;
+import com.around.aroundcore.core.statemachine.RoundEvents;
+import com.around.aroundcore.core.enums.CoordsAPIType;
+import com.around.aroundcore.web.mappers.chunk.StringGameChunkDTOMapper;
+import com.around.aroundcore.core.services.H3ChunkService;
+import com.around.aroundcore.core.services.apis.coords.CoordsAPI;
+import com.around.aroundcore.core.services.apis.coords.DadataAPIService;
+import com.around.aroundcore.core.services.apis.coords.GeotreeAPIService;
 import com.kuliginstepan.dadata.client.DadataClient;
 import com.uber.h3core.H3Core;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +23,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -30,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @EnableCaching
+@EnableAsync
 @EnableScheduling
 @Configuration
 @RequiredArgsConstructor
@@ -42,21 +47,22 @@ public class AroundConfig {
     public static final String API_V1_REGISTRATION = API_V1_AUTH+"/registration";
     public static final String API_V1_REFRESH= API_V1_AUTH+"/refresh";
     public static final String API_V1_RECOVERY = API_V1_AUTH+"/recovery";
-    public static final String API_V1_USER = API_V1+"/user";
-    public static final String API_V1_TEAM = API_V1+"/team";
-    public static final String API_V1_ROUND = API_V1+"/round";
+    public static final String API_V1_USER = API_V1+"/users";
+    public static final String API_V1_TEAM = API_V1+"/teams";
+    public static final String API_V1_ROUND = API_V1+"/rounds";
     public static final String API_V1_EVENTS = API_V1+"/map-events";
     public static final String API_V1_CHUNKS = API_V1+"/chunks";
-    public static final String API_V1_STATISTIC = API_V1+"/stat";
+    public static final String API_V1_STATISTIC = API_V1+"/stats";
     public static final String API_V1_SKILLS = API_V1+"/skills";
-    public static final String API_V1_IMAGE = API_V1+"/image";
-    public static final String API_V1_CITY = API_V1+"/city";
-    public static final String URL_AVATAR = "/"+AroundConfig.API_V1_IMAGE+"/avatar/";
-    public static final String URL_ICON = "/"+AroundConfig.API_V1_IMAGE+"/icon/";
+    public static final String API_V1_IMAGE = API_V1+"/images";
+    public static final String API_V1_CITY = API_V1+"/cities";
+    public static final String API_V1_ADMIN = API_V1+"/admin";
+    public static final String URL_AVATAR = "/"+AroundConfig.API_V1_IMAGE+"/avatars/";
+    public static final String URL_ICON = "/"+AroundConfig.API_V1_IMAGE+"/icons/";
     public static final String URL_IMAGE = "/"+AroundConfig.API_V1_IMAGE+"/";
     public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.])[a-zA-Z\\d!@#%^&*()_+\\-=:;” '{}<>?\\|`~,.]{8,100}$";
-    public static final String EMAIL_REGEX = "^[a-z0-9-]+@([a-z0-9-]+\\.)+[a-z]{2,}$";
-    public static final String USERNAME_REGEX = "[a-zA-Z0-9]+";
+    public static final String EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,6}$";
+    public static final String USERNAME_REGEX = "[a-zA-Z0-9.\\-]{2,40}";
     @Value("${around.coordsapi}")
     private String coordsAPIType;
     @Value("${geotree.api.key}")
@@ -65,15 +71,6 @@ public class AroundConfig {
     private String geotreeMainUrl;
     @Value("${around.chunks.resolution}")
     private Integer chunksResolution;
-    @Bean
-    public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
-        ThreadPoolTaskScheduler threadPoolTaskScheduler
-                = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(5);
-        threadPoolTaskScheduler.setThreadNamePrefix(
-                "ThreadPoolTaskScheduler");
-        return threadPoolTaskScheduler;
-    }
     @Bean
     public H3Core h3Core() throws IOException {
         return H3Core.newInstance();
@@ -110,5 +107,11 @@ public class AroundConfig {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager("defaultAvatar","currentRound", "verifiedAndActiveEventsByCity","checkRound","getRoundById","checkCity","findCityById");
+    }
+    @Bean
+    public StateMachine<GameStates, RoundEvents> stateMachine(StateMachineFactory<GameStates, RoundEvents> factory){
+        StateMachine<GameStates, RoundEvents> stateMachine =  factory.getStateMachine();
+        stateMachine.startReactively().subscribe();
+        return stateMachine;
     }
 }

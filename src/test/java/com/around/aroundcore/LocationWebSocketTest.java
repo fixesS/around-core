@@ -30,6 +30,7 @@ import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Slf4j
@@ -128,8 +129,13 @@ public class LocationWebSocketTest {
         StompSession stompSessionMary = clientMary.getStompSession();
 
         GameUserLocationDTO gameUserLocationDTOFromMike = GameUserLocationDTO.builder()
-                .latitude(1)
-                .longitude(2)
+                // not in yekateringburg
+                //.latitude(55.643499)
+                //.longitude(56.331474)
+                //
+                // in yekateringburg
+                .latitude(56.819302)
+                .longitude(60.605782)
                 .build();
 
         stompSessionMary.subscribe("/user"+WebSocketConfig.QUEUE_LOCATIONS_FOR_USER, new StompFrameHandler() {
@@ -141,6 +147,18 @@ public class LocationWebSocketTest {
             @Override
             public void handleFrame(StompHeaders headers, Object payload) {
                 blockingQueue.offer((GameUserLocationDTO) payload);
+            }
+        });
+
+        stompSessionMike.subscribe("/user"+WebSocketConfig.QUEUE_ERROR_FOR_USER, new StompFrameHandler() {
+            @Override
+            public Type getPayloadType(StompHeaders headers) {
+                return new TypeReference<ApiError>(){}.getType();
+            }
+
+            @Override
+            public void handleFrame(StompHeaders headers, Object payload) {
+                blockingQueueError.offer((ApiError) payload);
             }
         });
 

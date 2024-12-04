@@ -1,6 +1,7 @@
 package com.around.aroundcore.web.dtos.stat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Nullable;
 import lombok.*;
 
 import java.util.List;
@@ -14,5 +15,11 @@ import java.util.List;
 public class CityStatDTO {
     private Integer city_id;
     private String name;
-    private List<RoundStatDTO> rounds;
+    @Nullable
+    private Integer team_id;
+    @Nullable
+    private Long chunks_all;
+    private Integer chunks_now;
+    @Nullable
+    private List<ChunkStatDTO> chunks;
 }

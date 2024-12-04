@@ -2,15 +2,23 @@ package com.around.aroundcore.web.controllers.rest.auth;
 
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.user.*;
+import com.around.aroundcore.database.models.oauth.OAuthProvider;
+import com.around.aroundcore.database.models.oauth.OAuthUser;
+import com.around.aroundcore.database.models.oauth.OAuthUserEmbedded;
 import com.around.aroundcore.database.services.GameUserService;
 import com.around.aroundcore.database.services.ImageService;
 import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.web.dtos.auth.OAuthDTO;
 import com.around.aroundcore.web.dtos.auth.TokenData;
 import com.around.aroundcore.web.dtos.oauth.OAuthResponse;
-import com.around.aroundcore.web.exceptions.entity.GameUserNullException;
-import com.around.aroundcore.web.services.apis.oauth.OAuthProviderRouter;
-import com.around.aroundcore.web.services.apis.oauth.ProviderOAuthService;
+import com.around.aroundcore.core.exceptions.api.entity.GameUserNullException;
+import com.around.aroundcore.core.exceptions.api.entity.GameUserUsernameNotUnique;
+import com.around.aroundcore.core.exceptions.api.oauth.OAuthException;
+import com.around.aroundcore.core.exceptions.api.validation.ValidationException;
+import com.around.aroundcore.core.services.apis.oauth.OAuthProviderRouter;
+import com.around.aroundcore.core.services.apis.oauth.ProviderOAuthService;
+import com.around.aroundcore.core.services.apis.oauth.ValidationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +40,7 @@ import java.net.UnknownHostException;
 public class OAuthController {
     private final GameUserService gameUserService;
     private final PasswordEncoder passwordEncoder;
+    private final ValidationService validationService;
     private final AuthService authService;
     private final OAuthProviderRouter oAuthProviderRouter;
     private final ImageService imageService;
@@ -50,17 +59,41 @@ public class OAuthController {
         OAuthResponse oAuthResponse = providerOAuthService.checkToken(oAuthDTO.getAccess_token());
 
         try{
+            validationService.validateEmail(oAuthResponse.getEmail());
             user = gameUserService.findByOAuthIdAndProvider(oAuthResponse.getUser_id(), oAuthDTO.getProvider());
         }catch (GameUserNullException e){
-            user = createUser(oAuthResponse, oAuthDTO.getProvider());
+            if(oAuthDTO.getProvider().equals(OAuthProvider.GOOGLE) && gameUserService.existByEmail(oAuthResponse.getEmail())){
+                user = gameUserService.findByEmail(oAuthResponse.getEmail());
+                addOAuthToUser(user, oAuthResponse, oAuthDTO.getProvider());
+            }else{
+                user = createUser(oAuthResponse, oAuthDTO.getProvider());
+            }
+        } catch (ValidationException e) {
+            throw new OAuthException("validation exception");
+        } catch (GameUserUsernameNotUnique e){
+            throw new OAuthException("username generation exception");
         }
+
         TokenData tokenData = authService.createSession(user,userAgent, InetAddress.getByName(ip));
 
         return ResponseEntity.ok(tokenData);
     }
+    private void addOAuthToUser(GameUser user, OAuthResponse oAuthResponse, OAuthProvider oAuthProvider) {
+        OAuthUser oAuthUser = OAuthUser.builder()
+                .oauthId(oAuthResponse.getUser_id())
+                .oAuthUserEmbedded(new OAuthUserEmbedded(oAuthProvider, user))
+                .build();
+        user.addOAuthToUser(oAuthUser);
+        gameUserService.update(user);
+    }
     private GameUser createUser(OAuthResponse oAuthResponse, OAuthProvider oAuthProvider){
+        log.info("Creating user");
+        String username = switch (oAuthProvider){
+            case GOOGLE -> gameUserService.generateUsername(oAuthResponse.getEmailWithoutDomain());
+            default -> gameUserService.generateUsername("user");
+        };
         GameUser user = GameUser.builder()
-                .username(gameUserService.generateUsername())
+                .username(username)
                 .avatar(imageService.getDefaultAvatar())
                 .email(oAuthResponse.getEmail())
                 .password(passwordEncoder.encode(gameUserService.generatePassword()))

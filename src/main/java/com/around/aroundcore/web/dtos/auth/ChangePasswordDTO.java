@@ -1,7 +1,7 @@
 package com.around.aroundcore.web.dtos.auth;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.web.exceptions.entity.GameUserPasswordSame;
+import com.around.aroundcore.core.exceptions.api.entity.GameUserPasswordSame;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -21,7 +21,7 @@ public class ChangePasswordDTO {
     @Schema(example = "Password1!")
     private String new_password;
 
-    public void CheckIsPasswordsDifferent() throws GameUserPasswordSame{
+    public void checkIsPasswordsDifferent() throws GameUserPasswordSame{
         if(old_password.equals(new_password)){
             throw new GameUserPasswordSame();
         }

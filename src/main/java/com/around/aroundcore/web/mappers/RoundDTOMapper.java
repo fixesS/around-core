@@ -1,7 +1,7 @@
 package com.around.aroundcore.web.mappers;
 
-import com.around.aroundcore.database.models.Round;
-import com.around.aroundcore.web.dtos.RoundDTO;
+import com.around.aroundcore.database.models.round.Round;
+import com.around.aroundcore.web.dtos.round.RoundDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

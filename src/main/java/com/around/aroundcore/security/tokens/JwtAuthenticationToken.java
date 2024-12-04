@@ -1,6 +1,6 @@
 package com.around.aroundcore.security.tokens;
 
-import com.around.aroundcore.database.models.GameUser;
+import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.Session;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,8 +45,8 @@ public class JwtAuthenticationToken implements Authentication {
     }
 
     @Override
-    public String getName() {
-        return user.getUsername();
+    public String getName() {// IT IS USER IN WEBSOCKETS (MESSAGING TEMPLATE -> SEND TO USER)
+        return user.getId().toString();
     }
 
     public JwtAuthenticationToken(

@@ -1,11 +1,11 @@
 package com.around.aroundcore.database.services;
 
-import com.around.aroundcore.database.models.GameUser;
-import com.around.aroundcore.database.models.RecoveryToken;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.token.RecoveryToken;
 import com.around.aroundcore.database.repositories.RecoveryTokenRepository;
 import com.around.aroundcore.security.models.Token;
 import com.around.aroundcore.security.services.JwtService;
-import com.around.aroundcore.web.exceptions.entity.RecoveryTokenNullException;
+import com.around.aroundcore.core.exceptions.api.entity.RecoveryTokenNullException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

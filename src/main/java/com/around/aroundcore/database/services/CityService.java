@@ -2,7 +2,7 @@ package com.around.aroundcore.database.services;
 
 import com.around.aroundcore.database.models.City;
 import com.around.aroundcore.database.repositories.CityRepository;
-import com.around.aroundcore.web.exceptions.entity.CityNullException;
+import com.around.aroundcore.core.exceptions.api.entity.CityNullException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,6 +24,9 @@ public class CityService {
         if(!cityRepository.existsById(cityId)){
             throw new CityNullException();
         }
+    }
+    public List<City> findByUserAndRound(Integer userId, Integer round){
+        return cityRepository.findCitiesByUserAndRound(userId, round);
     }
     public List<City> findAll(){
         return cityRepository.findAll();

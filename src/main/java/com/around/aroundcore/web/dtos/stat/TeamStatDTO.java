@@ -15,6 +15,6 @@ public class TeamStatDTO {
     @Schema(description = "team id")
     private Integer id;
     private String color;
-    private List<CityStatDTO> cities;
+    private List<RoundStatDTO> cities;
 
 }

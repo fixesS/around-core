@@ -31,8 +31,8 @@ public class TeamController {
     private final TeamDTOMapper teamDTOMapper;
     @GetMapping("/{id}")
     @Operation(
-            summary = "Gives team info by id",
-            description = "Allows to get info about team by id."
+            summary = "Gives team info by id in current round",
+            description = "Allows to get info about team by id in current round."
     )
     @Transactional
     public ResponseEntity<TeamDTO> getTeamById(@PathVariable @Parameter(description = "team id") Integer id){
@@ -44,8 +44,8 @@ public class TeamController {
 
     @GetMapping("/all")
     @Operation(
-            summary = "Gives all teams info",
-            description = "Allows to get info about all created teams."
+            summary = "Gives all teams info in current round",
+            description = "Allows to get info about all teams in current round."
     )
     @Transactional
     public ResponseEntity<List<TeamDTO>> getAllTeams(){

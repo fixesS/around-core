@@ -12,29 +12,21 @@ import java.util.Objects;
 @Builder
 public class GameUserLocationDTO {
     @JsonIgnore
-    private String name;
+    private Integer friendId;
     private GameUserDTO gameUserDTO;
     private double latitude;
     private double longitude;
 
     @Override
-    public boolean equals(Object object) {
-        boolean same = false;
-
-        if (object instanceof GameUserLocationDTO gameUserLocationDTO) {
-            same = Objects.equals(this.name, gameUserLocationDTO.getName()) && Objects.equals(this.gameUserDTO.getId(), gameUserLocationDTO.getGameUserDTO().getId());
-        }
-
-        return same;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GameUserLocationDTO that = (GameUserLocationDTO) o;
+        return Objects.equals(friendId, that.friendId) && Objects.equals(gameUserDTO, that.gameUserDTO);
     }
 
     @Override
-    public String toString() {
-        return "GameUserLocationDTO{" +
-                "name='" + name + '\'' +
-                ", gameUserDTO=" + gameUserDTO +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                '}';
+    public int hashCode() {
+        return Objects.hash(friendId, gameUserDTO);
     }
 }

@@ -1,16 +1,15 @@
 package com.around.aroundcore.database.services;
 
-import com.around.aroundcore.database.models.MapEvent;
+import com.around.aroundcore.database.models.event.MapEvent;
 import com.around.aroundcore.database.repositories.MapEventRepository;
-import com.around.aroundcore.web.exceptions.entity.MapEventNullException;
-import com.around.aroundcore.web.services.MapEventParsingService;
+import com.around.aroundcore.core.exceptions.api.entity.MapEventNullException;
+import com.around.aroundcore.core.services.MapEventParsingService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
@@ -44,9 +43,8 @@ public class MapEventService {
     public MapEvent findById(Integer id){
         return mapEventRepository.findById(id).orElseThrow(MapEventNullException::new);
     }
-    @Scheduled(fixedRate = 900000)
     @CacheEvict(value = "verifiedAndActiveEventsByCity")
-    public void makeEndedEventsNotActive(){
+    public void disableEndedEvents(){
         List<MapEvent> events = findAll();
         events.forEach(event -> {
             if(event.getEnds()!=null &&
@@ -62,6 +60,9 @@ public class MapEventService {
     @Cacheable(value = "verifiedAndActiveEventsByCity", key = "#cityId")
     public List<MapEvent> findAllVerifiedInCity(Integer cityId) {
         return mapEventRepository.findAllByVerifiedAndActiveAndCityId(true,true, cityId);
+    }
+    public List<MapEvent> findVerifiedActiveByChunksAndNotVisitedByUser(List<String> chunkIds,Integer userId) {
+        return mapEventRepository.findVerifiedActiveByChunksAndNotVisitedByUser(chunkIds, userId);
     }
     public boolean existByUrl(String url){
         return mapEventRepository.existsByUrl(url);

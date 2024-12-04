@@ -2,7 +2,7 @@ package com.around.aroundcore.database.models;
 
 import com.around.aroundcore.database.converters.ListOfChunkDTOConverter;
 import com.around.aroundcore.database.dtos.ChunkDTOForCity;
-import com.around.aroundcore.web.dtos.ChunkDTO;
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "cities")
+@Table(name = "cities", schema = "public")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +24,7 @@ public class City implements Serializable {
     @Column(name = "id")
     private Integer id;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_rounds_team_city",
             joinColumns = @JoinColumn(name = "city_id", referencedColumnName = "id"),

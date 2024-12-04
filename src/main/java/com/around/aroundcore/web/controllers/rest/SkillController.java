@@ -1,7 +1,7 @@
 package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
-import com.around.aroundcore.database.models.Skill;
+import com.around.aroundcore.database.models.skill.Skill;
 import com.around.aroundcore.database.services.GameUserSkillsService;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.database.services.SkillService;

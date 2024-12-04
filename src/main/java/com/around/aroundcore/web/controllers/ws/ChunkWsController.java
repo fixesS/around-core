@@ -2,27 +2,31 @@ package com.around.aroundcore.web.controllers.ws;
 
 import com.around.aroundcore.config.WebSocketConfig;
 import com.around.aroundcore.database.models.*;
+import com.around.aroundcore.database.models.event.MapEvent;
+import com.around.aroundcore.database.models.round.Round;
+import com.around.aroundcore.database.models.round.UserRoundTeamCity;
+import com.around.aroundcore.database.models.user.GameUser;
+import com.around.aroundcore.database.models.user.GameUserSkill;
 import com.around.aroundcore.database.services.*;
 import com.around.aroundcore.security.tokens.JwtAuthenticationToken;
 import com.around.aroundcore.web.dtos.ApiError;
 import com.around.aroundcore.web.dtos.ChunkDTO;
-import com.around.aroundcore.web.enums.ApiResponse;
-import com.around.aroundcore.web.enums.Skills;
-import com.around.aroundcore.web.exceptions.api.ApiException;
-import com.around.aroundcore.web.services.queues.ChunkQueueService;
-import com.around.aroundcore.web.services.H3ChunkService;
+import com.around.aroundcore.core.enums.ApiResponse;
+import com.around.aroundcore.core.enums.Skills;
+import com.around.aroundcore.core.exceptions.api.ApiException;
+import com.around.aroundcore.core.services.queues.ChunkQueueService;
+import com.around.aroundcore.core.services.H3ChunkService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -35,21 +39,32 @@ public class ChunkWsController {
     private final MapEventService mapEventService;
     private final GameUserService userService;
     private final H3ChunkService h3ChunkService;
+    private final RoundService roundService;
     private final SimpMessagingTemplate messagingTemplate;
     public static final String CHUNK_CHANGES_FROM_USER = "/chunk.changes";
     public static final String CHUNK_CHANGES_EVENT = "/topic/chunk.event";
 
-    @SubscribeMapping(CHUNK_CHANGES_EVENT)
-    public void fetchChunkChangesEvent(Principal principal){
-        try {
-            JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
-            var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
-            var session = sessionService.findByUuid(sessionUuid);
-            log.debug("Got subscription from: {}",session.getUser().getEmail());
-        }catch (Exception e){
-            log.error(e.getMessage());
-        }
-    }
+//    deleted because spring did not call this due /topic (only if /topic sat as application prefix in config)
+//    todo decide what to do with this method
+//    @SubscribeMapping(CHUNK_CHANGES_EVENT)
+//    public void fetchChunkChangesEvent(Principal principal){
+//        GameUser user = null;
+//        try {
+//            JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
+//            var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
+//            var session = sessionService.findByUuid(sessionUuid);
+//            user = session.getUser();
+//            log.info("Fetching chunk changes");
+//            log.error(String.valueOf(user));
+//            user.checkTeamForCurrentRoundAndAnyCity();
+//        }catch (ApiException e){
+//            log.error(e.getClass().getName());
+//            if(user != null){
+//                ApiError apiError = ApiResponse.getApiError(e.getResponse());
+//                messagingTemplate.convertAndSendToUser(user.getId().toString(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
+//            }
+//        }
+//    }
 
     @MessageMapping(CHUNK_CHANGES_FROM_USER)
     @Transactional
@@ -58,52 +73,57 @@ public class ChunkWsController {
         Session session;
         GameUserSkill userWidthSkill;
         Round round;
-        City city;
+        List<City> cities;
 
         JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken) principal;
         var sessionUuid = (UUID) jwtAuthenticationToken.getPrincipal();
         try {
+            roundService.getCurrentRound();//check if game is active
             session = sessionService.findByUuid(sessionUuid);
             user = session.getUser();
             userWidthSkill = user.getUserSkillBySkillId(Skills.WIDTH.getId());
-            round = UserRoundTeamCity.findCurrentRoundFromURTs(user.getUserRoundTeamCities());
-            city = UserRoundTeamCity.findCityForCurrentRoundAndUser(user);
+            user.checkTeamForCurrentRoundAndAnyCity();
+            round = user.getUserRoundTeamCities().get(0).getRound();
+            cities = UserRoundTeamCity.findCitiesForUser(user);
         }catch (ApiException e){
-            log.error(e.getMessage());
+            log.error(e.getClass().getName());
             if(user != null){
                 ApiError apiError = ApiResponse.getApiError(e.getResponse());
-                messagingTemplate.convertAndSendToUser(user.getUsername(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
+                messagingTemplate.convertAndSendToUser(user.getId().toString(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
             }
             return;
         }
 
-        if(!city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(),city.getChunksResolution()))){// if chunk is not in user city
-            ApiError apiError = ApiResponse.getApiError(ApiResponse.CHUNK_DOES_NOT_RELATES_WITH_USER_CITY);
-            messagingTemplate.convertAndSendToUser(user.getUsername(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
+        //find city by chunk
+        Optional<City> cityOptional = cities.stream()
+                .filter(city -> city.containsChunkDTO(h3ChunkService.getParentId(chunkDTO.getId(), city.getChunksResolution())))
+                .findFirst();
+        if (cityOptional.isEmpty()) {
+            ApiError apiError = ApiResponse.getApiError(ApiResponse.CHUNK_DOES_NOT_CORRELATE_WITH_USER_CITY);
+            messagingTemplate.convertAndSendToUser(user.getId().toString(), WebSocketConfig.QUEUE_ERROR_FOR_USER, apiError);
             return;
         }
+        City city = cityOptional.get();
 
-        List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill); // getting neighbours for width userskill level
-        chunksDTOList = chunksDTOList.stream().filter(chunk -> city.containsChunkDTO(h3ChunkService.getParentId(chunk.getId(),city.getChunksResolution()))).toList(); // filtering for chunks by city
+
+        // getting neighbours for width userskill level
+        List<ChunkDTO> chunksDTOList = h3ChunkService.getChunksForWidthSkill(chunkDTO.getId(),userWidthSkill);
+        // filtering for chunks by city (remove chunks that out of the city)
+
+        chunksDTOList = chunksDTOList.stream()
+                .filter(chunk -> city.containsChunkDTO(h3ChunkService.getParentId(chunk.getId(),city.getChunksResolution())))
+                .toList();
         gameChunkService.saveListOfChunkDTOs(chunksDTOList, user, round, city);// adding chunks
-        user.addCapturedChunks(chunksDTOList.size()); // increase captured chunks value
-        chunksDTOList.forEach(chunkDTO1 -> chunkDTO1.setRound_id(round.getId()));
+        userService.increaseCapturedChunksToUserInRoundInCity(user,round,city,chunksDTOList.size());
+        user.addCoins(chunksDTOList.size()*round.getGameSettings().getUserChunkReward());//add reward for each chunk to coins
+        chunksDTOList.forEach(chunkDTO1 -> chunkDTO1.setRound_id(round.getId()));// setting round for correct output from chunk queue
 
-        //getting user visited events from verified events on map
-        List<MapEvent> visitedEvents = getVisitedByUserAndChunk(user, gameChunkService.findByIdAndRoundId(chunkDTO.getId(), round.getId()), city);
+        //getting visited events (NOW) for user (in DB they are not visited yet)
+        List<MapEvent> visitedEvents = mapEventService.findVerifiedActiveByChunksAndNotVisitedByUser(List.of(chunkDTO.getId()),user.getId());
         user.addVisitedEvents(visitedEvents);
+        user.addCoins(visitedEvents.stream().mapToInt(MapEvent::getReward).sum());//add sum of rewards to coins
         userService.update(user);
 
         chunkQueueService.addToQueue(chunksDTOList);
-    }
-    private List<MapEvent> getVisitedByUserAndChunk(GameUser user, GameChunk gameChunk, City city){
-        List<MapEvent> visitedEvents = new ArrayList<>();
-        List<MapEvent> eventsOnMap = mapEventService.findAllVerifiedInCity(city.getId());
-        eventsOnMap.forEach(event -> {
-            if (!user.getVisitedEvents().contains(event) && event.getChunks().contains(gameChunk)){
-                visitedEvents.add(event);
-            }
-        });
-        return visitedEvents;
     }
 }
