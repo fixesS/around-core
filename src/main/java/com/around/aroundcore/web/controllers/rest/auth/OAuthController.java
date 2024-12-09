@@ -6,7 +6,7 @@ import com.around.aroundcore.database.models.user.*;
 import com.around.aroundcore.database.models.oauth.OAuthProvider;
 import com.around.aroundcore.database.models.oauth.OAuthUser;
 import com.around.aroundcore.database.models.oauth.OAuthUserEmbedded;
-import com.around.aroundcore.database.services.GameUserService;
+import com.around.aroundcore.database.services.user.GameUserService;
 import com.around.aroundcore.database.services.ImageService;
 import com.around.aroundcore.security.services.AuthService;
 import com.around.aroundcore.web.dtos.auth.OAuthDTO;

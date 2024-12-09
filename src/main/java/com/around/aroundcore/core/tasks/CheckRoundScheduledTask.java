@@ -1,7 +1,8 @@
 package com.around.aroundcore.core.tasks;
 
+import com.around.aroundcore.config.RoundStateMachine;
 import com.around.aroundcore.database.models.round.Round;
-import com.around.aroundcore.database.services.RoundService;
+import com.around.aroundcore.database.services.round.RoundService;
 import com.around.aroundcore.core.statemachine.GameStates;
 import com.around.aroundcore.core.statemachine.RoundEvents;
 import com.around.aroundcore.core.exceptions.api.entity.NoActiveRoundException;
@@ -32,15 +33,16 @@ public class CheckRoundScheduledTask {
     @Scheduled(fixedRate = 1000)
     @Transactional
     public void checkCurrentRound(){
-        if(!stateMachine.getState().getId().equals(GameStates.ACTIVE)){
+        if(Boolean.FALSE.equals(stateMachine.getState().getId().equals(GameStates.ACTIVE))){
             return;
         }
         try{
             Round round = roundService.getCurrentRound();
             LocalDateTime now = new Date().toInstant().atZone(ZoneId.of(timeLocale)).toLocalDateTime();
             if(now.isAfter(round.getEnds())){
-                log.debug("Round ("+round.getId()+") ended!");
-                Message<RoundEvents> message = MessageBuilder.withPayload(RoundEvents.END).setHeader("round", round).build();
+                log.debug("Round {} ended!",round.getId());
+                Message<RoundEvents> message = MessageBuilder.withPayload(RoundEvents.END)
+                        .setHeader(RoundStateMachine.ROUND_HEADER, round).build();
                 stateMachine.sendEvent(Mono.just(message)).subscribe();
             }
         }catch (NoActiveRoundException ignored){

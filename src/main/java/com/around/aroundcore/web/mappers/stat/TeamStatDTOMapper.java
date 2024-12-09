@@ -5,7 +5,7 @@ import com.around.aroundcore.database.models.Team;
 import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import com.around.aroundcore.database.services.CityService;
 import com.around.aroundcore.database.services.GameChunkService;
-import com.around.aroundcore.database.services.RoundService;
+import com.around.aroundcore.database.services.round.RoundService;
 import com.around.aroundcore.web.dtos.stat.CityStatDTO;
 import com.around.aroundcore.web.dtos.stat.RoundStatDTO;
 import com.around.aroundcore.web.dtos.stat.TeamStatDTO;

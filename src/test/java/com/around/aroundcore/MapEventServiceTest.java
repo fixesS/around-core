@@ -1,6 +1,6 @@
 package com.around.aroundcore;
 
-import com.around.aroundcore.database.services.MapEventService;
+import com.around.aroundcore.database.services.event.MapEventService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

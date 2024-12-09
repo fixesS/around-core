@@ -13,6 +13,7 @@ import java.util.Set;
 @EnableStateMachineFactory
 @Configuration
 public class RoundStateMachine extends StateMachineConfigurerAdapter<GameStates, RoundEvents> {
+    public static final String ROUND_HEADER = "round";
 
     @Override
     public void configure(StateMachineStateConfigurer<GameStates, RoundEvents> states) throws Exception {

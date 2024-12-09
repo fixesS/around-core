@@ -1,4 +1,4 @@
-package com.around.aroundcore.database.repositories;
+package com.around.aroundcore.database.repositories.user;
 
 import com.around.aroundcore.database.models.user.GameUserSkill;
 import com.around.aroundcore.database.models.user.GameUserSkillEmbedded;

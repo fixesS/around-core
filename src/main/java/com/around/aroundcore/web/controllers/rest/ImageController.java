@@ -2,7 +2,7 @@ package com.around.aroundcore.web.controllers.rest;
 
 import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.Image;
-import com.around.aroundcore.database.services.GameUserService;
+import com.around.aroundcore.database.services.user.GameUserService;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.core.image.ImageType;
 import com.around.aroundcore.database.services.ImageService;

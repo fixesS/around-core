@@ -1,4 +1,4 @@
-package com.around.aroundcore.database.repositories;
+package com.around.aroundcore.database.repositories.round;
 
 
 import com.around.aroundcore.database.models.round.Round;

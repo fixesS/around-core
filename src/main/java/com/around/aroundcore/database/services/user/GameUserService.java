@@ -1,4 +1,4 @@
-package com.around.aroundcore.database.services;
+package com.around.aroundcore.database.services.user;
 
 import com.around.aroundcore.database.EntityFilters;
 import com.around.aroundcore.database.models.*;
@@ -7,12 +7,13 @@ import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.user.GameUserSkill;
 import com.around.aroundcore.database.models.user.GameUserSkillEmbedded;
 import com.around.aroundcore.database.models.oauth.OAuthProvider;
-import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
+import com.around.aroundcore.database.repositories.round.UserRoundTeamRepository;
 import com.around.aroundcore.core.enums.Skills;
-import com.around.aroundcore.database.repositories.GameUserRepository;
+import com.around.aroundcore.database.repositories.user.GameUserRepository;
 import com.around.aroundcore.core.exceptions.api.entity.GameUserEmailNotUnique;
 import com.around.aroundcore.core.exceptions.api.entity.GameUserNullException;
 import com.around.aroundcore.core.exceptions.api.entity.GameUserUsernameNotUnique;
+import com.around.aroundcore.database.services.SkillService;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -129,9 +130,14 @@ public class GameUserService {
         }
         return userRepository.getUsersStatTopForRoundsForChunksNow(roundIds,userIds, PageRequest.of(0, limit));
     }
-    public List<GameUser> getTeamMembersForRound(Team team, Round round){
-        return userRepository.getTeamMembersForRound(team.getId(),round.getId());
+    public List<GameUser> getTeamMembersForRoundAndCity(Team team, List<Round> rounds, List<City> cities){
+        List<Integer> roundIds = rounds.stream().map(Round::getId).collect(
+                Collectors.collectingAndThen(Collectors.toList(),list ->list.isEmpty()? null : list));
+        List<Integer> cityIds = cities.stream().map(City::getId).collect(
+                Collectors.collectingAndThen(Collectors.toList(),list ->list.isEmpty()? null : list));
+        return userRepository.getTeamMembersForRoundAndCity(team.getId(),roundIds,cityIds);
     }
+
     public void setTeamForRoundAndCity(GameUser user, Round round, City city, Team team){
         userRepository.setTeamForRoundAndCity(user.getId(), round.getId(), city.getId(), team.getId());
     }

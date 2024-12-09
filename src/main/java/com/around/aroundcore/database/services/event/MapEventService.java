@@ -1,7 +1,7 @@
-package com.around.aroundcore.database.services;
+package com.around.aroundcore.database.services.event;
 
 import com.around.aroundcore.database.models.event.MapEvent;
-import com.around.aroundcore.database.repositories.MapEventRepository;
+import com.around.aroundcore.database.repositories.event.MapEventRepository;
 import com.around.aroundcore.core.exceptions.api.entity.MapEventNullException;
 import com.around.aroundcore.core.services.MapEventParsingService;
 import jakarta.transaction.Transactional;

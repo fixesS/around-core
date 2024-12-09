@@ -1,6 +1,6 @@
 package com.around.aroundcore.security.services;
 
-import com.around.aroundcore.database.repositories.GameUserRepository;
+import com.around.aroundcore.database.repositories.user.GameUserRepository;
 import com.around.aroundcore.core.exceptions.api.entity.GameUserNullException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
