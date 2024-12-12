@@ -158,11 +158,6 @@ public class GameUserController {
             updatePassword(user,updateGameUserDTO.getPassword());
         }
         userService.updateAndFlush(user);
-        if(updateGameUserDTO.getTeam_id()!=null && updateGameUserDTO.getCity_id()!=null){
-            var team = teamService.findById(updateGameUserDTO.getTeam_id());
-            var city = cityService.findById(updateGameUserDTO.getCity_id());
-            userService.setTeamForRoundAndCity(user,roundService.getCurrentRound(),city,team);
-        }
         return ResponseEntity.ok("");
     }
     @PatchMapping("/me/team")
