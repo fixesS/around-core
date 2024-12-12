@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum EventProvidersEnum {
-    TIMEPAD(0);
+    TIMEPAD(1);
 
     private final Integer id;
 

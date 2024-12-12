@@ -32,8 +32,6 @@ public class UserStatDTOMapper implements Function<GameUser, GameUserStatDTO> {
                 .avatar(user.getAvatar().getUrl())
                 .build();
     }
-    //todo could be done with hashmaps(chatgpt suggection), but i not sure about performnce (a lot of forEach vs if-statement)
-    //todo check performance in future
     public List<RoundStatDTO> getRoundStatDTO(GameUser user){
         List<RoundStatDTO> rounds = new ArrayList<>();
         List<UserRoundTeamCity> userURTCs = roundService.getURTCByUserDistinctOnRoundAndCity(user.getId());

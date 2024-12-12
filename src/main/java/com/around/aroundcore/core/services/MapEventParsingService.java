@@ -62,6 +62,7 @@ public class MapEventParsingService {
     private String cityName;
 
     public List<MapEvent> parseEvents() throws EventsNotFoundException{
+        log.debug(cityName);
         CityEnum cityEnum = CityEnum.valueOf(cityName);
         City city = cityService.findById(cityEnum.getId());
         Round currentRound = roundService.getCurrentRound();
@@ -96,7 +97,7 @@ public class MapEventParsingService {
                 List<GameChunk> chunks = chunkDTOS.stream().map(gameChunkMapper).toList();
                 List<GameChunk> chunkList = chunks.stream().map(chunk -> {
                     if(Boolean.TRUE.equals(gameChunkRepository.existsByIdAndRoundId(chunk.getId(), currentRound.getId()))){
-                        return gameChunkRepository.findById(chunk.getId()).orElse(null);
+                        return gameChunkRepository.findByIdAndRoundId(chunk.getId(),currentRound.getId()).orElse(null);
                     }else{
                         chunk.setCity(city);
                         chunk.setRound(currentRound);

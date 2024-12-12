@@ -3,6 +3,7 @@ package com.around.aroundcore;
 import com.around.aroundcore.database.models.event.MapEvent;
 import com.around.aroundcore.core.exceptions.api.EventsNotFoundException;
 import com.around.aroundcore.core.services.MapEventParsingService;
+import com.around.aroundcore.database.services.event.MapEventService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,19 +23,23 @@ import java.util.List;
 class MapEventParsingServiceTest {
 
     @Autowired
+    MapEventService service;
+
+    @Autowired
     MapEventParsingService mapEventParsingService;
 
     @Test
     void testParseEvents(){
-        List<MapEvent> events = null;
-        try{
-            events = mapEventParsingService.parseEvents();
-        }catch (EventsNotFoundException e){
-            log.info("Events not found");
-        }
-        Assertions.assertNotNull(events);
-        for(MapEvent event: events){
-            log.info(event.toString());
-        }
+//        List<MapEvent> events = null;
+//        try{
+//            events = mapEventParsingService.parseEvents();
+//        }catch (EventsNotFoundException e){
+//            log.info("Events not found");
+//        }
+//        Assertions.assertNotNull(events);
+//        for(MapEvent event: events){
+//            log.info(event.toString());
+//        }
+        service.createFromEventAPI();
     }
 }

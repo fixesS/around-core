@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -37,10 +38,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(WHITE_LIST).permitAll()
-                        .requestMatchers("/api/**").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
-                        .requestMatchers("/api/**/admin/**").hasAuthority(Role.ADMIN.name())
-                        .requestMatchers("/ws/**").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
-                        .requestMatchers("/actuator/health").hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
+                        .requestMatchers(new AntPathRequestMatcher("/api/**")).hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
+                        .requestMatchers(new AntPathRequestMatcher("/api/**/admin/**")).hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(new AntPathRequestMatcher("/ws/**")).hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
+                        .requestMatchers(new AntPathRequestMatcher("/actuator/health")).hasAnyAuthority(Role.USER.name(),Role.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(smc -> smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

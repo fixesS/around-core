@@ -25,6 +25,9 @@ public class GameChunkDTOMapper implements Function<GameChunk, ChunkDTO> {
                 .build();
     }
     private Integer getTeamId(final GameChunk gameChunk) {
+        if(gameChunk.getOwner()==null){
+            return -1000;
+        }
         Team team = gameChunkService.getTeamOfChunkOwnerInCurrentRound(gameChunk);
         if(team == null) {
             return -1000;
