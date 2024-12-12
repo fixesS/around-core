@@ -31,14 +31,6 @@ public class Image implements Serializable {
     private Boolean is_default = false;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Image image = (Image) o;
-        return Objects.equals(uuid, image.uuid);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hashCode(uuid);
     }

@@ -18,14 +18,6 @@ public class GameChunkEmbedded implements Serializable {
     private String id;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GameChunkEmbedded that = (GameChunkEmbedded) o;
-        return Objects.equals(round, that.round) && Objects.equals(id, that.id);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(round, id);
     }

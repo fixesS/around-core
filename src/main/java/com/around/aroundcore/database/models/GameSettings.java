@@ -39,13 +39,6 @@ public class GameSettings implements Serializable {
     @Column(name = "team_win_reward_exp_dividing_ratio")
     private Double teamWinRewardExpDividingRatio;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GameSettings that = (GameSettings) o;
-        return Objects.equals(id, that.id);
-    }
 
     @Override
     public int hashCode() {

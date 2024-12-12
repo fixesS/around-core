@@ -28,13 +28,6 @@ public class OAuthUserEmbedded implements Serializable {
     @JoinColumn(name = "user_id")
     private GameUser gameUser;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OAuthUserEmbedded that = (OAuthUserEmbedded) o;
-        return oauthProvider == that.oauthProvider && Objects.equals(gameUser, that.gameUser);
-    }
 
     @Override
     public int hashCode() {

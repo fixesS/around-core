@@ -21,13 +21,6 @@ public class MapEventCategories {
     @Column
     private Integer category_id;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MapEventCategories that = (MapEventCategories) o;
-        return Objects.equals(event_id, that.event_id) && Objects.equals(category_id, that.category_id);
-    }
 
     @Override
     public int hashCode() {
