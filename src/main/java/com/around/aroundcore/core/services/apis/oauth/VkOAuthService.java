@@ -31,7 +31,7 @@ public class VkOAuthService implements ProviderOAuthService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("id_token", token);
+        body.add("access_token", token);
         body.add("client_id", clientId);
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
