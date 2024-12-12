@@ -6,7 +6,8 @@ import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
-import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
+import com.around.aroundcore.database.repositories.round.UserRoundTeamRepository;
+import com.around.aroundcore.database.services.round.RoundService;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.core.exceptions.api.entity.CityNullException;
 import com.around.aroundcore.core.exceptions.api.entity.GameChunkNullException;
@@ -40,21 +41,14 @@ public class GameChunkService {
     public void saveListOfChunks(List<GameChunk> gameChunks){
         gameChunkRepository.saveAll(gameChunks);
     }
-    /**
-     * @deprecated (udoli potom)
-     */
-    @Deprecated(forRemoval = true)
-    public GameChunk findById(String id) throws GameChunkNullException{
-        return gameChunkRepository.findById(id).orElseThrow(GameChunkNullException::new);
-    }
     public GameChunk findByIdAndRoundId(String id, Integer roundId) throws GameChunkNullException, RoundNullException {
         roundService.checkById(roundId);
         return gameChunkRepository.findByIdAndRoundId(id, roundId).orElseThrow(GameChunkNullException::new);
     }
-    public List<GameChunk> findAllByRoundAndCity(Integer roundId, Integer cityId) throws RoundNullException, CityNullException {
+    public List<GameChunk> findAllByRoundAndCity(Integer roundId, Integer cityId, Boolean nullable) throws RoundNullException, CityNullException {
         roundService.checkById(roundId);
         cityService.checkById(cityId);
-        return gameChunkRepository.findAllByRoundIdAndCityId(roundId,cityId);
+        return gameChunkRepository.findAllByRoundIdAndCityId(roundId,cityId, nullable);
     }
     public List<GameChunk> findAllByOwnerAndRoundAndCity(GameUser gameUser, Round round, City city) {
         return gameChunkRepository.findAllByOwnerIdAndRoundIdAndCityId(gameUser.getId(), round.getId(), city.getId());

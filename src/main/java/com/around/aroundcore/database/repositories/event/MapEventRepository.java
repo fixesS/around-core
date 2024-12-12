@@ -1,4 +1,4 @@
-package com.around.aroundcore.database.repositories;
+package com.around.aroundcore.database.repositories.event;
 
 import com.around.aroundcore.database.models.event.MapEvent;
 import org.springframework.data.jpa.repository.JpaRepository;

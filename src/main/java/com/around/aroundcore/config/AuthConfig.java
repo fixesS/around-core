@@ -1,6 +1,6 @@
 package com.around.aroundcore.config;
 
-import com.around.aroundcore.database.repositories.GameUserRepository;
+import com.around.aroundcore.database.repositories.user.GameUserRepository;
 import com.around.aroundcore.database.services.SessionService;
 import com.around.aroundcore.security.filters.ExceptionHandlerFilter;
 import com.around.aroundcore.security.filters.JwtFilter;

@@ -1,10 +1,10 @@
-package com.around.aroundcore.database.services;
+package com.around.aroundcore.database.services.user;
 
 import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.user.GameUserSkill;
 import com.around.aroundcore.database.models.user.GameUserSkillEmbedded;
 import com.around.aroundcore.database.models.skill.Skill;
-import com.around.aroundcore.database.repositories.GameUserSkillsRepository;
+import com.around.aroundcore.database.repositories.user.GameUserSkillsRepository;
 import com.around.aroundcore.core.exceptions.api.LevelsLessOrEqualZeroException;
 import com.around.aroundcore.core.exceptions.api.entity.GameUserSkillNullException;
 import jakarta.transaction.Transactional;

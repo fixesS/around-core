@@ -22,16 +22,16 @@ public class UpdateGameUserDTO {
     @Size(min=1,message = "-3005")
     @Pattern(regexp = AroundConfig.USERNAME_REGEX, message = "-3005")
     private String username;
-    @Nullable
-    @NotRead
-    @Min(value = 1, message = "-3008")
-    @Schema(example = "Yekaterinburg")
-    private Integer city_id;
-    @Nullable
-    @Min(value = 1, message = "-3007")
-    @Schema(example = "1")
-    @NotRead
-    private Integer team_id;
+//    @Nullable
+//    @NotRead
+//    @Min(value = 1, message = "-3008")
+//    @Schema(example = "Yekaterinburg")
+//    private Integer city_id;
+//    @Nullable
+//    @Min(value = 1, message = "-3007")
+//    @Schema(example = "1")
+//    @NotRead
+//    private Integer team_id;
     @Nullable
     @Valid
     @NotRead

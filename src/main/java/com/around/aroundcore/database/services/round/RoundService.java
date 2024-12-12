@@ -1,12 +1,13 @@
-package com.around.aroundcore.database.services;
+package com.around.aroundcore.database.services.round;
 
 import com.around.aroundcore.database.models.*;
 import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.models.round.UserRoundTeamCity;
-import com.around.aroundcore.database.repositories.RoundRepository;
-import com.around.aroundcore.database.repositories.UserRoundTeamRepository;
+import com.around.aroundcore.database.repositories.round.RoundRepository;
+import com.around.aroundcore.database.repositories.round.UserRoundTeamRepository;
 import com.around.aroundcore.core.exceptions.api.entity.NoActiveRoundException;
 import com.around.aroundcore.core.exceptions.api.entity.RoundNullException;
+import com.around.aroundcore.database.services.TeamService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

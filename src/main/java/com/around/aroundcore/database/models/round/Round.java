@@ -53,12 +53,26 @@ public class Round implements Serializable {
 
     @Column
     @Builder.Default
-    @Setter
     private Boolean active = false;
 
     @ManyToOne
     @JoinColumn(name = "game_settings_id", referencedColumnName = "id")
     private GameSettings gameSettings;
+
+    public void activate(){
+        this.active = true;
+    }
+    public void deactivate(){
+        this.active = false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Round round = (Round) o;
+        return Objects.equals(id, round.id);
+    }
 
 
     @Override

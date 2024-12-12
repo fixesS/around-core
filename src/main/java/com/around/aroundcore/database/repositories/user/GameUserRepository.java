@@ -1,4 +1,4 @@
-package com.around.aroundcore.database.repositories;
+package com.around.aroundcore.database.repositories.user;
 
 import com.around.aroundcore.database.models.user.GameUser;
 import jakarta.transaction.Transactional;
@@ -36,6 +36,6 @@ public interface GameUserRepository extends JpaRepository<GameUser, Integer> {
     boolean existsByUserIdAndProvider(@Param("userId") Integer userId, @Param("provider") String provider);
     @Query(nativeQuery = true, value = "SELECT nextval('users_id_seq') from public.users_id_seq;")
     BigDecimal getNextValMySequence();
-    @Query(nativeQuery = true, value = "select u.* from public.users_rounds_team_city as urtc join public.users as u on urtc.user_id = u.id where urtc.team_id = :teamId and urtc.round_id = :roundId; ")
-    List<GameUser> getTeamMembersForRound(@Param("teamId") Integer teamId,@Param("roundId") Integer roundId);
+    @Query(nativeQuery = true, value = "select u.* from public.users_rounds_team_city as urtc join public.users as u on urtc.user_id = u.id where urtc.team_id = :teamId and (coalesce(null,:roundIds) is null or urtc.round_id in (:roundIds)) and (coalesce(null,:cityIds) is null or urtc.city_id in (:cityIds)); ")
+    List<GameUser> getTeamMembersForRoundAndCity(@Param("teamId") Integer teamId,@Param("roundIds") List<Integer> roundIds, @Param("cityIds") List<Integer> cityIds);
 }

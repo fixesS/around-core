@@ -6,11 +6,11 @@ import com.around.aroundcore.database.models.event.Category;
 import com.around.aroundcore.database.models.event.EventProvider;
 import com.around.aroundcore.database.models.event.MapEvent;
 import com.around.aroundcore.database.models.round.Round;
-import com.around.aroundcore.database.repositories.CategoryRepository;
+import com.around.aroundcore.database.repositories.event.CategoryRepository;
 import com.around.aroundcore.database.repositories.GameChunkRepository;
 import com.around.aroundcore.database.services.CityService;
-import com.around.aroundcore.database.services.EventProviderService;
-import com.around.aroundcore.database.services.RoundService;
+import com.around.aroundcore.database.services.event.EventProviderService;
+import com.around.aroundcore.database.services.round.RoundService;
 import com.around.aroundcore.web.dtos.ChunkDTO;
 import com.around.aroundcore.web.dtos.coords.Location;
 import com.around.aroundcore.web.dtos.events.timepad.TimepadEvent;
@@ -62,6 +62,7 @@ public class MapEventParsingService {
     private String cityName;
 
     public List<MapEvent> parseEvents() throws EventsNotFoundException{
+        log.debug(cityName);
         CityEnum cityEnum = CityEnum.valueOf(cityName);
         City city = cityService.findById(cityEnum.getId());
         Round currentRound = roundService.getCurrentRound();
@@ -96,7 +97,7 @@ public class MapEventParsingService {
                 List<GameChunk> chunks = chunkDTOS.stream().map(gameChunkMapper).toList();
                 List<GameChunk> chunkList = chunks.stream().map(chunk -> {
                     if(Boolean.TRUE.equals(gameChunkRepository.existsByIdAndRoundId(chunk.getId(), currentRound.getId()))){
-                        return gameChunkRepository.findById(chunk.getId()).orElse(null);
+                        return gameChunkRepository.findByIdAndRoundId(chunk.getId(),currentRound.getId()).orElse(null);
                     }else{
                         chunk.setCity(city);
                         chunk.setRound(currentRound);

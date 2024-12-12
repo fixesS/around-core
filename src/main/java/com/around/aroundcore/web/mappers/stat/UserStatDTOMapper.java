@@ -4,7 +4,7 @@ import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.models.round.UserRoundTeamCity;
 import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.services.GameChunkService;
-import com.around.aroundcore.database.services.RoundService;
+import com.around.aroundcore.database.services.round.RoundService;
 import com.around.aroundcore.web.dtos.stat.CityStatDTO;
 import com.around.aroundcore.web.dtos.stat.RoundStatDTO;
 import com.around.aroundcore.web.dtos.stat.GameUserStatDTO;
@@ -32,8 +32,6 @@ public class UserStatDTOMapper implements Function<GameUser, GameUserStatDTO> {
                 .avatar(user.getAvatar().getUrl())
                 .build();
     }
-    //todo could be done with hashmaps(chatgpt suggection), but i not sure about performnce (a lot of forEach vs if-statement)
-    //todo check performance in future
     public List<RoundStatDTO> getRoundStatDTO(GameUser user){
         List<RoundStatDTO> rounds = new ArrayList<>();
         List<UserRoundTeamCity> userURTCs = roundService.getURTCByUserDistinctOnRoundAndCity(user.getId());

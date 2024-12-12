@@ -24,7 +24,7 @@ public class GameChunk implements Serializable {
 
     @Id
     @Setter
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "round_id", referencedColumnName = "id")
     private Round round;
 

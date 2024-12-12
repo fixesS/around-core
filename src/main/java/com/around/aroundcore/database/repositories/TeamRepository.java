@@ -20,52 +20,54 @@ public interface TeamRepository extends JpaRepository<Team, Integer> {
     Team getRandomTeam();
 
     @Query(nativeQuery = true,value = """
-WITH team_chunks_count AS (
+    WITH team_chunks_count AS (
+        SELECT
+            urtc.team_id,
+            COUNT(*) AS chunk_count
+        FROM
+            public.chunks AS c
+                LEFT JOIN
+            public.users_rounds_team_city AS urtc
+            ON c.owner = urtc.user_id
+                AND c.round_id = urtc.round_id
+                AND c.city_id = urtc.city_id
+        WHERE
+            c.round_id = :roundId
+            AND c.city_id = :cityId
+        GROUP BY
+            urtc.team_id
+    ),
+    max_chunks AS (
+        SELECT
+            MAX(chunk_count) AS max_chunk_count
+        FROM
+            team_chunks_count
+    ),
+    candidate_teams AS (
+        SELECT
+            team_id,
+            chunk_count
+        FROM
+            team_chunks_count
+        WHERE
+            chunk_count = (SELECT max_chunk_count FROM max_chunks)
+    ),
+    total_teams AS (
+        SELECT
+            COUNT(*) AS num_candidates
+        FROM
+            candidate_teams
+    )
     SELECT
-        urtc.team_id,
-        COUNT(*) AS chunk_count
+        t.*
     FROM
-        public.chunks AS c
-            LEFT JOIN
-        public.users_rounds_team_city AS urtc
-        ON c.owner = urtc.user_id
-            AND c.round_id = urtc.round_id
-            AND c.city_id = urtc.city_id
+        candidate_teams AS ct
+            JOIN
+        public.teams AS t
+        ON ct.team_id = t.id
     WHERE
-        c.round_id = :roundId
-    GROUP BY
-        urtc.team_id
-),
-     max_chunks AS (
-         SELECT
-             MAX(chunk_count) AS max_chunk_count
-         FROM
-             team_chunks_count
-     ),
-     candidate_teams AS (
-         SELECT
-             team_id,
-             chunk_count
-         FROM
-             team_chunks_count
-         WHERE
-             chunk_count = (SELECT max_chunk_count FROM max_chunks)
-     ),
-     total_teams AS (
-         SELECT
-             COUNT(*) AS num_candidates
-         FROM
-             candidate_teams
-     )
-SELECT
-    t.*
-FROM
-    candidate_teams AS ct
-        JOIN
-    public.teams AS t
-    ON ct.team_id = t.id
-WHERE
-    (SELECT num_candidates FROM total_teams) >= 1;
+        (SELECT num_candidates FROM total_teams) >= 1;
+                                                  
 """)
-    List<Team> getWinnerForRound(@Param("roundId") Integer roundId );
+    List<Team> getWinnerForRound(@Param("roundId") Integer roundId, @Param("cityId") Integer cityId );
 }

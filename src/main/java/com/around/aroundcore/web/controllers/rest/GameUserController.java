@@ -6,6 +6,8 @@ import com.around.aroundcore.database.models.oauth.OAuthUser;
 import com.around.aroundcore.database.models.oauth.OAuthUserEmbedded;
 import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.services.*;
+import com.around.aroundcore.database.services.round.RoundService;
+import com.around.aroundcore.database.services.user.GameUserService;
 import com.around.aroundcore.web.dtos.events.MapEventDTO;
 import com.around.aroundcore.web.dtos.auth.ChangePasswordDTO;
 import com.around.aroundcore.web.dtos.auth.OAuthDTO;
@@ -156,11 +158,6 @@ public class GameUserController {
             updatePassword(user,updateGameUserDTO.getPassword());
         }
         userService.updateAndFlush(user);
-        if(updateGameUserDTO.getTeam_id()!=null && updateGameUserDTO.getCity_id()!=null){
-            var team = teamService.findById(updateGameUserDTO.getTeam_id());
-            var city = cityService.findById(updateGameUserDTO.getCity_id());
-            userService.setTeamForRoundAndCity(user,roundService.getCurrentRound(),city,team);
-        }
         return ResponseEntity.ok("");
     }
     @PatchMapping("/me/team")

@@ -99,8 +99,17 @@ CREATE TABLE public.users_rounds_team_city(
     CONSTRAINT urt_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users (id),
     UNIQUE (user_id,round_id,city_id)
 );
-CREATE TABLE public.chunks
-(
+CREATE TABLE public.rounds_cities_winner_team(
+    round_id int8 not null,
+    city_id int8 not null,
+    winner_team_id int8 not null,
+    constraint rounds_cities_winner_team_pk primary key (round_id,city_id,winner_team_id),
+    constraint rcwt_round_fk foreign key (round_id) references public.rounds(id),
+    constraint rcwt_city_fk foreign key (city_id) references  public.cities(id),
+    constraint rcwt_team_fk foreign key (winner_team_id) references public.teams(id),
+    unique (round_id,city_id,winner_team_id)
+);
+CREATE TABLE public.chunks(
     id      varchar NOT NULL,
     round_id int8 not null,
     city_id int8 not null,

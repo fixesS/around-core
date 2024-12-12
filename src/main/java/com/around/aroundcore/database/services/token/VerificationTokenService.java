@@ -1,8 +1,8 @@
-package com.around.aroundcore.database.services;
+package com.around.aroundcore.database.services.token;
 
 import com.around.aroundcore.database.models.user.GameUser;
 import com.around.aroundcore.database.models.token.VerificationToken;
-import com.around.aroundcore.database.repositories.VerificationTokenRepository;
+import com.around.aroundcore.database.repositories.token.VerificationTokenRepository;
 import com.around.aroundcore.security.models.Token;
 import com.around.aroundcore.security.services.JwtService;
 import com.around.aroundcore.core.exceptions.api.entity.VerificationTokenNullException;

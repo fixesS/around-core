@@ -27,6 +27,7 @@ public class ValidationService {
         }
     }
     private boolean validate(String value, String regex){
+
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(value);
         return matcher.matches();

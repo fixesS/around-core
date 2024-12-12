@@ -1,7 +1,8 @@
 package com.around.aroundcore.core.listeners;
 
+import com.around.aroundcore.config.RoundStateMachine;
 import com.around.aroundcore.database.models.round.Round;
-import com.around.aroundcore.database.services.RoundService;
+import com.around.aroundcore.database.services.round.RoundService;
 import com.around.aroundcore.core.statemachine.GameStates;
 import com.around.aroundcore.core.statemachine.RoundEvents;
 import com.around.aroundcore.core.exceptions.api.entity.NoActiveRoundException;
@@ -44,7 +45,8 @@ public class StartupListener {
                 stateMachine.sendEvent(Mono.just(message)).subscribe();
             }else {
                 log.debug("Current round is ended on startup.");
-                Message<RoundEvents> message = MessageBuilder.withPayload(RoundEvents.STARTUP_END).setHeader("round", round).build();
+                Message<RoundEvents> message = MessageBuilder.withPayload(RoundEvents.STARTUP_END)
+                        .setHeader(RoundStateMachine.ROUND_HEADER, round).build();
                 stateMachine.sendEvent(Mono.just(message)).subscribe();
             }
         }catch (NoActiveRoundException e){

@@ -34,7 +34,7 @@ public class AuthService {
         session.setCreated(accessToken.getCreated().toInstant()
                 .atZone(ZoneId.of(timeLocale))
                 .toLocalDateTime());
-        session.setExpiresIn(accessToken.getExpiresIn().toInstant()
+        session.setExpiresIn(refreshToken.getExpiresIn().toInstant()
                 .atZone(ZoneId.of(timeLocale))
                 .toLocalDateTime());
         session.setLastRefresh(accessToken.getCreated().toInstant()

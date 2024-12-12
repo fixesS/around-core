@@ -4,7 +4,7 @@ import com.around.aroundcore.config.AroundConfig;
 import com.around.aroundcore.database.models.GameSettings;
 import com.around.aroundcore.database.models.round.Round;
 import com.around.aroundcore.database.services.GameSettingService;
-import com.around.aroundcore.database.services.RoundService;
+import com.around.aroundcore.database.services.round.RoundService;
 import com.around.aroundcore.core.statemachine.GameStates;
 import com.around.aroundcore.core.statemachine.RoundEvents;
 import com.around.aroundcore.web.dtos.round.CreateRoundDTO;
